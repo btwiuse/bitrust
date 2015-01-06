@@ -2,9 +2,8 @@ extern crate git2;
 extern crate "rustc-serialize" as rustc_serialize;
 
 use std::io::File;
-use std::fmt::Show;
 use std::os;
-use git2::{Repository, Oid};
+use git2::Repository;
 use rustc_serialize::json;
 use rustc_serialize::hex::ToHex;
 
@@ -32,7 +31,7 @@ fn main() {
     revs.push_head().unwrap();
 
     let commits = revs
-    .filter_map(|commitId| { repo.find_commit(commitId).ok() })
+    .filter_map(|commit_id| { repo.find_commit(commit_id).ok() })
     .filter_map(|commit| {
         match commit.message().and_then(|msg| { Some(msg.contains("[breaking-change]")) }) {
             Some(true) => Some(commit),
@@ -55,5 +54,8 @@ fn main() {
     .take(100)
     .collect::<Vec<Commit>>();
 
-    write!(&mut output, "{}", json::as_pretty_json(&commits));
+    match write!(&mut output, "{}", json::as_pretty_json(&commits)) {
+        Ok(_) => println!("wrote commits to `log.json`."),
+        Err(e) => panic!("failed to write commits to file: {}", e),
+    };
 }
