@@ -3,7 +3,7 @@ extern crate "rustc-serialize" as rustc_serialize;
 
 use std::io::File;
 use std::os;
-use git2::Repository;
+use git2::{Repository, Error};
 use rustc_serialize::json;
 use rustc_serialize::hex::ToHex;
 
@@ -15,25 +15,14 @@ struct Commit {
     message: String
 }
 
-fn main() {
-    let mut output = File::create(&os::getcwd().unwrap().join("log.json")).unwrap();
-
-    let repo_path = os::getcwd().unwrap().join("rust");
-    let repo = match Repository::open(&repo_path) {
-        Ok(repo) => repo,
-        Err(e) => panic!("failed to init `{}`: {}", repo_path.display(), e),
-    };
-    let mut revs = match repo.revwalk() {
-        Ok(revs) => revs,
-        Err(e) => panic!("failed to revwalk: {}", e),
-    };
-
-    revs.push_head().unwrap();
+fn fetch_commits(repo: &Repository, query: &str, amount: uint) -> Result<Vec<Commit>, Error> {
+    let mut revs = try!(repo.revwalk());
+    try!(revs.push_head());
 
     let commits = revs
     .filter_map(|commit_id| { repo.find_commit(commit_id).ok() })
     .filter_map(|commit| {
-        match commit.message().and_then(|msg| { Some(msg.contains("[breaking-change]")) }) {
+        match commit.message().and_then(|msg| { Some(msg.contains(query)) }) {
             Some(true) => Some(commit),
             _ => None
         }
@@ -51,8 +40,19 @@ fn main() {
                 .unwrap().trim().to_string()
         }
     })
-    .take(100)
-    .collect::<Vec<Commit>>();
+    .take(amount)
+    .collect();
+
+    Result::Ok(commits)
+}
+
+fn main() {
+    let cwd = os::getcwd().unwrap();
+    let repo = Repository::open(&cwd.join("rust")).unwrap();
+
+    let mut output = File::create(&cwd.join("log.json")).unwrap();
+
+    let commits = fetch_commits(&repo, "[breaking-change]", 100).unwrap();
 
     match write!(&mut output, "{}", json::as_pretty_json(&commits)) {
         Ok(_) => println!("wrote commits to `log.json`."),
