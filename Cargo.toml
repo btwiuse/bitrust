@@ -9,7 +9,5 @@ readme = "README.md"
 description = "List commits with breaking changes from the rust repository."
 
 [dependencies]
-rustc-serialize = "0.2.5"
-
-[dependencies.git2]
-git = "https://github.com/alexcrichton/git2-rs"
+rustc-serialize = "0.2.7"
+git2 = "0.1.10"

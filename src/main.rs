@@ -1,9 +1,12 @@
+#![allow(unstable)]
+
 extern crate git2;
 extern crate "rustc-serialize" as rustc_serialize;
 
 use std::io::File;
 use std::os;
-use git2::{Repository, Error};
+use git2::Repository;
+use git2::Error as GitError;
 use rustc_serialize::json;
 use rustc_serialize::hex::ToHex;
 
@@ -15,7 +18,7 @@ struct Commit {
     message: String
 }
 
-fn fetch_commits(repo: &Repository, query: &str, amount: uint) -> Result<Vec<Commit>, Error> {
+fn fetch_commits(repo: &Repository, query: &str, amount: usize) -> Result<Vec<Commit>, GitError> {
     let mut revs = try!(repo.revwalk());
     try!(revs.push_head());
 
