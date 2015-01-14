@@ -30,17 +30,17 @@
                 </div>
             </div>
 
-            <div class="panel panel-default" ng-repeat="commit in commits | filter:search | orderBy:'-date'">
-                <div class="panel-heading">
+            <article class="panel panel-default" ng-repeat="commit in commits | filter:search | orderBy:'-date'">
+                <header class="panel-heading">
                     <h2 class="panel-title">
                         <a href="https://github.com/rust-lang/rust/commit/{{commit.hash}}"  title="{{commit.hash}}">{{short_hash(commit.hash)}}:</a> {{get_subject(commit.message)}}
                     </h2>
-                </div>
+                </header>
                 <div class="panel-body" ng-bind-html="get_message(commit.message) | markdown"> </div>
-                <div class="panel-footer">
+                <footer class="panel-footer">
                     {{commit.author}}, {{(commit.date * 1000) | date:"yyyy-MM-dd HH:mm:ss Z"}}
-                </div>
-            </div>
+                </footer>
+            </article>
         </main>
     </div>
 
