@@ -1,9 +1,123 @@
 [
   {
+    "hash": "3d0d9bb6fbdf6ead9396f0874cf38f3ef7c9be5c",
+    "author": "bors",
+    "date": 1421103380,
+    "message": "auto merge of #20896 : sfackler/rust/atomic-rename, r=alexcrichton\n\nChange any use of AtomicInt to AtomicIsize and AtomicUint to AtomicUsize\r\n\r\nCloses #20893\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "8b6cda3ce681d4d95c3097d12ed754975b4a07f6",
+    "author": "Steven Fackler",
+    "date": 1421005664,
+    "message": "Rename AtomicInt and AtomicUint\n\nChange any use of AtomicInt to AtomicIsize and AtomicUint to AtomicUsize\n\nCloses #20893\n\n[breaking-change]"
+  },
+  {
+    "hash": "2e4cef4e78253beb4c08ed35416fad076d978344",
+    "author": "bors",
+    "date": 1420994748,
+    "message": "auto merge of #20910 : sfackler/rust/show-impls, r=alexcrichton\n\nA derived implementation would not be appropriate for the Buffered types\r\nsince the buffer is both huge (64k by default) and full of uninitialized\r\nmemory. Instead of printing the whole thing, we display how full it is.\r\n\r\nI also altered `MultiWriter` to make it generic over Writers instead of\r\ntaking `Box<Writer>` trait objects. `Box<Writer>` implements `Writer` so\r\nexisting use cases should continue to work, and this enables a more\r\nuseful Show implementation in applicable cases.\r\n\r\nThe change to `MultiWriter` may break code that uses it, but any fixes\r\nshould be easy.\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton"
+  },
+  {
+    "hash": "b4fae2fba99e713a6d6a8a59caaf1cfba847b50e",
+    "author": "Steven Fackler",
+    "date": 1420939974,
+    "message": "Implement Show for types in std::io::{buffered,util}\n\nA derived implementation would not be appropriate for the Buffered types\nsince the buffer is both huge (64k by default) and full of uninitialized\nmemory. Instead of printing the whole thing, we display how full it is.\n\nI also altered MultiWriter to make it generic over Writers instead of\ntaking Box<Writer> trait objects. Box<Writer> implements Writer so\nexisting use cases should continue to work, and this enables a more\nuseful Show implementation in applicable cases.\n\nThe change to MultiWriter may break code that uses it, but any fixes\nshould be easy.\n\n[breaking-change]"
+  },
+  {
+    "hash": "daee409b60cdb17040122343e0a184049c62180b",
+    "author": "Alex Crichton",
+    "date": 1420737726,
+    "message": "rollup merge of #20740: FlaPer87/remove-opt-out-copy\n\n[breaking-change] code using this feature will break."
+  },
+  {
+    "hash": "4a31aaddb364f5ab8280242a1016bdd3d10dcaed",
+    "author": "Felix S. Klock II",
+    "date": 1420674103,
+    "message": "Added `box_syntax` feature gate; added to std and rustc crates for bootstrap.\n\nTo avoid using the feauture, change uses of `box <expr>` to\n`Box::new(<expr>)` alternative, as noted by the feature gate message.\n\n(Note that box patterns have no analogous trivial replacement, at\nleast not in general; you need to revise the code to do a partial\nmatch, deref, and then the rest of the match.)\n\n[breaking-change]"
+  },
+  {
+    "hash": "63a9bd5e0adc03652e10506055564077aa00eeaa",
+    "author": "Nick Cameron",
+    "date": 1420669500,
+    "message": "Fix precedence for ranges.\n\nTechnically this is a\n\n[breaking-change]\n\nbut it probably shouldn't affect your code.\n\nCloses #20256"
+  },
+  {
+    "hash": "209c701bf9e95542aec69455bc12c7ca295109c4",
+    "author": "Alex Crichton",
+    "date": 1420664176,
+    "message": "std: Stablize the macros module\n\nThis commit performs a pass over the `std::macros` module, applying stability\nattributes where necessary. In particular, this audits macros for patterns such\nas:\n\n* Standard use of forward-to-format-args via `$($arg:tt)*` (or `+`)\n* Prevent macro-defined identifiers from leaking into expression arguments as\n  hygiene is not perfectly implemented.\n* Wherever possible, `$crate` is used now.\n\nSpecifically, the following actions were taken:\n\n* The `std::macros` module itself is no longer public.\n* The `panic!` macro is stable\n* The `assert!` macro is stable\n* The `assert_eq!` macro is stable\n* The `debug_assert!` macro is stable\n* The `debug_assert_eq!` macro is stable\n* The `unreachable!` macro is stable after removing the extra forms to bring the\n  definition in line with the `unimplemented!` macro.\n* The `try!` macro is stable\n* The `vec!` macro is stable\n\n[breaking-change]"
+  },
+  {
+    "hash": "92cd8ea96ad2a1da51863b7f089baec41ed10ce9",
+    "author": "Huon Wilson",
+    "date": 1420680448,
+    "message": "Prohibit type parameter shadowing with a clunky hammer.\n\nThis is a [breaking-change].\n\nChange\n\n    impl<T> Foo<T> {\n        fn bar<T>(...\n\nto (for example)\n\n    impl<T> Foo<T> {\n        fn bar<U>(...\n\nPer RFC 459.\n\nCloses #19390."
+  },
+  {
+    "hash": "7deb9abd1b45f3e56ca6b13432866ae89886f21f",
+    "author": "Aaron Turon",
+    "date": 1420659611,
+    "message": "Add isize, usize modules, deprecate int, uint modules\n\nThis PR introduces `isize` and `usize` modules to `core` and `std`, and\ndeprecates the existing `int` and `uint` modules. The rustdoc primitive\ntype links now point to these new modules.\n\nDue to deprecation this is a:\n\n[breaking-change]"
+  },
+  {
+    "hash": "6301c7878ebcaa45e77315db2a9afd8b5d1425c8",
+    "author": "Alex Crichton",
+    "date": 1420679843,
+    "message": "rollup merge of #20680: nick29581/target-word\n\nCloses #20421\n\n[breaking-change]\n\nr? @brson"
+  },
+  {
+    "hash": "dd3e89aaf25c667fa8207f8800c4b60d70d76c1b",
+    "author": "Nick Cameron",
+    "date": 1420661275,
+    "message": "Rename `target_word_size` to `target_pointer_width`\n\nCloses #20421\n\n[breaking-change]"
+  },
+  {
+    "hash": "8bf3ee7c5c44fa5aa0a1003e8fe61a0af1527927",
+    "author": "Alex Crichton",
+    "date": 1420679839,
+    "message": "rollup merge of #20654: alexcrichton/stabilize-hash\n\nThis commit aims to prepare the `std::hash` module for alpha by formalizing its\ncurrent interface whileholding off on adding `#[stable]` to the new APIs.  The\ncurrent usage with the `HashMap` and `HashSet` types is also reconciled by\nseparating out composable parts of the design. The primary goal of this slight\nredesign is to separate the concepts of a hasher's state from a hashing\nalgorithm itself.\n\nThe primary change of this commit is to separate the `Hasher` trait into a\n`Hasher` and a `HashState` trait. Conceptually the old `Hasher` trait was\nactually just a factory for various states, but hashing had very little control\nover how these states were used. Additionally the old `Hasher` trait was\nactually fairly unrelated to hashing.\n\nThis commit redesigns the existing `Hasher` trait to match what the notion of a\n`Hasher` normally implies with the following definition:\n\n    trait Hasher {\n        type Output;\n        fn reset(&mut self);\n        fn finish(&self) -> Output;\n    }\n\nThis `Hasher` trait emphasizes that hashing algorithms may produce outputs other\nthan a `u64`, so the output type is made generic. Other than that, however, very\nlittle is assumed about a particular hasher. It is left up to implementors to\nprovide specific methods or trait implementations to feed data into a hasher.\n\nThe corresponding `Hash` trait becomes:\n\n    trait Hash<H: Hasher> {\n        fn hash(&self, &mut H);\n    }\n\nThe old default of `SipState` was removed from this trait as it's not something\nthat we're willing to stabilize until the end of time, but the type parameter is\nalways required to implement `Hasher`. Note that the type parameter `H` remains\non the trait to enable multidispatch for specialization of hashing for\nparticular hashers.\n\nNote that `Writer` is not mentioned in either of `Hash` or `Hasher`, it is\nsimply used as part `derive` and the implementations for all primitive types.\n\nWith these definitions, the old `Hasher` trait is realized as a new `HashState`\ntrait in the `collections::hash_state` module as an unstable addition for\nnow. The current definition looks like:\n\n    trait HashState {\n        type Hasher: Hasher;\n        fn hasher(&self) -> Hasher;\n    }\n\nThe purpose of this trait is to emphasize that the one piece of functionality\nfor implementors is that new instances of `Hasher` can be created.  This\nconceptually represents the two keys from which more instances of a\n`SipHasher` can be created, and a `HashState` is what's stored in a\n`HashMap`, not a `Hasher`.\n\nImplementors of custom hash algorithms should implement the `Hasher` trait, and\nonly hash algorithms intended for use in hash maps need to implement or worry\nabout the `HashState` trait.\n\nThe entire module and `HashState` infrastructure remains `#[unstable]` due to it\nbeing recently redesigned, but some other stability decision made for the\n`std::hash` module are:\n\n* The `Writer` trait remains `#[experimental]` as it's intended to be replaced\n  with an `io::Writer` (more details soon).\n* The top-level `hash` function is `#[unstable]` as it is intended to be generic\n  over the hashing algorithm instead of hardwired to `SipHasher`\n* The inner `sip` module is now private as its one export, `SipHasher` is\n  reexported in the `hash` module.\n\nAnd finally, a few changes were made to the default parameters on `HashMap`.\n\n* The `RandomSipHasher` default type parameter was renamed to `RandomState`.\n  This renaming emphasizes that it is not a hasher, but rather just state to\n  generate hashers. It also moves away from the name \"sip\" as it may not always\n  be implemented as `SipHasher`. This type lives in the\n  `std::collections::hash_map` module as `#[unstable]`\n\n* The associated `Hasher` type of `RandomState` is creatively called...\n  `Hasher`! This concrete structure lives next to `RandomState` as an\n  implemenation of the \"default hashing algorithm\" used for a `HashMap`. Under\n  the hood this is currently implemented as `SipHasher`, but it draws an\n  explicit interface for now and allows us to modify the implementation over\n  time if necessary.\n\nThere are many breaking changes outlined above, and as a result this commit is\na:\n\n[breaking-change]"
+  },
+  {
+    "hash": "511f0b8a3de5a166fc96aba5170782c9abf92101",
+    "author": "Alex Crichton",
+    "date": 1420661888,
+    "message": "std: Stabilize the std::hash module\n\nThis commit aims to prepare the `std::hash` module for alpha by formalizing its\ncurrent interface whileholding off on adding `#[stable]` to the new APIs.  The\ncurrent usage with the `HashMap` and `HashSet` types is also reconciled by\nseparating out composable parts of the design. The primary goal of this slight\nredesign is to separate the concepts of a hasher's state from a hashing\nalgorithm itself.\n\nThe primary change of this commit is to separate the `Hasher` trait into a\n`Hasher` and a `HashState` trait. Conceptually the old `Hasher` trait was\nactually just a factory for various states, but hashing had very little control\nover how these states were used. Additionally the old `Hasher` trait was\nactually fairly unrelated to hashing.\n\nThis commit redesigns the existing `Hasher` trait to match what the notion of a\n`Hasher` normally implies with the following definition:\n\n    trait Hasher {\n        type Output;\n        fn reset(&mut self);\n        fn finish(&self) -> Output;\n    }\n\nThis `Hasher` trait emphasizes that hashing algorithms may produce outputs other\nthan a `u64`, so the output type is made generic. Other than that, however, very\nlittle is assumed about a particular hasher. It is left up to implementors to\nprovide specific methods or trait implementations to feed data into a hasher.\n\nThe corresponding `Hash` trait becomes:\n\n    trait Hash<H: Hasher> {\n        fn hash(&self, &mut H);\n    }\n\nThe old default of `SipState` was removed from this trait as it's not something\nthat we're willing to stabilize until the end of time, but the type parameter is\nalways required to implement `Hasher`. Note that the type parameter `H` remains\non the trait to enable multidispatch for specialization of hashing for\nparticular hashers.\n\nNote that `Writer` is not mentioned in either of `Hash` or `Hasher`, it is\nsimply used as part `derive` and the implementations for all primitive types.\n\nWith these definitions, the old `Hasher` trait is realized as a new `HashState`\ntrait in the `collections::hash_state` module as an unstable addition for\nnow. The current definition looks like:\n\n    trait HashState {\n        type Hasher: Hasher;\n        fn hasher(&self) -> Hasher;\n    }\n\nThe purpose of this trait is to emphasize that the one piece of functionality\nfor implementors is that new instances of `Hasher` can be created.  This\nconceptually represents the two keys from which more instances of a\n`SipHasher` can be created, and a `HashState` is what's stored in a\n`HashMap`, not a `Hasher`.\n\nImplementors of custom hash algorithms should implement the `Hasher` trait, and\nonly hash algorithms intended for use in hash maps need to implement or worry\nabout the `HashState` trait.\n\nThe entire module and `HashState` infrastructure remains `#[unstable]` due to it\nbeing recently redesigned, but some other stability decision made for the\n`std::hash` module are:\n\n* The `Writer` trait remains `#[experimental]` as it's intended to be replaced\n  with an `io::Writer` (more details soon).\n* The top-level `hash` function is `#[unstable]` as it is intended to be generic\n  over the hashing algorithm instead of hardwired to `SipHasher`\n* The inner `sip` module is now private as its one export, `SipHasher` is\n  reexported in the `hash` module.\n\nAnd finally, a few changes were made to the default parameters on `HashMap`.\n\n* The `RandomSipHasher` default type parameter was renamed to `RandomState`.\n  This renaming emphasizes that it is not a hasher, but rather just state to\n  generate hashers. It also moves away from the name \"sip\" as it may not always\n  be implemented as `SipHasher`. This type lives in the\n  `std::collections::hash_map` module as `#[unstable]`\n\n* The associated `Hasher` type of `RandomState` is creatively called...\n  `Hasher`! This concrete structure lives next to `RandomState` as an\n  implemenation of the \"default hashing algorithm\" used for a `HashMap`. Under\n  the hood this is currently implemented as `SipHasher`, but it draws an\n  explicit interface for now and allows us to modify the implementation over\n  time if necessary.\n\nThere are many breaking changes outlined above, and as a result this commit is\na:\n\n[breaking-change]"
+  },
+  {
     "hash": "6680c9c5c797101fc5e0608cb2c3657517333148",
     "author": "Corey Richardson",
     "date": 1420563792,
     "message": "syntax: implement 'macro input future proofing'\n\nSee RFC 550 (https://github.com/rust-lang/rfcs/pull/550) for the motivation\nand details.\n\nIf this breaks your code, add one of the listed tokens after the relevant\nnon-terminal in your matcher.\n\n[breaking-change]"
+  },
+  {
+    "hash": "36f5d122b80682de473aeda2e20f14b6ceb86d74",
+    "author": "Alex Crichton",
+    "date": 1420587518,
+    "message": "rollup merge of #20615: aturon/stab-2-thread\n\nThis commit takes a first pass at stabilizing `std::thread`:\n\n* It removes the `detach` method in favor of two constructors -- `spawn`\n  for detached threads, `scoped` for \"scoped\" (i.e., must-join)\n  threads. This addresses some of the surprise/frustrating debug\n  sessions with the previous API, in which `spawn` produced a guard that\n  on destruction joined the thread (unless `detach` was called).\n\n  The reason to have the division in part is that `Send` will soon not\n  imply `'static`, which means that `scoped` thread creation can take a\n  closure over *shared stack data* of the parent thread. On the other\n  hand, this means that the parent must not pop the relevant stack\n  frames while the child thread is running. The `JoinGuard` is used to\n  prevent this from happening by joining on drop (if you have not\n  already explicitly `join`ed.) The APIs around `scoped` are\n  future-proofed for the `Send` changes by taking an additional lifetime\n  parameter. With the current definition of `Send`, this is forced to be\n  `'static`, but when `Send` changes these APIs will gain their full\n  flexibility immediately.\n\n  Threads that are `spawn`ed, on the other hand, are detached from the\n  start and do not yield an RAII guard.\n\n  The hope is that, by making `scoped` an explicit opt-in with a very\n  suggestive name, it will be drastically less likely to be caught by a\n  surprising deadlock due to an implicit join at the end of a scope.\n\n* The module itself is marked stable.\n\n* Existing methods other than `spawn` and `scoped` are marked stable.\n\nThe migration path is:\n\n```rust\nThread::spawn(f).detached()\n```\n\nbecomes\n\n```rust\nThread::spawn(f)\n```\n\nwhile\n\n```rust\nlet res = Thread::spawn(f);\nres.join()\n```\n\nbecomes\n\n```rust\nlet res = Thread::scoped(f);\nres.join()\n```\n\n[breaking-change]"
+  },
+  {
+    "hash": "f67b81e8d4dc198ad10ad50a7624e43cc1e25802",
+    "author": "Aaron Turon",
+    "date": 1420563888,
+    "message": "Stabilize std::thread\n\nThis commit takes a first pass at stabilizing `std::thread`:\n\n* It removes the `detach` method in favor of two constructors -- `spawn`\n  for detached threads, `scoped` for \"scoped\" (i.e., must-join)\n  threads. This addresses some of the surprise/frustrating debug\n  sessions with the previous API, in which `spawn` produced a guard that\n  on destruction joined the thread (unless `detach` was called).\n\n  The reason to have the division in part is that `Send` will soon not\n  imply `'static`, which means that `scoped` thread creation can take a\n  closure over *shared stack data* of the parent thread. On the other\n  hand, this means that the parent must not pop the relevant stack\n  frames while the child thread is running. The `JoinGuard` is used to\n  prevent this from happening by joining on drop (if you have not\n  already explicitly `join`ed.) The APIs around `scoped` are\n  future-proofed for the `Send` changes by taking an additional lifetime\n  parameter. With the current definition of `Send`, this is forced to be\n  `'static`, but when `Send` changes these APIs will gain their full\n  flexibility immediately.\n\n  Threads that are `spawn`ed, on the other hand, are detached from the\n  start and do not yield an RAII guard.\n\n  The hope is that, by making `scoped` an explicit opt-in with a very\n  suggestive name, it will be drastically less likely to be caught by a\n  surprising deadlock due to an implicit join at the end of a scope.\n\n* The module itself is marked stable.\n\n* Existing methods other than `spawn` and `scoped` are marked stable.\n\nThe migration path is:\n\n```rust\nThread::spawn(f).detached()\n```\n\nbecomes\n\n```rust\nThread::spawn(f)\n```\n\nwhile\n\n```rust\nlet res = Thread::spawn(f);\nres.join()\n```\n\nbecomes\n\n```rust\nlet res = Thread::scoped(f);\nres.join()\n```\n\n[breaking-change]"
+  },
+  {
+    "hash": "503709708c72401dbe091ed5c7e0494efabe0669",
+    "author": "Nick Cameron",
+    "date": 1420577128,
+    "message": "Change `std::kinds` to `std::markers`; flatten `std::kinds::marker`\n\n[breaking-change]"
+  },
+  {
+    "hash": "2375a79152b8a6554c3e97a3f127fedd75f7495f",
+    "author": "Niko Matsakis",
+    "date": 1420582668,
+    "message": "Implement impl reachability rules. This is a [breaking-change]. Type\nparameters on impls must now also appear in the trait ref, self type,\nor some associated type declared on the impl. This ensures that they\nare constrianed in some way and that the semantics of the trait system\nare well-defined (always a good thing).\n\nThere are three major ways to fix this error:\n\n1. Convert the trait to use associated types; most often the type\n   parameters are not constrained because they are in fact outputs of\n   the impl.\n\n2. Move the type parameters to methods.\n\n3. Add an additional type parameter to the self type or trait so that\n   the unused parameter can appear there.\n\nIn some cases, it is not possible to fix the impl because the trait\ndefinition needs to be changed first (and that may be out of your\ncontrol). In that case, for the time being, you can opt out of these\nrules by using `#[old_impl_check]` on the impl and adding a\n`#![feature(old_impl_check)]` to your crate declaration."
+  },
+  {
+    "hash": "44440e5c18a1dbcc9685866ffffe00c508929079",
+    "author": "Sean McArthur",
+    "date": 1420584582,
+    "message": "core: split into fmt::Show and fmt::String\n\nfmt::Show is for debugging, and can and should be implemented for\nall public types. This trait is used with `{:?}` syntax. There still\nexists #[derive(Show)].\n\nfmt::String is for types that faithfully be represented as a String.\nBecause of this, there is no way to derive fmt::String, all\nimplementations must be purposeful. It is used by the default format\nsyntax, `{}`.\n\nThis will break most instances of `{}`, since that now requires the type\nto impl fmt::String. In most cases, replacing `{}` with `{:?}` is the\ncorrect fix. Types that were being printed specifically for users should\nreceive a fmt::String implementation to fix this.\n\nPart of #20013\n\n[breaking-change]"
   },
   {
     "hash": "ae4762761c995494726e8c9f41b05e99e6c7c81b",
@@ -18,6 +132,60 @@
     "message": "Deprecate the constant-returning functions in Float.\n\nThese are replaced by the equivalent constants in `std::f32` and\n`std::f64` respectively.\n\n[breaking-change]"
   },
   {
+    "hash": "48f50e1e98691d74427e23e82694f528b3fb4d56",
+    "author": "Nick Cameron",
+    "date": 1420507247,
+    "message": "Obsolete `Sized? T`\n\n[breaking-change]\n\nUse `T: ?Sized`"
+  },
+  {
+    "hash": "6e68fd09edc7ed37fd76f703247b5410cd338bfe",
+    "author": "Niko Matsakis",
+    "date": 1420496246,
+    "message": "Implement new orphan rule that requires that impls of remote traits meet the following two criteria:\n\n- the self type includes some local type; and,\n- type parameters in the self type must be constrained by a local type.\n\nA type parameter is called *constrained* if it appears in some type-parameter of a local type.\n\nHere are some examples that are accepted. In all of these examples, I\nassume that `Foo` is a trait defined in another crate. If `Foo` were\ndefined in the local crate, then all the examples would be legal.\n\n- `impl Foo for LocalType`\n- `impl<T> Foo<T> for LocalType` -- T does not appear in Self, so it is OK\n- `impl<T> Foo<T> for LocalType<T>` -- T here is constrained by LocalType\n- `impl<T> Foo<T> for (LocalType<T>, T)` -- T here is constrained by LocalType\n\nHere are some illegal examples (again, these examples assume that\n`Foo` is not local to the current crate):\n\n- `impl Foo for int` -- the Self type is not local\n- `impl<T> Foo for T` -- T appears in Self unconstrained by a local type\n- `impl<T> Foo for (LocalType, T)` -- T appears in Self unconstrained by a local type\n\nThis is a [breaking-change]. For the time being, you can opt out of\nthe new rules by placing `#[old_orphan_check]` on the trait (and\nenabling the feature gate where the trait is defined). Longer term,\nyou should restructure your traits to avoid the problem. Usually this\nmeans changing the order of parameters so that the \"central\" type\nparameter is in the `Self` position.\n\nAs an example of that refactoring, consider the `BorrowFrom` trait:\n\n```rust\npub trait BorrowFrom<Sized? Owned> for Sized? {\n    fn borrow_from(owned: &Owned) -> &Self;\n}\n```\n\nAs defined, this trait is commonly implemented for custom pointer\ntypes, such as `Arc`. Those impls follow the pattern:\n\n```rust\nimpl<T> BorrowFrom<Arc<T>> for T {...}\n```\n\nUnfortunately, this impl is illegal because the self type `T` is not\nlocal to the current crate. Therefore, we are going to change the order of the parameters,\nso that `BorrowFrom` becomes `Borrow`:\n\n```rust\npub trait Borrow<Sized? Borrowed> for Sized? {\n    fn borrow_from(owned: &Self) -> &Borrowed;\n}\n```\n\nNow the `Arc` impl is written:\n\n```rust\nimpl<T> Borrow<T> for Arc<T> { ... }\n```\n\nThis impl is legal because the self type (`Arc<T>`) is local."
+  },
+  {
+    "hash": "64ec47c9d2a75c8150d153450e7e7b7db60208dc",
+    "author": "Aaron Turon",
+    "date": 1420495265,
+    "message": "Final alpha stabilization of core::iter\n\nThis commit wraps up the adjustments to the iterator for recent language\nchanges.\n\n* Moves `rposition` from `ExactSizeIterator` to `IteratorExt` using a\n  `where` clause, thereby removing the `ExactSizeIterator:\n  DoubleEndedIterator` constraint.\n\n* Merges `MutableDoubleEndedIterator` into `IteratorExt`, renaming\n  `reverse_` to `reverse_in_place`.\n\n* Merges `IteratorOrdExt`, `IteratorCloneExt` and `CloneIteratorExt`\n  into `IteratorExt` using `where` clauses.\n\nMarks as `#[stable]`:\n\n* the `iter` module itself\n* `FromIterator`, `Extend`\n* `Iterator`, `IteratorExt`\n* `map`\n* `filter`\n* `filter_map`\n* `skip_while`\n* `take_while`\n* `scan`\n* `flat_map`\n* `inspect`\n* `collect`\n* `fold`\n* `all`\n* `any`\n* `find`\n* `rposition`\n* `max`, `min`\n* Various adapter types related to the above methods\n\nBecause of the trait merging, this is a:\n\n[breaking-change]"
+  },
+  {
+    "hash": "bf6c007760169e9c382d3700fd1cdd20037e4343",
+    "author": "Huon Wilson",
+    "date": 1420434857,
+    "message": "Change `&` pat to only work with &T, and `&mut` with &mut T.\n\nThis implements RFC 179 by making the pattern `&<pat>` require matching\nagainst a variable of type `&T`, and introducing the pattern `&mut\n<pat>` which only works with variables of type `&mut T`.\n\nThe pattern `&mut x` currently parses as `&(mut x)` i.e. a pattern match\nthrough a `&T` or a `&mut T` that binds the variable `x` to have type\n`T` and to be mutable. This should be rewritten as follows, for example,\n\n    for &mut x in slice.iter() {\n\nbecomes\n\n    for &x in slice.iter() {\n        let mut x = x;\n\nDue to this, this is a\n\n[breaking-change]\n\nCloses #20496."
+  },
+  {
+    "hash": "25d5a3a19423fee01787de87a56d185dd4e0a4e7",
+    "author": "Alex Crichton",
+    "date": 1420511842,
+    "message": "rollup merge of #20507: alexcrichton/issue-20444\n\nThis commit is an implementation of [RFC 494][rfc] which removes the entire\n`std::c_vec` module and redesigns the `std::c_str` module as `std::ffi`.\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0494-c_str-and-c_vec-stability.md\n\nThe interface of the new `CString` is outlined in the linked RFC, the primary\nchanges being:\n\n* The `ToCStr` trait is gone, meaning the `with_c_str` and `to_c_str` methods\n  are now gone. These two methods are replaced with a `CString::from_slice`\n  method.\n* The `CString` type is now just a wrapper around `Vec<u8>` with a static\n  guarantee that there is a trailing nul byte with no internal nul bytes. This\n  means that `CString` now implements `Deref<Target = [c_char]>`, which is where\n  it gains most of its methods from. A few helper methods are added to acquire a\n  slice of `u8` instead of `c_char`, as well as including a slice with the\n  trailing nul byte if necessary.\n* All usage of non-owned `CString` values is now done via two functions inside\n  of `std::ffi`, called `c_str_to_bytes` and `c_str_to_bytes_with_nul`. These\n  functions are now the one method used to convert a `*const c_char` to a Rust\n  slice of `u8`.\n\nMany more details, including newly deprecated methods, can be found linked in\nthe RFC. This is a:\n\n[breaking-change]\nCloses #20444"
+  },
+  {
+    "hash": "ec7a50d20dff416d9fec837a6492dfe244f5f3ab",
+    "author": "Alex Crichton",
+    "date": 1420473613,
+    "message": "std: Redesign c_str and c_vec\n\nThis commit is an implementation of [RFC 494][rfc] which removes the entire\n`std::c_vec` module and redesigns the `std::c_str` module as `std::ffi`.\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0494-c_str-and-c_vec-stability.md\n\nThe interface of the new `CString` is outlined in the linked RFC, the primary\nchanges being:\n\n* The `ToCStr` trait is gone, meaning the `with_c_str` and `to_c_str` methods\n  are now gone. These two methods are replaced with a `CString::from_slice`\n  method.\n* The `CString` type is now just a wrapper around `Vec<u8>` with a static\n  guarantee that there is a trailing nul byte with no internal nul bytes. This\n  means that `CString` now implements `Deref<Target = [c_char]>`, which is where\n  it gains most of its methods from. A few helper methods are added to acquire a\n  slice of `u8` instead of `c_char`, as well as including a slice with the\n  trailing nul byte if necessary.\n* All usage of non-owned `CString` values is now done via two functions inside\n  of `std::ffi`, called `c_str_to_bytes` and `c_str_to_bytes_with_nul`. These\n  functions are now the one method used to convert a `*const c_char` to a Rust\n  slice of `u8`.\n\nMany more details, including newly deprecated methods, can be found linked in\nthe RFC. This is a:\n\n[breaking-change]\nCloses #20444"
+  },
+  {
+    "hash": "88b4c8e0d347921673e61bf1770ba0acd4c7d824",
+    "author": "Alex Crichton",
+    "date": 1420511794,
+    "message": "rollup merge of #20465: nikomatsakis/assoc-types-regions-20303\n\nTreat associated types the same as type parameters when it comes to region bounding. Fixes #20303.\n\nStrictly speaking, this is a [breaking-change] (if you are using\nassociated types). You are no longer free to wantonly violate the type\nsystem rules by closing associated types into objects without any form\nof region bound. Instead you should add region bounds like `T::X :\n'a`, just as you would with a normal type parameter.\n\nr? @aturon"
+  },
+  {
+    "hash": "c8868942e845254abfd3623a709847d65e015a2f",
+    "author": "Niko Matsakis",
+    "date": 1420470875,
+    "message": "Treat associated types the same as type parameters when it comes to region bounding. Fixes #20303.\n\nStrictly speaking, this is a [breaking-change] (if you are using\nassociated types). You are no longer free to wantonly violate the type\nsystem rules by closing associated types into objects without any form\nof region bound. Instead you should add region bounds like `T::X :\n'a`, just as you would with a normal type parameter."
+  },
+  {
+    "hash": "c7dd3c4d69aee1c4ad8cc220c194b176bba2ab62",
+    "author": "bors",
+    "date": 1420501860,
+    "message": "auto merge of #20578 : japaric/rust/no-more-bc, r=nmatsakis\n\nThis PR removes boxed closures from the language, the closure type syntax (`let f: |int| -> bool = /* ... */`) has been obsoleted. Move all your uses of closures to the new unboxed closure system (i.e. `Fn*` traits).\r\n\r\n[breaking-change] patterns\r\n\r\n- `lef f = || {}`\r\n\r\nThis binding used to type check to a boxed closure. Now that boxed closures are gone, you need to annotate the \"kind\" of the unboxed closure, i.e. you need pick one of these: `|&:| {}`, `|&mut:| {}` or `|:| {}`.\r\n\r\nIn the (near) future we'll have closure \"kind\" inference, so the compiler will infer which `Fn*` trait to use based on how the closure is used. Once this inference machinery is in place, we'll be able to remove the kind annotation from most closures.\r\n\r\n- `type Alias<'a> = |int|:'a -> bool`\r\n\r\nUse a trait object: `type Alias<'a> = Box<FnMut(int) -> bool + 'a>`. Use the `Fn*` trait that makes sense for your use case.\r\n\r\n- `fn foo(&self, f: |uint| -> bool)`\r\n\r\nIn this case you can use either a trait object or an unboxed closure:\r\n\r\n``` rust\r\nfn foo(&self, f: F) where F: FnMut(uint) -> bool;\r\n// or\r\nfn foo(&self, f: Box<FnMut(uint) -> bool>);\r\n```\r\n\r\n- `struct Struct<'a> { f: |uint|:'a -> bool }`\r\n\r\nAgain, you can use either a trait object or an unboxed closure:\r\n\r\n``` rust\r\nstruct Struct<F> where F: FnMut(uint) -> bool { f: F }\r\n// or\r\nstruct Struct<'a> { f: Box<FnMut(uint) -> bool + 'a> }\r\n```\r\n\r\n- Using `|x, y| f(x, y)` for closure \"borrows\"\r\n\r\nThis comes up in recursive functions, consider the following (contrived) example:\r\n\r\n``` rust\r\nfn foo(x: uint, f: |uint| -> bool) -> bool {\r\n    //foo(x / 2, f) && f(x)  // can't use this because `f` gets moved away in the `foo` call\r\n    foo(x / 2, |x| f(x)) && f(x)  // instead \"borrow\" `f` in the `foo` call\r\n}\r\n```\r\n\r\nIf you attempt to do the same with unboxed closures you'll hit \"\"error: reached the recursion limit during monomorphization\" (see #19596):\r\n\r\n``` rust\r\nfn foo<F>(x: uint, mut f: F) -> bool where F: FnMut(uint) -> bool {\r\n    foo(x / 2, |x| f(x)) && f(x)\r\n    //~^ error: reached the recursion limit during monomorphization\r\n}\r\n```\r\n\r\nInstead you *should* be able to write this:\r\n\r\n``` rust\r\nfn foo<F>(x: uint, mut f: F) -> bool where F: FnMut(uint) -> bool {\r\n    foo(x / 2, &mut f) && f(x)\r\n    //~^ error: the trait `FnMut` is not implemented for the type `&mut F`\r\n}\r\n```\r\n\r\nBut as you see above `&mut F` doesn't implement the `FnMut` trait. `&mut F` *should* implement the `FnMut` and the above code *should* work, but due to a bug (see #18835) it doesn't (for now).\r\n\r\nYou can work around the issue by rewriting the function to take `&mut F` instead of `F`:\r\n\r\n``` rust\r\nfn foo<F>(x: uint, f: &mut F) -> bool where F: FnMut(uint) -> bool {\r\n    foo(x / 2, f) && (*f)(x)\r\n}\r\n```\r\n\r\nThis finally works! However writing `foo(0, &mut |x| x == 0)` is unergonomic. So you can use a private helper function to avoid this:\r\n\r\n``` rust\r\n// public API function\r\npub fn foo<F>(x: uint, mut f: F) -> bool where F: FnMut(uint) -> bool {\r\n    foo_(x, &mut f)\r\n}\r\n\r\n// private helper function\r\nfn foo_<F>(x: uint, f: &mut F) -> bool where F: FnMut(uint) -> bool {\r\n    foo_(x / 2, f) && (*f)(x)\r\n}\r\n```\r\n\r\nCloses #14798\r\n\r\n---\r\n\r\nThere is more cleanup to do: like renaming functions/types from `unboxed_closure` to just `closure`, removing more dead code, simplify functions which now have unused arguments, update the documentation, etc. But that can be done in another PR.\r\n\r\nr? @nikomatsakis @aturon (You probably want to focus on the deleted/modified tests.)\r\ncc @eddyb"
+  },
+  {
     "hash": "03268bbf35d3ff2350d987fe7b60375839abdf2e",
     "author": "bors",
     "date": 1420469463,
@@ -30,10 +198,40 @@
     "message": "serialize: Use assoc types + less old_orphan_check\n\nThis commit moves the libserialize crate (and will force the hand of the\nrustc-serialize crate) to not require the `old_orphan_check` feature gate as\nwell as using associated types wherever possible. Concretely, the following\nchanges were made:\n\n* The error type of `Encoder` and `Decoder` is now an associated type, meaning\n  that these traits have no type parameters.\n\n* The `Encoder` and `Decoder` type parameters on the `Encodable` and `Decodable`\n  traits have moved to the corresponding method of the trait. This movement\n  alleviates the dependency on `old_orphan_check` but implies that\n  implementations can no longer be specialized for the type of encoder/decoder\n  being implemented.\n\nDue to the trait definitions changing, this is a:\n\n[breaking-change]"
   },
   {
+    "hash": "0302d379776fca82d3eb693046239dc66998f691",
+    "author": "Huon Wilson",
+    "date": 1420421451,
+    "message": "Merge `UnicodeChar` and `CharExt`.\n\nThis \"reexports\" all the functionality of `core::char::CharExt` as\nmethods on `unicode::u_char::UnicodeChar` (renamed to `CharExt`).\n\nImports may need to be updated (one now just imports\n`unicode::CharExt`, or `std::char::CharExt` rather than two traits from\neither), so this is a\n\n[breaking-change]"
+  },
+  {
+    "hash": "19120209d8e532514203d16a2cff0ad3b44de3bb",
+    "author": "Huon Wilson",
+    "date": 1420421430,
+    "message": "Rename `core::char::Char` to `CharExt` to match prelude guidelines.\n\nImports may need to be updated so this is a\n\n[breaking-change]"
+  },
+  {
+    "hash": "f031285c3a76b86525695bbb5b46daa9e77df200",
+    "author": "Corey Farwell",
+    "date": 1420256156,
+    "message": "Remove graphviz::LabelText::* public reexport\n\nPart of #19253\n\n[breaking-change]"
+  },
+  {
     "hash": "c6c786671d692d7b13c2e5c68a53001327b4b125",
     "author": "bors",
     "date": 1420332659,
     "message": "auto merge of #20490 : japaric/rust/assoc-types, r=aturon\n\ncloses #20486 \r\ncloses #20474 \r\ncloses #20441\r\n\r\n[breaking-change]\r\n\r\nThe `Index[Mut]` traits now have one less input parameter, as the return type of the indexing operation is an associated type. This breaks all existing implementations.\r\n\r\n---\r\n\r\nbinop traits (`Add`, `Sub`, etc) now have an associated type for their return type. Also, the RHS input parameter now defaults to `Self` (except for the `Shl` and `Shr` traits). For example, the `Add` trait now looks like this:\r\n\r\n``` rust\r\ntrait Add<Rhs=Self> {\r\n    type Output;\r\n\r\n    fn add(self, Rhs) -> Self::Output;\r\n}\r\n```\r\n\r\nThe `Neg` and `Not` traits now also have an associated type for their return type.\r\n\r\nThis breaks all existing implementations of these traits.\r\n\r\n---\r\nAffected traits:\r\n\r\n- `Iterator { type Item }`\r\n- `IteratorExt` no input/output types, uses `<Self as Iterator>::Item` in its methods\r\n- `DoubleEndedIterator` no input/output types, uses `<Self as Iterator>::Item` in its methods\r\n- `DoubleEndedIteratorExt` no input/output types, uses `<Self as Iterator>::Item` in its methods\r\n- `RandomAccessIterator` no input/output types\r\n- `ExactSizeIterator` no input/output types, uses `<Self as Iterator>::Item` in its methods\r\n\r\nThis breaks all the implementations of these traits."
+  },
+  {
+    "hash": "9c3e6082e71618c088afd93f7a4a9a7708c9dcbd",
+    "author": "bors",
+    "date": 1420255521,
+    "message": "auto merge of #20154 : P1start/rust/qualified-assoc-type-generics, r=nikomatsakis\n\nThis modifies `Parser::eat_lt` to always split up `<<`s, instead of doing so only when a lifetime name followed or the `force` parameter (now removed) was `true`. This is because `Foo<<TYPE` is now a valid start to a type, whereas previously only `Foo<<LIFETIME` was valid.\r\n\r\nThis is a [breaking-change]. Change code that looks like this:\r\n\r\n```rust\r\nlet x = foo as bar << 13;\r\n```\r\n\r\nto use parentheses, like this:\r\n\r\n```rust\r\nlet x = (foo as bar) << 13;\r\n```\r\n\r\nCloses #17362."
+  },
+  {
+    "hash": "d9769ec3834b62318da892925dc24c8883bb1635",
+    "author": "P1start",
+    "date": 1419487127,
+    "message": "Parse fully-qualified associated types in generics without whitespace\n\nThis breaks code that looks like this:\n\n    let x = foo as bar << 13;\n\nChange such code to look like this:\n\n    let x = (foo as bar) << 13;\n\nCloses #17362.\n\n[breaking-change]"
   },
   {
     "hash": "7506fe52696c5b3b628f173d74dc4a13b5ccc1f3",
@@ -46,6 +244,96 @@
     "author": "Nick Cameron",
     "date": 1420193122,
     "message": "Accept `self` in place of `mod` in use items\n\n[breaking-change]\n\n`mod` is still accepted, but gives a deprecated warning"
+  },
+  {
+    "hash": "c61a0092bc236c4be4cb691fcd50ff50e91ab0d6",
+    "author": "Niko Matsakis",
+    "date": 1420189569,
+    "message": "Fix orphan checking (cc #19470). (This is not a complete fix of #19470 because of the backwards compatibility feature gate.)\n\nThis is a [breaking-change]. The new rules require that, for an impl of a trait defined\nin some other crate, two conditions must hold:\n\n1. Some type must be local.\n2. Every type parameter must appear \"under\" some local type.\n\nHere are some examples that are legal:\n\n```rust\nstruct MyStruct<T> { ... }\n\n// Here `T` appears \"under' `MyStruct`.\nimpl<T> Clone for MyStruct<T> { }\n\n// Here `T` appears \"under' `MyStruct` as well. Note that it also appears\n// elsewhere.\nimpl<T> Iterator<T> for MyStruct<T> { }\n```\n\nHere is an illegal example:\n\n```rust\n// Here `U` does not appear \"under\" `MyStruct` or any other local type.\n// We call `U` \"uncovered\".\nimpl<T,U> Iterator<U> for MyStruct<T> { }\n```\n\nThere are a couple of ways to rewrite this last example so that it is\nlegal:\n\n1. In some cases, the uncovered type parameter (here, `U`) should be converted\n   into an associated type. This is however a non-local change that requires access\n   to the original trait. Also, associated types are not fully baked.\n2. Add `U` as a type parameter of `MyStruct`:\n   ```rust\n   struct MyStruct<T,U> { ... }\n   impl<T,U> Iterator<U> for MyStruct<T,U> { }\n   ```\n3. Create a newtype wrapper for `U`\n   ```rust\n   impl<T,U> Iterator<Wrapper<U>> for MyStruct<T,U> { }\n   ```\n\nBecause associated types are not fully baked, which in the case of the\n`Hash` trait makes adhering to this rule impossible, you can\ntemporarily disable this rule in your crate by using\n`#![feature(old_orphan_check)]`. Note that the `old_orphan_check`\nfeature will be removed before 1.0 is released."
+  },
+  {
+    "hash": "9ca8076cb77a7d7738162c80e1d240ef2ad0b73a",
+    "author": "Alex Crichton",
+    "date": 1420219357,
+    "message": "rollup merge of #20386: frewsxcv/rm-reexports\n\nPart of #19253\n\n[breaking-change]"
+  },
+  {
+    "hash": "f9ce6f5ba458d6a3d4e63b282bac43a18e90aeb0",
+    "author": "Corey Farwell",
+    "date": 1420082881,
+    "message": "Remove core::iter::MinMaxResult::* public reexport\n\nPart of #19253\n\n[breaking-change]"
+  },
+  {
+    "hash": "f3a7ec7028c76b3a1c6051131328f372b068e33a",
+    "author": "Alex Crichton",
+    "date": 1420178579,
+    "message": "std: Second pass stabilization of sync\n\nThis pass performs a second pass of stabilization through the `std::sync`\nmodule, avoiding modules/types that are being handled in other PRs (e.g.\nmutexes, rwlocks, condvars, and channels).\n\nThe following items are now stable\n\n* `sync::atomic`\n* `sync::atomic::ATOMIC_BOOL_INIT` (was `INIT_ATOMIC_BOOL`)\n* `sync::atomic::ATOMIC_INT_INIT` (was `INIT_ATOMIC_INT`)\n* `sync::atomic::ATOMIC_UINT_INIT` (was `INIT_ATOMIC_UINT`)\n* `sync::Once`\n* `sync::ONCE_INIT`\n* `sync::Once::call_once` (was `doit`)\n  * C == `pthread_once(..)`\n  * Boost == `call_once(..)`\n  * Windows == `InitOnceExecuteOnce`\n* `sync::Barrier`\n* `sync::Barrier::new`\n* `sync::Barrier::wait` (now returns a `bool`)\n* `sync::Semaphore::new`\n* `sync::Semaphore::acquire`\n* `sync::Semaphore::release`\n\nThe following items remain unstable\n\n* `sync::SemaphoreGuard`\n* `sync::Semaphore::access` - it's unclear how this relates to the poisoning\n                              story of mutexes.\n* `sync::TaskPool` - the semantics of a failing task and whether a thread is\n                     re-attached to a thread pool are somewhat unclear, and the\n                     utility of this type in `sync` is question with respect to\n                     the jobs of other primitives. This type will likely become\n                     stable or move out of the standard library over time.\n* `sync::Future` - futures as-is have yet to be deeply re-evaluated with the\n                   recent core changes to Rust's synchronization story, and will\n                   likely become stable in the future but are unstable until\n                   that time comes.\n\n[breaking-change]"
+  },
+  {
+    "hash": "f2ccdfd8914b7b8f8f8f2053f9ecd98d54ef95a6",
+    "author": "Alex Crichton",
+    "date": 1420180313,
+    "message": "std: Second pass stabilization for `boxed`\n\nThis commit performs a second pass over the `std::boxed` module, taking the\nfollowing actions:\n\n* `boxed` is now stable\n* `Box` is now stable\n* `BoxAny` is removed in favor of a direct `impl Box<Any>`\n* `Box::downcast` remains unstable while the name of the `downcast` family of\n  methods is determined.\n\nThis is a breaking change due to the removal of the `BoxAny` trait (note that\nthe `downcast` method still exists), and existing consumers of `BoxAny` simply\nneed to remove the import in their modules.\n\n[breaking-change]"
+  },
+  {
+    "hash": "a6f5b980cc44621efeed847e8d359f3b90c29080",
+    "author": "Alex Crichton",
+    "date": 1420070700,
+    "message": "rustc: Re-jigger -L and -l for MSYS compatibility\n\nAs discovered in #20376, the MSYS shell will silently rewrite arguemnts that\nlook like unix paths into their windows path counterparts for compatibility, but\nthe recently added `:kind` syntax added to the `-L` flag does not allow for this\nform of rewriting. This means that the syntax can be difficult to use at an MSYS\nprompt, as well as causing tests to fail when run manuall right now.\n\nThis commit takes the other option presented in the original issue to prefix the\npath with `kind=` instead of suffixing it with `:kind`. For consistence, the\n`-l` flag is also now migrating to `kind=name`.\n\nThis is a breaking change due to the *removal* of behavior with `-L`. All code\nusing `:kind` should now pass `kind=` for `-L` arguments. This is not currently,\nbut will become, a breaking change for `-l` flags. The old `name:kind` syntax is\nstill accepted, but all code should update to `kind=name`.\n\n[breaking-change]\nCloses #20376"
+  },
+  {
+    "hash": "e423fcf0e0166da55f88233e0be5eacba55bc0bc",
+    "author": "Alex Crichton",
+    "date": 1420178686,
+    "message": "std: Enforce Unicode in fmt::Writer\n\nThis commit is an implementation of [RFC 526][rfc] which is a change to alter\nthe definition of the old `fmt::FormatWriter`. The new trait, renamed to\n`Writer`, now only exposes one method `write_str` in order to guarantee that all\nimplementations of the formatting traits can only produce valid Unicode.\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0526-fmt-text-writer.md\n\nOne of the primary improvements of this patch is the performance of the\n`.to_string()` method by avoiding an almost-always redundant UTF-8 check. This\nis a breaking change due to the renaming of the trait as well as the loss of the\n`write` method, but migration paths should be relatively easy:\n\n* All usage of `write` should move to `write_str`. If truly binary data was\n  being written in an implementation of `Show`, then it will need to use a\n  different trait or an altogether different code path.\n\n* All usage of `write!` should continue to work as-is with no modifications.\n\n* All usage of `Show` where implementations just delegate to another should\n  continue to work as-is.\n\n[breaking-change]\n\nCloses #20352"
+  },
+  {
+    "hash": "bc83a009f655dd3896be4a7cd33cac8032a605f2",
+    "author": "Alex Crichton",
+    "date": 1419884209,
+    "message": "std: Second pass stabilization for `comm`\n\nThis commit is a second pass stabilization for the `std::comm` module,\nperforming the following actions:\n\n* The entire `std::comm` module was moved under `std::sync::mpsc`. This movement\n  reflects that channels are just yet another synchronization primitive, and\n  they don't necessarily deserve a special place outside of the other\n  concurrency primitives that the standard library offers.\n* The `send` and `recv` methods have all been removed.\n* The `send_opt` and `recv_opt` methods have been renamed to `send` and `recv`.\n  This means that all send/receive operations return a `Result` now indicating\n  whether the operation was successful or not.\n* The error type of `send` is now a `SendError` to implement a custom error\n  message and allow for `unwrap()`. The error type contains an `into_inner`\n  method to extract the value.\n* The error type of `recv` is now `RecvError` for the same reasons as `send`.\n* The `TryRecvError` and `TrySendError` types have had public reexports removed\n  of their variants and the variant names have been tweaked with enum\n  namespacing rules.\n* The `Messages` iterator is renamed to `Iter`\n\nThis functionality is now all `#[stable]`:\n\n* `Sender`\n* `SyncSender`\n* `Receiver`\n* `std::sync::mpsc`\n* `channel`\n* `sync_channel`\n* `Iter`\n* `Sender::send`\n* `Sender::clone`\n* `SyncSender::send`\n* `SyncSender::try_send`\n* `SyncSender::clone`\n* `Receiver::recv`\n* `Receiver::try_recv`\n* `Receiver::iter`\n* `SendError`\n* `RecvError`\n* `TrySendError::{mod, Full, Disconnected}`\n* `TryRecvError::{mod, Empty, Disconnected}`\n* `SendError::into_inner`\n* `TrySendError::into_inner`\n\nThis is a breaking change due to the modification of where this module is\nlocated, as well as the changing of the semantics of `send` and `recv`. Most\nprograms just need to rename imports of `std::comm` to `std::sync::mpsc` and\nadd calls to `unwrap` after a send or a receive operation.\n\n[breaking-change]"
+  },
+  {
+    "hash": "c32d03f4172580e3f33e4844ed3c01234dca2d53",
+    "author": "Alex Crichton",
+    "date": 1419872301,
+    "message": "std: Stabilize the prelude module\n\nThis commit is an implementation of [RFC 503][rfc] which is a stabilization\nstory for the prelude. Most of the RFC was directly applied, removing reexports.\nSome reexports are kept around, however:\n\n* `range` remains until range syntax has landed to reduce churn.\n* `Path` and `GenericPath` remain until path reform lands. This is done to\n  prevent many imports of `GenericPath` which will soon be removed.\n* All `io` traits remain until I/O reform lands so imports can be rewritten all\n  at once to `std::io::prelude::*`.\n\nThis is a breaking change because many prelude reexports have been removed, and\nthe RFC can be consulted for the exact list of removed reexports, as well as to\nfind the locations of where to import them.\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0503-prelude-stabilization.md\n[breaking-change]\n\nCloses #20068"
+  },
+  {
+    "hash": "56290a004493a5d2e211f056601533253497df60",
+    "author": "Alex Crichton",
+    "date": 1420217646,
+    "message": "std: Stabilize the prelude module\n\nThis commit is an implementation of [RFC 503][rfc] which is a stabilization\nstory for the prelude. Most of the RFC was directly applied, removing reexports.\nSome reexports are kept around, however:\n\n* `range` remains until range syntax has landed to reduce churn.\n* `Path` and `GenericPath` remain until path reform lands. This is done to\n  prevent many imports of `GenericPath` which will soon be removed.\n* All `io` traits remain until I/O reform lands so imports can be rewritten all\n  at once to `std::io::prelude::*`.\n\nThis is a breaking change because many prelude reexports have been removed, and\nthe RFC can be consulted for the exact list of removed reexports, as well as to\nfind the locations of where to import them.\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0503-prelude-stabilization.md\n[breaking-change]\n\nCloses #20068"
+  },
+  {
+    "hash": "71b46b18a274edc7f7fb60b490e5ebbb9c911462",
+    "author": "bors",
+    "date": 1420213885,
+    "message": "auto merge of #20356 : Gankro/rust/stab, r=aturon\n\nThis stabilizes most of libcollections, carefully avoiding sections of API which are being managed in other PRs. APIs which are not stable are marked explicitly unstable with a reason.\r\n\r\nDeprecates:\r\n\r\n* DList\r\n  * rotate_forward\r\n  * rotate_backward\r\n  * prepend\r\n  * insert_when\r\n  * insert_ordered\r\n  * merge\r\n\r\n* VecMap\r\n  * update\r\n  * update_with_key\r\n\r\n* Renames and newtypes the Bitv and BitvSet iterators to match conventions.\r\n\r\n* Removes the Copy impl from DList's Iter.\r\n\r\nas such this is a\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "d45b5d2ed9b43b3ad573482fb8820a382f20289e",
+    "author": "Nick Cameron",
+    "date": 1420147699,
+    "message": "Disallow [_, ..n] syntax for fixed length arrays and repeating array constructors\n\nCloses #19999\n\n[breaking-change]\n\nUse [_; n] instead."
+  },
+  {
+    "hash": "39d74026663597a8d4ad0ab04e6d117bf9fd6ad4",
+    "author": "bors",
+    "date": 1420127468,
+    "message": "auto merge of #20190 : cmr/rust/gate-macro-args, r=alexcrichton\n\nUses the same approach as https://github.com/rust-lang/rust/pull/17286 (and\r\nsubsequent changes making it more correct), where the visitor will skip any\r\npieces of the AST that are from \"foreign code\", where the spans don't line up,\r\nindicating that that piece of code is due to a macro expansion.\r\n\r\nIf this breaks your code, read the error message to determine which feature\r\ngate you should add to your crate.\r\n\r\nCloses #18102\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "41da99dff417eadf8f296a93529d9810f79e1d1b",
+    "author": "Corey Richardson",
+    "date": 1420114006,
+    "message": "Feature gate macro arguments\n\nUses the same approach as https://github.com/rust-lang/rust/pull/17286 (and\nsubsequent changes making it more correct), where the visitor will skip any\npieces of the AST that are from \"foreign code\", where the spans don't line up,\nindicating that that piece of code is due to a macro expansion.\n\nIf this breaks your code, read the error message to determine which feature\ngate you should add to your crate, and bask in the knowledge that your code\nwon't mysteriously break should you try to use the 1.0 release.\n\nCloses #18102\n\n[breaking-change]"
+  },
+  {
+    "hash": "47b8479e73e40395f1b1b2d0c6281f28f80301e4",
+    "author": "bors",
+    "date": 1420084862,
+    "message": "auto merge of #20363 : japaric/rust/moar-uc, r=nmatsakis\n\nThe the last argument of the `ItemDecorator::expand` method has changed to `Box<FnMut>`. Syntax extensions will break.\r\n\r\n[breaking-change]\r\n\r\n---\r\n\r\nThis PR removes pretty much all the remaining uses of boxed closures from the libraries. There are still boxed closures under the `test` directory, but I think those should be removed or replaced with unboxed closures at the same time we remove boxed closures from the language.\r\n\r\nIn a few places I had to do some contortions (see the first commit for an example) to work around issue #19596. I have marked those workarounds with FIXMEs. In the future when `&mut F where F: FnMut` implements the `FnMut` trait, we should be able to remove those workarounds. I've take care to avoid placing the workaround functions in the public API.\r\n\r\nSince `let f = || {}` always gets type checked as a boxed closure, I have explictly annotated those closures (with e.g. `|&:| {}`) to force the compiler to type check them as unboxed closures.\r\n\r\nInstead of removing the type aliases (like `GetCrateDataCb`), I could have replaced them with newtypes. But this seemed like overcomplicating things for little to no gain.\r\n\r\nI think we should be able to remove the boxed closures from the languge after this PR lands. (I'm being optimistic here)\r\n\r\nr? @alexcrichton or @aturon \r\ncc @nikomatsakis"
   },
   {
     "hash": "e91d810b9b36d6bb163970cd0e8bbf4692f704bb",
@@ -66,537 +354,249 @@
     "message": "Second pass stabilization: vec\n\nThis commit takes a second pass through the `vec` module to\nstabilize its API. The changes are as follows:\n\n**Stable**:\n\n* `dedup`\n* `from_raw_parts`\n* `insert`\n* `into_iter`\n* `is_empty`\n* `remove`\n* `reserve_exact`\n* `reserve`\n* `retain`\n* `swap_remove`\n* `truncate`\n\n**Deprecated**:\n\n* `from_fn`, `from_elem`, `grow_fn` and `grow`, all deprecated in\n  favor of iterators. See https://github.com/rust-lang/rfcs/pull/509\n\n* `partition`, `partitioned`, deprecated in favor of a new, more\n  general iterator consumer called `partition`.\n\n* `unzip`, deprecated in favor of a new, more general iterator\n  consumer called `unzip`.\n\nA few remaining methods are left at experimental status.\n\n[breaking-change]"
   },
   {
-    "hash": "6bdce25e155d846bb9252fa4a18baef7e74cf8bf",
-    "author": "bors",
-    "date": 1418969521,
-    "message": "auto merge of #19899 : japaric/rust/unops-by-value, r=nikomatsakis\n\n- The following operator traits now take their argument by value: `Neg`, `Not`. This breaks all existing implementations of these traits.\r\n\r\n- The unary operation `OP a` now \"desugars\" to `OpTrait::op_method(a)` and consumes its argument.\r\n\r\n[breaking-change]\r\n\r\n---\r\n\r\nr? @nikomatsakis This PR is very similar to the binops-by-value PR\r\ncc @aturon"
-  },
-  {
-    "hash": "f9a48492a82f805aa40d8b6fea290badbab0d1b1",
-    "author": "bors",
-    "date": 1418923927,
-    "message": "auto merge of #19984 : japaric/rust/macro-expressions, r=alexcrichton\n\nfollowed by a semicolon.\r\n\r\nThis allows code like `vec![1i, 2, 3].len();` to work.\r\n\r\nThis breaks code that uses macros as statements without putting\r\nsemicolons after them, such as:\r\n\r\n    fn main() {\r\n        ...\r\n        assert!(a == b)\r\n        assert!(c == d)\r\n        println(...);\r\n    }\r\n\r\nIt also breaks code that uses macros as items without semicolons:\r\n\r\n    local_data_key!(foo)\r\n\r\n    fn main() {\r\n        println(\"hello world\")\r\n    }\r\n\r\nAdd semicolons to fix this code. Those two examples can be fixed as\r\nfollows:\r\n\r\n    fn main() {\r\n        ...\r\n        assert!(a == b);\r\n        assert!(c == d);\r\n        println(...);\r\n    }\r\n\r\n    local_data_key!(foo);\r\n\r\n    fn main() {\r\n        println(\"hello world\")\r\n    }\r\n\r\nRFC #378.\r\n\r\nCloses #18635.\r\n\r\n[breaking-change]\r\n\r\n---\r\n\r\nRebased version of #18958\r\nr? @alexcrichton \r\ncc @pcwalton"
-  },
-  {
-    "hash": "ddb2466f6a1bb66f22824334022a4cee61c73bdc",
-    "author": "Patrick Walton",
-    "date": 1418922547,
-    "message": "librustc: Always parse `macro!()`/`macro![]` as expressions if not\nfollowed by a semicolon.\n\nThis allows code like `vec![1i, 2, 3].len();` to work.\n\nThis breaks code that uses macros as statements without putting\nsemicolons after them, such as:\n\n    fn main() {\n        ...\n        assert!(a == b)\n        assert!(c == d)\n        println(...);\n    }\n\nIt also breaks code that uses macros as items without semicolons:\n\n    local_data_key!(foo)\n\n    fn main() {\n        println(\"hello world\")\n    }\n\nAdd semicolons to fix this code. Those two examples can be fixed as\nfollows:\n\n    fn main() {\n        ...\n        assert!(a == b);\n        assert!(c == d);\n        println(...);\n    }\n\n    local_data_key!(foo);\n\n    fn main() {\n        println(\"hello world\")\n    }\n\nRFC #378.\n\nCloses #18635.\n\n[breaking-change]"
-  },
-  {
-    "hash": "b60de4bfc2cf45ebe16b9b5b768f0aad54211625",
-    "author": "Niko Matsakis",
-    "date": 1418657028,
-    "message": "Emit warning when lifetime names are shadowed.\n\nThis is not technically a [breaking-change], but it will be soon, so\nyou should update your code. Typically, shadowing is accidental, and\nthe shadowing lifetime can simply be removed. This frequently occurs\nin constructor patterns:\n\n```rust\n// Old:\nimpl<'a> SomeStruct<'a> { fn new<'a>(..) -> SomeStruct<'a> { ... } }\n\n// Should be:\nimpl<'a> SomeStruct<'a> { fn new(..) -> SomeStruct<'a> { ... } }\n```\n\nOtherwise, you should rename the inner lifetime to something\nelse. Note though that lifetime elision frequently applies:\n\n```rust\n// Old\nimpl<'a> SomeStruct<'a> {\n    fn get<'a>(x: &'a self) -> &'a T { &self.field }\n}\n\n// Should be:\nimpl<'a> SomeStruct<'a> {\n    fn get(x: &self) -> &T { &self.field }\n}\n``"
-  },
-  {
-    "hash": "6d965cc2c99787a949d38abf225412fe502d3ed8",
-    "author": "bors",
-    "date": 1417694576,
-    "message": "auto merge of #19167 : japaric/rust/rhs-cmp, r=aturon\n\nComparison traits have gained an `Rhs` input parameter that defaults to `Self`. And now the comparison operators can be overloaded to work between different types. In particular, this PR allows the following operations (and their commutative versions):\r\n\r\n- `&str` == `String` == `CowString`\r\n- `&[A]` == `&mut [B]` == `Vec<C>` == `CowVec<D>` == `[E, ..N]` (for `N` up to 32)\r\n- `&mut A` == `&B` (for `Sized` `A` and `B`)\r\n\r\nWhere `A`, `B`, `C`, `D`, `E` may be different types that implement `PartialEq`. For example, these comparisons are now valid: `string == \"foo\"`, and `vec_of_strings == [\"Hello\", \"world\"]`.\r\n\r\n[breaking-change]s\r\n\r\nSince the `==` may now work on different types, operations that relied on the old \"same type restriction\" to drive type inference, will need to be type annotated. These are the most common fallout cases:\r\n\r\n- `some_vec == some_iter.collect()`: `collect` needs to be type annotated: `collect::<Vec<_>>()`\r\n- `slice == &[a, b, c]`: RHS doesn't get coerced to an slice, use an array instead `[a, b, c]`\r\n- `lhs == []`: Change expression to `lhs.is_empty()`\r\n- `lhs == some_generic_function()`: Type annotate the RHS as necessary\r\n\r\ncc #19148\r\n\r\nr? @aturon"
-  },
-  {
-    "hash": "1a44875af985de43d514192d43ef260a24e83d26",
-    "author": "bors",
-    "date": 1417023727,
-    "message": "auto merge of #19176 : aturon/rust/stab-iter, r=alexcrichton\n\nThis is an initial pass at stabilizing the `iter` module. The module is\r\nfairly large, but is also pretty polished, so most of the stabilization\r\nleaves things as they are.\r\n\r\nSome changes:\r\n\r\n* Due to the new object safety rules, various traits needs to be split\r\n  into object-safe traits and extension traits. This includes `Iterator`\r\n  itself. While splitting up the traits adds some complexity, it will\r\n  also increase flexbility: once we have automatic impls of `Trait` for\r\n  trait objects over `Trait`, then things like the iterator adapters\r\n  will all work with trait objects.\r\n\r\n* Iterator adapters that use up the entire iterator now take it by\r\n  value, which makes the semantics more clear and helps catch bugs. Due\r\n  to the splitting of Iterator, this does not affect trait objects. If\r\n  the underlying iterator is still desired for some reason, `by_ref` can\r\n  be used. (Note: this change had no fallout in the Rust distro except\r\n  for the useless mut lint.)\r\n\r\n* In general, extension traits new and old are following an [in-progress\r\n  convention](rust-lang/rfcs#445). As such, they\r\n  are marked `unstable`.\r\n\r\n* As usual, anything involving closures is `unstable` pending unboxed\r\n  closures.\r\n\r\n* A few of the more esoteric/underdeveloped iterator forms (like\r\n  `RandomAccessIterator` and `MutableDoubleEndedIterator`, along with\r\n  various unfolds) are left experimental for now.\r\n\r\n* The `order` submodule is left `experimental` because it will hopefully\r\n  be replaced by generalized comparison traits.\r\n\r\n* \"Leaf\" iterators (like `Repeat` and `Counter`) are uniformly\r\n  constructed by free fns at the module level. That's because the types\r\n  are not otherwise of any significance (if we had `impl Trait`, you\r\n  wouldn't want to define a type at all).\r\n\r\nCloses #17701\r\n\r\nDue to renamings and splitting of traits, this is a:\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "a86f72d9a2adc6d65f2ba0990caca35c1a3f622d",
-    "author": "Aaron Turon",
-    "date": 1416966085,
-    "message": "libs: stabilize iter module\n\nThis is an initial pass at stabilizing the `iter` module. The module is\nfairly large, but is also pretty polished, so most of the stabilization\nleaves things as they are.\n\nSome changes:\n\n* Due to the new object safety rules, various traits needs to be split\n  into object-safe traits and extension traits. This includes `Iterator`\n  itself. While splitting up the traits adds some complexity, it will\n  also increase flexbility: once we have automatic impls of `Trait` for\n  trait objects over `Trait`, then things like the iterator adapters\n  will all work with trait objects.\n\n* Iterator adapters that use up the entire iterator now take it by\n  value, which makes the semantics more clear and helps catch bugs. Due\n  to the splitting of Iterator, this does not affect trait objects. If\n  the underlying iterator is still desired for some reason, `by_ref` can\n  be used. (Note: this change had no fallout in the Rust distro except\n  for the useless mut lint.)\n\n* In general, extension traits new and old are following an [in-progress\n  convention](https://github.com/rust-lang/rfcs/pull/445). As such, they\n  are marked `unstable`.\n\n* As usual, anything involving closures is `unstable` pending unboxed\n  closures.\n\n* A few of the more esoteric/underdeveloped iterator forms (like\n  `RandomAccessIterator` and `MutableDoubleEndedIterator`, along with\n  various unfolds) are left experimental for now.\n\n* The `order` submodule is left `experimental` because it will hopefully\n  be replaced by generalized comparison traits.\n\n* \"Leaf\" iterators (like `Repeat` and `Counter`) are uniformly\n  constructed by free fns at the module level. That's because the types\n  are not otherwise of any significance (if we had `impl Trait`, you\n  wouldn't want to define a type at all).\n\nCloses #17701\n\nDue to renamings and splitting of traits, this is a:\n\n[breaking-change]"
-  },
-  {
-    "hash": "793624261a221aa4592381fa8067e1f597b90c22",
-    "author": "bors",
-    "date": 1416450691,
-    "message": "auto merge of #18999 : aturon/rust/stab-floats, r=alexcrichton,alexcrichton\n\nThis commit adds stability markers for the APIs that have recently been aligned with [numerics reform](https://github.com/rust-lang/rfcs/pull/369). For APIs that were changed as part of that reform, `#[unstable]` is used to reflect the recency, but the APIs will become `#[stable]` in a follow-up pass.\r\n\r\nIn addition, a few aspects of the APIs not explicitly covered by the RFC are marked here -- in particular, constants for floats.\r\n\r\nThis commit does not mark the `uint` or `int` modules as `#[stable]`, given the ongoing debate out the names and roles of these types.\r\n\r\nDue to some deprecation (see the RFC for details), this is a:\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton \r\ncc @bjz"
-  },
-  {
-    "hash": "bdbc09ad484847378b87ee8d60096cd39d8fb47a",
-    "author": "Aaron Turon",
-    "date": 1416370078,
-    "message": "libs: stabilize most numerics after RFC changes\n\nThis commit adds stability markers for the APIs that have recently been\naligned with [numerics\nreform](https://github.com/rust-lang/rfcs/pull/369). For APIs that were\nchanged as part of that reform, `#[unstable]` is used to reflect the\nrecency, but the APIs will become `#[stable]` in a follow-up pass.\n\nIn addition, a few aspects of the APIs not explicitly covered by the RFC\nare marked here -- in particular, constants for floats.\n\nThis commit does not mark the `uint` or `int` modules as `#[stable]`,\ngiven the ongoing debate out the names and roles of these types.\n\nDue to some deprecation (see the RFC for details), this is a:\n\n[breaking-change]"
-  },
-  {
-    "hash": "f09279395b6ca40f1398277971586197f949738a",
-    "author": "bors",
-    "date": 1416244926,
-    "message": "auto merge of #18973 : sfackler/rust/enum-namespace-pt2, r=pcwalton\n\nThis breaks code that referred to variant names in the same namespace as\r\ntheir enum. Reexport the variants in the old location or alter code to\r\nrefer to the new locations:\r\n\r\n```\r\npub enum Foo {\r\n    A,\r\n    B\r\n}\r\n\r\nfn main() {\r\n    let a = A;\r\n}\r\n```\r\n=>\r\n```\r\npub use self::Foo::{A, B};\r\n\r\npub enum Foo {\r\n    A,\r\n    B\r\n}\r\n\r\nfn main() {\r\n    let a = A;\r\n}\r\n```\r\nor\r\n```\r\npub enum Foo {\r\n    A,\r\n    B\r\n}\r\n\r\nfn main() {\r\n    let a = Foo::A;\r\n}\r\n```\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "3dcd2157403163789aaf21a9ab3c4d30a7c6494d",
-    "author": "Steven Fackler",
-    "date": 1416238551,
-    "message": "Switch to purely namespaced enums\n\nThis breaks code that referred to variant names in the same namespace as\ntheir enum. Reexport the variants in the old location or alter code to\nrefer to the new locations:\n\n```\npub enum Foo {\n    A,\n    B\n}\n\nfn main() {\n    let a = A;\n}\n```\n=>\n```\npub use self::Foo::{A, B};\n\npub enum Foo {\n    A,\n    B\n}\n\nfn main() {\n    let a = A;\n}\n```\nor\n```\npub enum Foo {\n    A,\n    B\n}\n\nfn main() {\n    let a = Foo::A;\n}\n```\n\n[breaking-change]"
-  },
-  {
-    "hash": "82f383839c7cc0ce66d7cfbd400182b535029f0f",
-    "author": "bors",
-    "date": 1415881623,
-    "message": "auto merge of #18879 : pcwalton/rust/path-silliness, r=aturon\n\nThis breaks code like:\r\n\r\n    struct Foo {\r\n        x: int,\r\n    }\r\n\r\n    let f: Foo = ...;\r\n    ... f.x::<int> ...\r\n\r\nChange this code to not contain an unused type parameter. For example:\r\n\r\n    struct Foo {\r\n        x: int,\r\n    }\r\n\r\n    let f: Foo = ...;\r\n    ... f.x ...\r\n\r\nCloses #18680.\r\n\r\n[breaking-change]\r\n\r\nr? @aturon"
-  },
-  {
-    "hash": "e6e58e43f8f9507474fdf35544b6b0c0fc6cef39",
-    "author": "Patrick Walton",
-    "date": 1415731559,
-    "message": "libsyntax: Forbid type parameters in field expressions.\n\nThis breaks code like:\n\n    struct Foo {\n        x: int,\n    }\n\n    let f: Foo = ...;\n    ... f.x::<int> ...\n\nChange this code to not contain an unused type parameter. For example:\n\n    struct Foo {\n        x: int,\n    }\n\n    let f: Foo = ...;\n    ... f.x ...\n\nCloses #18680.\n\n[breaking-change]"
-  },
-  {
-    "hash": "3327ecca422046699315122345c6c050ab73804b",
-    "author": "bors",
-    "date": 1414881708,
-    "message": "auto merge of #17595 : danburkert/rust/tuple-index-deserialization, r=alexcrichton\n\nCurrently `Decoder` implementations are not provided the tuple arity as\r\na parameter to `read_tuple`. This forces all encoder/decoder combos to\r\nserialize the arity along with the elements. Tuple-arity is always known\r\nstatically at the decode site, because it is part of the type of the\r\ntuple, so it could instead be provided as an argument to `read_tuple`,\r\nas it is to `read_struct`.\r\n\r\nThe upside to this is that serialized tuples could become smaller in\r\nencoder/decoder implementations which choose not to serialize type\r\n(arity) information. For example, @TyOverby's\r\n[binary-encode](https://github.com/TyOverby/binary-encode) format is\r\ncurrently forced to serialize the tuple-arity along with every tuple,\r\ndespite the information being statically known at the decode site.\r\n\r\nA downside to this change is that the tuple-arity of serialized tuples\r\ncan no longer be automatically checked during deserialization. However,\r\nfor formats which do serialize the tuple-arity, either explicitly (rbml)\r\nor implicitly (json), this check can be added to the `read_tuple` method.\r\n\r\nThe signature of `Deserialize::read_tuple` and\r\n`Deserialize::read_tuple_struct` are changed, and thus binary\r\nbackwards-compatibility is broken. This change does *not* force\r\nserialization formats to change, and thus does not break decoding values\r\nserialized prior to this change.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "ca6b082c0573f9d6f6c81403ac7ea4b5b78260d6",
-    "author": "Dan Burkert",
-    "date": 1414864474,
-    "message": "libserialize: tuple-arity should be provided to `Decoder::read_tuple`\n\nCurrently `Decoder` implementations are not provided the tuple arity as\na parameter to `read_tuple`. This forces all encoder/decoder combos to\nserialize the arity along with the elements. Tuple-arity is always known\nstatically at the decode site, because it is part of the type of the\ntuple, so it could instead be provided as an argument to `read_tuple`,\nas it is to `read_struct`.\n\nThe upside to this is that serialized tuples could become smaller in\nencoder/decoder implementations which choose not to serialize type\n(arity) information. For example, @TyOverby's\n[binary-encode](https://github.com/TyOverby/binary-encode) format is\ncurrently forced to serialize the tuple-arity along with every tuple,\ndespite the information being statically known at the decode site.\n\nA downside to this change is that the tuple-arity of serialized tuples\ncan no longer be automatically checked during deserialization. However,\nfor formats which do serialize the tuple-arity, either explicitly (rbml)\nor implicitly (json), this check can be added to the `read_tuple` method.\n\nThe signature of `Deserialize::read_tuple` and\n`Deserialize::read_tuple_struct` are changed, and thus binary\nbackwards-compatibility is broken. This change does *not* force\nserialization formats to change, and thus does not break decoding values\nserialized prior to this change.\n\n[breaking-change]"
-  },
-  {
-    "hash": "0547a407aa03b9f1c03843aead617a2e8c5d1147",
-    "author": "bors",
-    "date": 1414840907,
-    "message": "auto merge of #18457 : japaric/rust/tocstr, r=alexcrichton\n\nMethods that used to take `ToCStr` implementors by value, now take them by reference. In particular, this breaks some uses of `Command`:\r\n\r\n``` rust\r\nCommand::new(\"foo\");  // Still works\r\nCommand::new(path) -> Command::new(&path)\r\ncmd.arg(string) -> cmd.arg(&string) or cmd.arg(string.as_slice())\r\n```\r\n\r\n[breaking-change]\r\n\r\n---\r\n\r\nIt may be sensible to remove `impl ToCstr for String` since:\r\n- We're getting `impl Deref<str> for String`, so `string.to_cstr()` would still work\r\n- `Command` methods would still be able to use `cmd.arg(string[..])` instead of `cmd.arg(&string)`.\r\n\r\nBut, I'm leaving that up to the library stabilization process.\r\n\r\nr? @aturon \r\ncc #16918"
-  },
-  {
-    "hash": "6ac7fc73f5acfe30c698ea4f8bfc37b30473977e",
-    "author": "Steve Klabnik",
-    "date": 1414613173,
-    "message": "Update infrastructure for fail -> panic\n\nThis includes updating the language items and marking what needs to\nchange after a snapshot.\n\nIf you do not use the standard library, the language items you need to\nimplement have changed. For example:\n\n```rust\n #[lang = \"fail_fmt\"] fn fail_fmt() -> ! { loop {} }\n```\n\nis now\n\n```rust\n #[lang = \"panic_fmt\"] fn panic_fmt() -> ! { loop {} }\n```\n\nRelated, lesser-implemented language items `fail` and\n`fail_bounds_check` have become `panic` and `panic_bounds_check`, as\nwell. These are implemented by `libcore`, so it is unlikely (though\npossible!) that these two renamings will affect you.\n\n[breaking-change]\n\nFix test suite"
-  },
-  {
-    "hash": "7828c3dd2858d8f3a0448484d8093e22719dbda0",
-    "author": "Steve Klabnik",
-    "date": 1414597387,
-    "message": "Rename fail! to panic!\n\nhttps://github.com/rust-lang/rfcs/pull/221\n\nThe current terminology of \"task failure\" often causes problems when\nwriting or speaking about code. You often want to talk about the\npossibility of an operation that returns a Result \"failing\", but cannot\nbecause of the ambiguity with task failure. Instead, you have to speak\nof \"the failing case\" or \"when the operation does not succeed\" or other\ncircumlocutions.\n\nLikewise, we use a \"Failure\" header in rustdoc to describe when\noperations may fail the task, but it would often be helpful to separate\nout a section describing the \"Err-producing\" case.\n\nWe have been steadily moving away from task failure and toward Result as\nan error-handling mechanism, so we should optimize our terminology\naccordingly: Result-producing functions should be easy to describe.\n\nTo update your code, rename any call to `fail!` to `panic!` instead.\nAssuming you have not created your own macro named `panic!`, this\nwill work on UNIX based systems:\n\n    grep -lZR 'fail!' . | xargs -0 -l sed -i -e 's/fail!/panic!/g'\n\nYou can of course also do this by hand.\n\n[breaking-change]"
-  },
-  {
-    "hash": "3bc545373df4c81ba223a8bece14cbc27eb85a4d",
-    "author": "bors",
-    "date": 1414578121,
-    "message": "auto merge of #18365 : bjz/rust/token, r=alexcrichton\n\n[breaking-change]\r\n\r\n(for syntax-extensions)\r\n\r\n- Token variant identifiers have been converted to PascalCase for consistency with Rust coding standards\r\n- Some free-functions in `syntax::token` have been converted to methods on `syntax::token::Token`:\r\n    - `can_begin_expr`         -> `Token::can_begin_expr`\r\n    - `close_delimiter_for`    -> `Token::get_close_delimiter`\r\n    - `is_lit`                 -> `Token::is_lit`\r\n    - `is_ident`               -> `Token::is_ident`\r\n    - `is_path`                -> `Token::is_path`\r\n    - `is_plain_ident`         -> `Token::is_plain_ident`\r\n    - `is_lifetime`            -> `Token::is_lifetime`\r\n    - `is_mutability`          -> `Token::is_mutability`\r\n    - `to_binop`               -> `Token::to_binop`\r\n    - `is_keyword`             -> `Token::is_keyword`\r\n    - `is_any_keyword`         -> `Token:is_any_keyword`\r\n    - `is_strict_keyword`      -> `Token::is_strict_keyword`\r\n    - `is_reserved_keyword`    -> `Token::is_reserved_keyword`\r\n    - `mtwt_token_eq`          -> `Token::mtwt_eq`\r\n- `token::Ident` now takes an enum instead of a boolean for clarity\r\n- `token::{to_string, binop_to_string}` were moved to `pprust::{token_to_string, binop_to_string}`"
-  },
-  {
-    "hash": "2e92c67dc0318a52fe42c3c0bca408f76c7feb61",
-    "author": "bors",
-    "date": 1409270180,
-    "message": "auto merge of #16664 : aturon/rust/stabilize-option-result, r=alexcrichton\n\nPer API meeting\r\n\r\n  https://github.com/rust-lang/meeting-minutes/blob/master/Meeting-API-review-2014-08-13.md\r\n\r\n# Changes to `core::option`\r\n\r\nMost of the module is marked as stable or unstable; most of the unstable items are awaiting resolution of conventions issues.\r\n\r\nHowever, a few methods have been deprecated, either due to lack of use or redundancy:\r\n\r\n* `take_unwrap`, `get_ref` and `get_mut_ref` (redundant, and we prefer for this functionality to go through an explicit .unwrap)\r\n* `filtered` and `while`\r\n* `mutate` and `mutate_or_set`\r\n* `collect`: this functionality is being moved to a new `FromIterator` impl.\r\n\r\n# Changes to `core::result`\r\n\r\nMost of the module is marked as stable or unstable; most of the unstable items are awaiting resolution of conventions issues.\r\n\r\n* `collect`: this functionality is being moved to a new `FromIterator` impl.\r\n* `fold_` is deprecated due to lack of use\r\n* Several methods found in `core::option` are added here, including `iter`, `as_slice`, and variants.\r\n\r\nDue to deprecations, this is a:\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "9a8233d3772fbdb3d496aac3e4693e6d4c30e125",
-    "author": "Aaron Turon",
-    "date": 1409242374,
-    "message": "stabilize core::result\n\nPer API meeting\n\n  https://github.com/rust-lang/meeting-minutes/blob/master/Meeting-API-review-2014-08-13.md\n\nMost of the module is marked as stable or unstable; most of the unstable\nitems are awaiting resolution of conventions issues.\n\n* `collect`: this functionality is being moved to a new `FromIterator`\n  impl.\n* `fold_` is deprecated due to lack of use\n* Several methods found in `core::option` are added here, including\n  `iter`, `as_slice`, and variants.\n\nDue to deprecations, this is a:\n\n[breaking-change]"
-  },
-  {
-    "hash": "3a52ef4613f85fba1ecfd8746388bf34a5499bf9",
-    "author": "Aaron Turon",
-    "date": 1409242374,
-    "message": "stabilize core::option\n\nPer API meeting\n\n  https://github.com/rust-lang/meeting-minutes/blob/master/Meeting-API-review-2014-08-13.md\n\nMost of the module is marked as stable or unstable; most of the unstable\nitems are awaiting resolution of conventions issues.\n\nHowever, a few methods have been deprecated, either due to lack of use\nor redundancy:\n\n* `take_unwrap`, `get_ref` and `get_mut_ref` (redundant, and we prefer\n  for this functionality to go through an explicit .unwrap)\n* `filtered` and `while`\n* `mutate` and `mutate_or_set`\n* `collect`: this functionality is being moved to a new `FromIterator`\n  impl.\n\nDue to deprecations, this is a:\n\n[breaking-change]"
-  },
-  {
-    "hash": "1c76d559c37bf313a31e260b986255cc45912014",
+    "hash": "38f9805f11721d854a59818e0ad7b8a0b6282301",
     "author": "Alex Crichton",
-    "date": 1408968111,
-    "message": "rustc: Encode the visibility of foreign items\n\nThe privacy pass of the compiler was previously not taking into account the\nprivacy of foreign items, or bindings to external functions. This commit fixes\nthis oversight by encoding the visibility of foreign items into the metadata for\neach crate.\n\nAny code relying on this will start to fail to  compile and the bindings must be\nmarked with `pub` to indicate that they can be used externally.\n\nCloses #16725\n[breaking-change]"
+    "date": 1419985582,
+    "message": "rollup merge of #20348: frewsxcv/rm-reexports\n\nPart of #19253\n\n[breaking-change]"
   },
   {
-    "hash": "f2fa55903e378368ed9173560f03a0ef16e371c2",
-    "author": "bors",
-    "date": 1406908864,
-    "message": "auto merge of #16053 : pcwalton/rust/at-pattern-bindings, r=pnkfelix\n\nThis is an alternative to upgrading the way rvalues are handled in the\r\nborrow check. Making rvalues handled more like lvalues in the borrow\r\ncheck caused numerous problems related to double mutable borrows and\r\nrvalue scopes. Rather than come up with more borrow check rules to try\r\nto solve these problems, I decided to just forbid pattern bindings after\r\n`@`. This affected fewer than 10 lines of code in the compiler and\r\nlibraries.\r\n\r\nThis breaks code like:\r\n\r\n    match x {\r\n        y @ z => { ... }\r\n    }\r\n\r\n    match a {\r\n        b @ Some(c) => { ... }\r\n    }\r\n\r\nChange this code to use nested `match` or `let` expressions. For\r\nexample:\r\n\r\n    match x {\r\n        y => {\r\n            let z = y;\r\n            ...\r\n        }\r\n    }\r\n\r\n    match a {\r\n        Some(c) => {\r\n            let b = Some(c);\r\n            ...\r\n        }\r\n    }\r\n\r\nCloses #14587.\r\n\r\n[breaking-change]\r\n\r\nMay need discussion at the meeting, but r? @nikomatsakis anyway"
+    "hash": "1d26fb9e07e664b312ca9d7b666f6d1dd52285ed",
+    "author": "Corey Farwell",
+    "date": 1419968631,
+    "message": "Remove core::atomic::Ordering::* public reexport\n\nPart of #19253\n\n[breaking-change]"
   },
   {
-    "hash": "5b85c8cbe70abb914f9ba66116192667b8235cfb",
-    "author": "Patrick Walton",
-    "date": 1406907922,
-    "message": "librustc: Forbid pattern bindings after `@`s, for memory safety.\n\nThis is an alternative to upgrading the way rvalues are handled in the\nborrow check. Making rvalues handled more like lvalues in the borrow\ncheck caused numerous problems related to double mutable borrows and\nrvalue scopes. Rather than come up with more borrow check rules to try\nto solve these problems, I decided to just forbid pattern bindings after\n`@`. This affected fewer than 10 lines of code in the compiler and\nlibraries.\n\nThis breaks code like:\n\n    match x {\n        y @ z => { ... }\n    }\n\n    match a {\n        b @ Some(c) => { ... }\n    }\n\nChange this code to use nested `match` or `let` expressions. For\nexample:\n\n    match x {\n        y => {\n            let z = y;\n            ...\n        }\n    }\n\n    match a {\n        Some(c) => {\n            let b = Some(c);\n            ...\n        }\n    }\n\nCloses #14587.\n\n[breaking-change]"
+    "hash": "b94bcbf56eab163517e8ffc93888284b8dbb6238",
+    "author": "Aaron Turon",
+    "date": 1419979466,
+    "message": "Stabilize cmp\n\nThis patch marks `PartialEq`, `Eq`, `PartialOrd`, and `Ord` as\n`#[stable]`, as well as the majorify of manual implementaitons of these\ntraits. The traits match the [reform\nRFC](https://github.com/rust-lang/rfcs/pull/439).\n\nAlong the way, two changes are made:\n\n* The recently-added type parameters for `Ord` and `Eq` are\n  removed. These were mistakenly added while adding them to `PartialOrd`\n  and `PartialEq`, but they don't make sense given the laws that are\n  required for (and use cases for) `Ord` and `Eq`.\n\n* More explicit laws are added for `PartialEq` and `PartialOrd`,\n  connecting them to their associated mathematical concepts.\n\nIn the future, many of the impls should be generalized; see\nsince generalizing later is not a breaking change.\n\n[breaking-change]"
   },
   {
-    "hash": "cf432b8f8f0d8822e654c1a40bf632f12fc97fbc",
-    "author": "kwantam",
-    "date": 1405382026,
-    "message": "add Graphemes iterator; tidy unicode exports\n\n- Graphemes and GraphemeIndices structs implement iterators over\n  grapheme clusters analogous to the Chars and CharOffsets for chars in\n  a string. Iterator and DoubleEndedIterator are available for both.\n\n- tidied up the exports for libunicode. crate root exports are now moved\n  into more appropriate module locations:\n  - UnicodeStrSlice, Words, Graphemes, GraphemeIndices are in str module\n  - UnicodeChar exported from char instead of crate root\n  - canonical_combining_class is exported from str rather than crate root\n\nSince libunicode's exports have changed, programs that previously relied\non the old export locations will need to change their `use` statements\nto reflect the new ones. See above for more information on where the new\nexports live.\n\ncloses #7043\n[breaking-change]"
+    "hash": "79db01a30d22950ad1597d495b76d2f58da859dc",
+    "author": "Alex Crichton",
+    "date": 1419899812,
+    "message": "rollup merge of #20306: alexcrichton/second-pass-string\n\nThis commit performs a second pass over the `std::string` module, performing the\nfollowing actions:\n\n* The name `std::string` is now stable.\n* The `String::from_utf8` function is now stable after having been altered to\n  return a new `FromUtf8Error` structure. The `FromUtf8Error` structure is now\n  stable as well as its `into_bytes` and `utf8_error` methods.\n* The `String::from_utf8_lossy` function is now stable.\n* The `String::from_chars` method is now deprecated in favor of `.collect()`\n* The `String::from_raw_parts` method is now stable\n* The `String::from_str` function remains experimental\n* The `String::from_raw_buf` function remains experimental\n* The `String::from_raw_buf_len` function remains experimental\n* The `String::from_utf8_unchecked` function is now stable\n* The `String::from_char` function is now deprecated in favor of\n  `repeat(c).take(n).collect()`\n* The `String::grow` function is now deprecated in favor of\n  `.extend(repeat(c).take(n)`\n* The `String::capacity` method is now stable\n* The `String::reserve` method is now stable\n* The `String::reserve_exact` method is now stable\n* The `String::shrink_to_fit` method is now stable\n* The `String::pop` method is now stable\n* The `String::as_mut_vec` method is now stable\n* The `String::is_empty` method is now stable\n* The `IntoString` trait is now deprecated (there are no implementors)\n* The `String::truncate` method is now stable\n* The `String::insert` method is now stable\n* The `String::remove` method is now stable\n* The `String::push` method is now stable\n* The `String::push_str` method is now stable\n* The `String::from_utf16` function is now stable after its error type has now\n  become an opaque structure to carry more semantic information in the future.\n\nA number of these changes are breaking changes, but the migrations should be\nfairly straightforward on a case-by-case basis (outlined above where possible).\n\n[breaking-change]"
   },
   {
-    "hash": "ff94f867d29a90ab59060c10a62f65994776a8c4",
-    "author": "bors",
-    "date": 1404071206,
-    "message": "auto merge of #15234 : pcwalton/rust/integer-fallback-and-casts, r=alexcrichton\n\nThis will break code that looks like:\r\n\r\n    let mut x = 0;\r\n    while ... {\r\n        x += 1;\r\n    }\r\n    println!(\"{}\", x);\r\n\r\nChange that code to:\r\n\r\n    let mut x = 0i;\r\n    while ... {\r\n        x += 1;\r\n    }\r\n    println!(\"{}\", x);\r\n\r\nCloses #15201.\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton"
+    "hash": "b26daf3a67a4e283a5e2c49227b60a2321434de0",
+    "author": "Alex Crichton",
+    "date": 1419891076,
+    "message": "std: Second pass stabilization for `string`\n\nThis commit performs a second pass over the `std::string` module, performing the\nfollowing actions:\n\n* The name `std::string` is now stable.\n* The `String::from_utf8` function is now stable after having been altered to\n  return a new `FromUtf8Error` structure. The `FromUtf8Error` structure is now\n  stable as well as its `into_bytes` and `utf8_error` methods.\n* The `String::from_utf8_lossy` function is now stable.\n* The `String::from_chars` method is now deprecated in favor of `.collect()`\n* The `String::from_raw_parts` method is now stable\n* The `String::from_str` function remains experimental\n* The `String::from_raw_buf` function remains experimental\n* The `String::from_raw_buf_len` function remains experimental\n* The `String::from_utf8_unchecked` function is now stable\n* The `String::from_char` function is now deprecated in favor of\n  `repeat(c).take(n).collect()`\n* The `String::grow` function is now deprecated in favor of\n  `.extend(repeat(c).take(n)`\n* The `String::capacity` method is now stable\n* The `String::reserve` method is now stable\n* The `String::reserve_exact` method is now stable\n* The `String::shrink_to_fit` method is now stable\n* The `String::pop` method is now stable\n* The `String::as_mut_vec` method is now stable\n* The `String::is_empty` method is now stable\n* The `IntoString` trait is now deprecated (there are no implementors)\n* The `String::truncate` method is now stable\n* The `String::insert` method is now stable\n* The `String::remove` method is now stable\n* The `String::push` method is now stable\n* The `String::push_str` method is now stable\n* The `String::from_utf16` function is now stable after its error type has now\n  become an opaque structure to carry more semantic information in the future.\n\nA number of these changes are breaking changes, but the migrations should be\nfairly straightforward on a case-by-case basis (outlined above where possible).\n\n[breaking-change]"
   },
   {
-    "hash": "a5bb0a3a4574af88add700ace7aefc37172fa7a5",
-    "author": "Patrick Walton",
-    "date": 1404067678,
-    "message": "librustc: Remove the fallback to `int` for integers and `f64` for\nfloating point numbers for real.\n\nThis will break code that looks like:\n\n    let mut x = 0;\n    while ... {\n        x += 1;\n    }\n    println!(\"{}\", x);\n\nChange that code to:\n\n    let mut x = 0i;\n    while ... {\n        x += 1;\n    }\n    println!(\"{}\", x);\n\nCloses #15201.\n\n[breaking-change]"
-  },
-  {
-    "hash": "f556c8cbd8af182a9dd871a4a36692a0dba7cc2e",
-    "author": "bors",
-    "date": 1403364999,
-    "message": "auto merge of #15062 : pcwalton/rust/trailing-plus, r=brson\n\nThis will break code that looks like `Box<Trait+>`. Change that code to\r\n`Box<Trait>` instead.\r\n\r\nCloses #14925.\r\n\r\n[breaking-change]\r\n\r\nr? @brson"
-  },
-  {
-    "hash": "ae067477fbc08e5998756d36b6ab0b82173e5c74",
-    "author": "Patrick Walton",
-    "date": 1403304418,
-    "message": "libsyntax: Stop parsing `+` with no bounds after it.\n\nThis will break code that looks like `Box<Trait+>`. Change that code to\n`Box<Trait>` instead.\n\nCloses #14925.\n\n[breaking-change]"
-  },
-  {
-    "hash": "8e7213f65b4348e1b54d8baeeb291267581227d2",
+    "hash": "f53314cd70dd194ea40c55a5d8ceae7b94409aea",
     "author": "Nick Cameron",
-    "date": 1403044233,
-    "message": "Remove TraitStore from ty_trait\n\nUse ty_rptr/ty_uniq(ty_trait) rather than TraitStore to represent trait types.\nAlso addresses (but doesn't close) #12470.\nPart of the work towards DST (#12938).\n\n[breaking-change] lifetime parameters in `&mut trait` are now invariant. They used to be contravariant."
+    "date": 1419830349,
+    "message": "Remove the glob/shadowing exception bug\n\n[breaking-change]\n\nThis and the other commit in this PR change the rules for shadowing and globs to be\nstricter. There were previously bugs where some glob imports would not be checked\nfor shadowing. Those are now fixed and you may have to adjust your imports to use\nfewer globs."
   },
   {
-    "hash": "9945052e64737a21a7d9a6cb337bda1a4eed3e0a",
-    "author": "Kevin Butler",
-    "date": 1402967754,
-    "message": "rustc: Improve span for error about using a method as a field.\n\nlibsyntax: ExprField now contains a SpannedIdent rather than Ident.\n\n[breaking-change]"
+    "hash": "1e89bbcb67020892bc0af5af218c35f0fd453fa4",
+    "author": "Simonas Kazlauskas",
+    "date": 1419767195,
+    "message": "Rename TaskRng to ThreadRng\n\nSince runtime is removed, rust has no tasks anymore and everything is moving\nfrom being task-* to thread-*. Let’s rename TaskRng as well!\n\n* Rename TaskRng to ThreadRng\n* Rename task_rng to thread_rng\n\n[breaking-change]"
   },
   {
-    "hash": "da0703973af921626d7235131d14847b1aacffc2",
+    "hash": "748440c5b3bad8a837918400973e9d6cbb58fa7a",
     "author": "Alex Crichton",
-    "date": 1402299526,
-    "message": "core: Move the collections traits to libcollections\n\nThis commit moves Mutable, Map, MutableMap, Set, and MutableSet from\n`core::collections` to the `collections` crate at the top-level. Additionally,\nthis removes the `deque` module and moves the `Deque` trait to only being\navailable at the top-level of the collections crate.\n\nAll functionality continues to be reexported through `std::collections`.\n\n[breaking-change]"
+    "date": 1419899766,
+    "message": "rollup merge of #20215: csouth3/hashmap-rename\n\nRename struct `Entries` to `Iter` in hash/table.rs and hash/map.rs, to match the naming convention of rust-lang/rfcs#344.\n\nThis is a [breaking-change]."
   },
   {
-    "hash": "50942c7695783875bd2161596036a52755ffb09c",
-    "author": "Brian Anderson",
-    "date": 1402288197,
-    "message": "core: Rename `container` mod to `collections`. Closes #12543\n\nAlso renames the `Container` trait to `Collection`.\n\n[breaking-change]"
+    "hash": "625697354db8a13450f6d56c7a384c202a79c9db",
+    "author": "Chase Southwood",
+    "date": 1419473988,
+    "message": "Rename remaining hashmap and hashtable iterators to match naming\nconventions.\n\nThis is a [breaking-change]."
   },
   {
-    "hash": "090040bf4037a094e50b03d79e4baf5cd89c912b",
-    "author": "Patrick Walton",
-    "date": 1399443174,
-    "message": "librustc: Remove `~EXPR`, `~TYPE`, and `~PAT` from the language, except\nfor `~str`/`~[]`.\n\nNote that `~self` still remains, since I forgot to add support for\n`Box<self>` before the snapshot.\n\nHow to update your code:\n\n* Instead of `~EXPR`, you should write `box EXPR`.\n\n* Instead of `~TYPE`, you should write `Box<Type>`.\n\n* Instead of `~PATTERN`, you should write `box PATTERN`.\n\n[breaking-change]"
-  },
-  {
-    "hash": "7d3b0bf3912fabf52fdd6926900e578e55af1b49",
+    "hash": "cc20d6009ebf46b7ec75020ebfe35ff0ef064d1b",
     "author": "Alex Crichton",
-    "date": 1397840784,
-    "message": "std: Make ~[T] no longer a growable vector\n\nThis removes all resizability support for ~[T] vectors in preparation of DST.\nThe only growable vector remaining is Vec<T>. In summary, the following methods\nfrom ~[T] and various functions were removed. Each method/function has an\nequivalent on the Vec type in std::vec unless otherwise stated.\n\n* slice::OwnedCloneableVector\n* slice::OwnedEqVector\n* slice::append\n* slice::append_one\n* slice::build (no replacement)\n* slice::bytes::push_bytes\n* slice::from_elem\n* slice::from_fn\n* slice::with_capacity\n* ~[T].capacity()\n* ~[T].clear()\n* ~[T].dedup()\n* ~[T].extend()\n* ~[T].grow()\n* ~[T].grow_fn()\n* ~[T].grow_set()\n* ~[T].insert()\n* ~[T].pop()\n* ~[T].push()\n* ~[T].push_all()\n* ~[T].push_all_move()\n* ~[T].remove()\n* ~[T].reserve()\n* ~[T].reserve_additional()\n* ~[T].reserve_exect()\n* ~[T].retain()\n* ~[T].set_len()\n* ~[T].shift()\n* ~[T].shrink_to_fit()\n* ~[T].swap_remove()\n* ~[T].truncate()\n* ~[T].unshift()\n* ~str.clear()\n* ~str.set_len()\n* ~str.truncate()\n\nNote that no other API changes were made. Existing apis that took or returned\n~[T] continue to do so.\n\n[breaking-change]"
+    "date": 1419899750,
+    "message": "rollup merge of #19661: alexcrichton/mutex-result\n\nAll of the current std::sync primitives have poisoning enable which means that\nwhen a task fails inside of a write-access lock then all future attempts to\nacquire the lock will fail. This strategy ensures that stale data whose\ninvariants are possibly not upheld are never viewed by other tasks to help\npropagate unexpected panics (bugs in a program) among tasks.\n\nCurrently there is no way to test whether a mutex or rwlock is poisoned. One\nmethod would be to duplicate all the methods with a sister foo_catch function,\nfor example. This pattern is, however, against our [error guidelines][errors].\nAs a result, this commit exposes the fact that a task has failed internally\nthrough the return value of a `Result`.\n\n[errors]: https://github.com/rust-lang/rfcs/blob/master/text/0236-error-conventions.md#do-not-provide-both-result-and-fail-variants\n\nAll methods now return a `LockResult<T>` or a `TryLockResult<T>` which\ncommunicates whether the lock was poisoned or not. In a `LockResult`, both the\n`Ok` and `Err` variants contains the `MutexGuard<T>` that is being returned in\norder to allow access to the data if poisoning is not desired. This also means\nthat the lock is *always* held upon returning from `.lock()`.\n\nA new type, `PoisonError`, was added with one method `into_guard` which can\nconsume the assertion that a lock is poisoned to gain access to the underlying\ndata.\n\nThis is a breaking change because the signatures of these methods have changed,\noften incompatible ways. One major difference is that the `wait` methods on a\ncondition variable now consume the guard and return it in as a `LockResult` to\nindicate whether the lock was poisoned while waiting. Most code can be updated\nby calling `.unwrap()` on the return value of `.lock()`.\n\n[breaking-change]"
   },
   {
-    "hash": "77303101bb7d18e48048fe6bdc7df6be2f315370",
+    "hash": "76e5ed655c762b812c3da4749a55f1bb1b52c787",
+    "author": "Alex Crichton",
+    "date": 1419873489,
+    "message": "std: Return Result from RWLock/Mutex methods\n\nAll of the current std::sync primitives have poisoning enable which means that\nwhen a task fails inside of a write-access lock then all future attempts to\nacquire the lock will fail. This strategy ensures that stale data whose\ninvariants are possibly not upheld are never viewed by other tasks to help\npropagate unexpected panics (bugs in a program) among tasks.\n\nCurrently there is no way to test whether a mutex or rwlock is poisoned. One\nmethod would be to duplicate all the methods with a sister foo_catch function,\nfor example. This pattern is, however, against our [error guidelines][errors].\nAs a result, this commit exposes the fact that a task has failed internally\nthrough the return value of a `Result`.\n\n[errors]: https://github.com/rust-lang/rfcs/blob/master/text/0236-error-conventions.md#do-not-provide-both-result-and-fail-variants\n\nAll methods now return a `LockResult<T>` or a `TryLockResult<T>` which\ncommunicates whether the lock was poisoned or not. In a `LockResult`, both the\n`Ok` and `Err` variants contains the `MutexGuard<T>` that is being returned in\norder to allow access to the data if poisoning is not desired. This also means\nthat the lock is *always* held upon returning from `.lock()`.\n\nA new type, `PoisonError`, was added with one method `into_guard` which can\nconsume the assertion that a lock is poisoned to gain access to the underlying\ndata.\n\nThis is a breaking change because the signatures of these methods have changed,\noften incompatible ways. One major difference is that the `wait` methods on a\ncondition variable now consume the guard and return it in as a `LockResult` to\nindicate whether the lock was poisoned while waiting. Most code can be updated\nby calling `.unwrap()` on the return value of `.lock()`.\n\n[breaking-change]"
+  },
+  {
+    "hash": "4e2afb0052618ca3d758fffd0cf50559be774391",
+    "author": "Nick Cameron",
+    "date": 1419897985,
+    "message": "Remove ExprSlice by hacking the compiler\n\n[breaking-change]\n\nThe `mut` in slices is now redundant. Mutability is 'inferred' from position. This means that if mutability is only obvious from the type, you will need to use explicit calls to the slicing methods."
+  },
+  {
+    "hash": "19f73b4ef6fb1d24f19738a8665889396fc1b0c8",
     "author": "bors",
-    "date": 1398172893,
-    "message": "auto merge of #13583 : FlaPer87/rust/special-unsafe, r=nikomatsakis\n\nThis patch adds a special rule for `Unsafe<T>` and makes it `Share`\r\nregardless of whether T is `Share`.\r\n\r\n[breaking-change]\r\n\r\nCloses #13125\r\n\r\ncc @nikomatsakis"
+    "date": 1419876150,
+    "message": "auto merge of #20058 : Kimundi/rust/str_pattern_pre, r=alexcrichton\n\nThis stabilizes most methods on `&str` working with patterns in a way that is forwards-compatible with a generic string pattern matching API:\r\n- Methods that are using the primary name for their operation are marked as `#[stable]`, as they can be upgraded to a full `Pattern` API later without existing code breaking. Example: `contains(&str)`\r\n- Methods that are using a more specific name in order to not clash with the primary one are marked as `#[unstable]`, as they will likely be removed once their functionality is merged into the primary one. Example: `contains_char<C: CharEq>(C)`\r\n- The method docs got changed to consistently refer to the pattern types as a pattern.\r\n- Methods whose names do not match in the context of the more generic API got renamed. Example: `trim_chars -> trim_matches` \r\n\r\nAdditionally, all methods returning iterators got changed to return unique new types with changed names in accordance with the new naming guidelines.\r\n\r\nSee also https://github.com/rust-lang/rfcs/pull/528\r\n\r\nDue to some deprecations and type changes, this is a \r\n\r\n[breaking-change]"
   },
   {
-    "hash": "5b4d54ee5be3166b662acd6fa0231c9851069e99",
-    "author": "Flavio Percoco",
-    "date": 1398169116,
-    "message": "Specialize kinds inference for `Unsafe<T>`\n\nThis patch adds a special rule for `Unsafe<T>` and makes it `Share`\nregardless of whether T is `Share`.\n\n[breaking-change]\n\nCloses #13125"
-  },
-  {
-    "hash": "bed70a42ecf0747f924c813b3b375d5fd364ffc3",
-    "author": "Brendan Zabarauskas",
-    "date": 1397868248,
-    "message": "Have floating point functions take their parameters by value.\n\nMake all of the methods in `std::num::Float` take `self` and their other parameters by value.\n\nSome of the `Float` methods took their parameters by value, and others took them by reference. This standardises them to one convention. The `Float` trait is intended for the built in IEEE 754 numbers only so we don't have to worry about the trait serving types of larger sizes.\n\n[breaking-change]"
-  },
-  {
-    "hash": "fe472020347d8eeb727f3a31e9cdc7268bb579f6",
-    "author": "Brendan Zabarauskas",
-    "date": 1397868105,
-    "message": "Merge the Round trait into the Float trait\n\nMove the rounding functions into the `std::num::Float` trait and then remove `std::num::Round`.\n\nThis continues the flattening of the numeric traits tracked in #10387. The aim is to make `std::num` very simple and tied to the built in types, leaving the definition of more complex numeric towers to third-party libraries.\n\n[breaking-change]"
-  },
-  {
-    "hash": "b4ecbe93401a56181baaffc4ff7e275aeecc5182",
-    "author": "Alex Crichton",
-    "date": 1398272623,
-    "message": "std: Change Finally to take `&mut self`\n\nAs with the previous commits, the Finally trait is primarily implemented for\nclosures, so the trait was modified from `&self` to `&mut self`. This will\nrequire that any closure variable invoked with `finally` to be stored in a\nmutable slot.\n\n[breaking-change]"
-  },
-  {
-    "hash": "2b2d1e14c97b7692debf62dd2739049f1f377a5e",
-    "author": "Alex Crichton",
-    "date": 1398272623,
-    "message": "std: Change CharEq to take `&mut self`\n\nThis is similar to the previous commits to allow invocation of a closure through\na `&mut self` pointer because `&self` is disallowed. One of the primary\nimplementors of the CharEq trait is a closure type, which would not work if the\nmethod continued to have `&self`.\n\nIn addition to changing mutability of the `matches` method, this modifies the\nfollowing methods from &CharEq to take a type which implements CharEq by value.\n\n* trim_chars\n* trim_left_chars\n* trim_right_chars\n\nWhere these methods were previously invoked via\n\n    s.trim_chars(&'a')\n\nit would now be invoked through\n\n    s.trim_chars('a')\n\n[breaking-change]"
-  },
-  {
-    "hash": "f4083a22451692b9ae360f3d12bfb8cb52b096e4",
-    "author": "Alex Crichton",
-    "date": 1398272623,
-    "message": "std: Change RandomAccessIterator to use `&mut self`\n\nMany iterators go through a closure when dealing with the `idx` method, which\nare invalid after the previous change (closures cannot be invoked through a `&`\npointer). This commit alters the `fn idx` method on the RandomAccessIterator\nto take `&mut self` rather than `&self`.\n\n[breaking-change]"
-  },
-  {
-    "hash": "159a10da4c15e5d34e00d4018b352573cec7918f",
-    "author": "Alex Crichton",
-    "date": 1398272623,
-    "message": "rustc: Tweak the borrow on closure invocations\n\nThis alters the borrow checker's requirements on invoking closures from\nrequiring an immutable borrow to requiring a unique immutable borrow. This means\nthat it is illegal to invoke a closure through a `&` pointer because there is no\nguarantee that is not aliased. This does not mean that a closure is required to\nbe in a mutable location, but rather a location which can be proven to be\nunique (often through a mutable pointer).\n\nFor example, the following code is unsound and is no longer allowed:\n\n    type Fn<'a> = ||:'a;\n\n    fn call(f: |Fn|) {\n        f(|| {\n            f(|| {})\n        });\n    }\n\n    fn main() {\n        call(|a| {\n            a();\n        });\n    }\n\nThere is no replacement for this pattern. For all closures which are stored in\nstructures, it was previously allowed to invoke the closure through `&self` but\nit now requires invocation through `&mut self`.\n\nThe standard library has a good number of violations of this new rule, but the\nfixes will be separated into multiple breaking change commits.\n\nCloses #12224\n\n[breaking-change]"
-  },
-  {
-    "hash": "d10735e3840b1bfcd52bf063258bc5db0c6e2a66",
-    "author": "Flavio Percoco",
-    "date": 1398269984,
-    "message": "Treat @T like ~T in borrowck\n\n`@` pointers used to have special rooting and regions management. With `@`\nmoving to standalone library, we don't need to keep that special\ntreatment around. This patch modifies the way `@` pointers are treated by\ntreating them as if they were `~` pointers\n\nRegion checker and borrow checker were modified in this patch.\n\nCloses #11586\n\n[breaking-change]"
-  },
-  {
-    "hash": "71f054ddd02051928e8e60356ecd95cb0b3f64e6",
-    "author": "Flavio Percoco",
-    "date": 1398269945,
-    "message": "Remove special rooting code from trans\n\n[breaking-change]\n\ncc #11586"
-  },
-  {
-    "hash": "0e750adefcb1985fc0fa60a240d9b8abbbc457c5",
+    "hash": "3e6b29f8ad1ddfcb134d743a66ee5f467e16c350",
     "author": "bors",
-    "date": 1398310296,
-    "message": "auto merge of #13675 : sfackler/rust/taskbuilder-new, r=alexcrichton\n\nThe constructor for `TaskBuilder` is being changed to an associated\r\nfunction called `new` for consistency with the rest of the standard\r\nlibrary.\r\n\r\nCloses #13666\r\n\r\n[breaking-change]"
+    "date": 1419736308,
+    "message": "auto merge of #20136 : eddyb/rust/format-args, r=alexcrichton\n\nWe have the technology: no longer do you need to write closures to use `format_args!`.\r\nThis is a `[breaking-change]`, as it forces you to clean up old hacks - if you had code like this:\r\n```rust\r\nformat_args!(fmt::format, \"{} {} {}\", a, b, c)\r\nformat_args!(|args| { w.write_fmt(args) }, \"{} {} {}\", x, y, z)\r\n```\r\nchange it to this: \r\n```rust\r\nfmt::format(format_args!(\"{} {} {}\", a, b, c))\r\nw.write_fmt(format_args!(\"{} {} {}\", x, y, z))\r\n```\r\nTo allow them to be called with `format_args!(...)` directly, several functions were modified to\r\ntake `fmt::Arguments` by value instead of by reference. Also, `fmt::Arguments` derives `Copy`\r\nnow in order to preserve all usecases that were previously possible."
   },
   {
-    "hash": "adeeadf49f04faf41eefaf90e16e2df90e6b8f10",
-    "author": "Steven Fackler",
-    "date": 1398308522,
-    "message": "Move task::task() to TaskBuilder::new()\n\nThe constructor for `TaskBuilder` is being changed to an associated\nfunction called `new` for consistency with the rest of the standard\nlibrary.\n\nCloses #13666\n\n[breaking-change]"
+    "hash": "070ab63807dc80fa6a6c5ee80531284761ab42de",
+    "author": "bors",
+    "date": 1419717103,
+    "message": "auto merge of #19916 : SimonSapin/rust/ascii-reform, r=sfackler\n\nImplements [RFC 486](https://github.com/rust-lang/rfcs/pull/486). Fixes #19908.\r\n\r\n* Rename `to_ascii_{lower,upper}` to `to_ascii_{lower,upper}case`, per #14401\r\n* Remove the `Ascii` type and associated traits: `AsciiCast`, `OwnedAsciiCast`, `AsciiStr`, `IntoBytes`, and `IntoString`.\r\n* As a replacement, add `.is_ascii()` to `AsciiExt`, and implement `AsciiExt` for `u8` and `char`.\r\n\r\n[breaking-change]"
   },
   {
-    "hash": "03609e5a5e8bdca9452327d44e25407ce888d0bb",
-    "author": "Jonathan S",
-    "date": 1398721536,
-    "message": "Deprecate the rev_iter pattern in all places where a DoubleEndedIterator is provided (everywhere but treemap)\n\nThis commit deprecates rev_iter, mut_rev_iter, move_rev_iter everywhere (except treemap) and also\ndeprecates related functions like rsplit, rev_components, and rev_str_components. In every case,\nthese functions can be replaced with the non-reversed form followed by a call to .rev(). To make this\nmore concrete, a translation table for all functional changes necessary follows:\n\n* container.rev_iter() -> container.iter().rev()\n* container.mut_rev_iter() -> container.mut_iter().rev()\n* container.move_rev_iter() -> container.move_iter().rev()\n* sliceorstr.rsplit(sep) -> sliceorstr.split(sep).rev()\n* path.rev_components() -> path.components().rev()\n* path.rev_str_components() -> path.str_components().rev()\n\nIn terms of the type system, this change also deprecates any specialized reversed iterator types (except\nin treemap), opting instead to use Rev directly if any type annotations are needed. However, since\nmethods directly returning reversed iterators are now discouraged, the need for such annotations should\nbe small. However, in those cases, the general pattern for conversion is to take whatever follows Rev in\nthe original reversed name and surround it with Rev<>:\n\n* RevComponents<'a> -> Rev<Components<'a>>\n* RevStrComponents<'a> -> Rev<StrComponents<'a>>\n* RevItems<'a, T> -> Rev<Items<'a, T>>\n* etc.\n\nThe reasoning behind this change is that it makes the standard API much simpler without reducing readability,\nperformance, or power. The presence of functions such as rev_iter adds more boilerplate code to libraries\n(all of which simply call .iter().rev()), clutters up the documentation, and only helps code by saving two\ncharacters. Additionally, the numerous type synonyms that were used to make the type signatures look nice\nlike RevItems add even more boilerplate and clutter up the docs even more. With this change, all that cruft\ngoes away.\n\n[breaking-change]"
+    "hash": "3a6ccdc263d9a169c2d317a6f78664e1f18d3b15",
+    "author": "Simon Sapin",
+    "date": 1419506377,
+    "message": "Remove Ascii, AsciiCast, OwnedAsciiCast, AsciiStr, IntoBytes, IntoString.\n\nAs a replacement, add is_ascii() to AsciiExt, and implement AsciiExt for u8 and char.\n\n[breaking-change]"
   },
   {
-    "hash": "f58a8c9d760aead49e138fa8045e229a47217644",
-    "author": "Jonathan S",
-    "date": 1398721536,
-    "message": "Provide an implementation of DoubleEndedIterator for the results of &[T]::split and &[T]::rsplit\n\nThis makes the splitting functions in std::slice return DoubleEndedIterators. Unfortunately,\nsplitn and rsplitn cannot provide such an interface and so must return different types. As a\nresult, the following changes were made:\n\n* RevSplits was removed in favor of explicitly using Rev\n* Splits can no longer bound the number of splits done\n* Splits now implements DoubleEndedIterator\n* SplitsN was added, taking the role of what both Splits and RevSplits used to be\n* rsplit returns Rev<Splits<'a, T>> instead of RevSplits<'a, T>\n* splitn returns SplitsN<'a, T> instead of Splits<'a, T>\n* rsplitn returns SplitsN<'a, T> instead of RevSplits<'a, T>\n\nAll functions that were previously implemented on each return value still are, so outside of changing\nof type annotations, existing code should work out of the box. In the rare case that code relied\non the return types of split and splitn or of rsplit and rsplitn being the same, the previous\nbehavior can be emulated by calling splitn or rsplitn with a bount of uint::MAX.\n\nThe value of this change comes in multiple parts:\n\n* Consistency. The splitting code in std::str is structured similarly to the new slice splitting code,\n  having separate CharSplits and CharSplitsN types.\n* Smaller API. Although this commit doesn't implement it, using a DoubleEndedIterator for splitting\n  means that rsplit, path::RevComponents, path::RevStrComponents, Path::rev_components, and\n  Path::rev_str_components are no longer needed - they can be emulated simply with .rev().\n* Power. DoubleEndedIterators are able to traverse the list from both sides at once instead of only\n  forwards or backwards.\n* Efficiency. For the common case of using split instead of splitn, the iterator is slightly smaller\n  and slightly faster.\n\n[breaking-change]"
+    "hash": "1e5811ef9271644db0d0ddaae351976b0d4abdd2",
+    "author": "Simon Sapin",
+    "date": 1419445984,
+    "message": "Rename to_ascii_{lower,upper} to to_ascii_{lower,upper}case, per #14401\n\n[breaking-change]"
   },
   {
-    "hash": "7c5d48a09e3648adc3d4f4118808a903758a9dda",
-    "author": "Michael Darakananda",
-    "date": 1398400685,
-    "message": "Cleaned up os::consts. The module only exposes constants for the target OS and arch.\n\nConstants for other OS's and arch's must be defined manually.\n[breaking-change]"
+    "hash": "df0c6d93852c51b6936d4b72b6b4be5f1932fb8a",
+    "author": "Nick Cameron",
+    "date": 1419627325,
+    "message": "save-analysis: emit names of items that a glob import actually imports.\n\nThere is also some work here to make resolve a bit more stable - it no longer overwrites a specific import with a glob import.\n\n[breaking-change]\n\nImport shadowing of single/list imports by globs is now forbidden. An interesting case is where a glob import imports a re-export (`pub use`) of a single import. This still counts as a single import for the purposes of shadowing .You can usually fix any bustage by re-ordering such imports. A single import may still shadow (override) a glob import or the prelude."
   },
   {
-    "hash": "593f6a42d01070c7217c1241e8783b4e908884bb",
-    "author": "Guillaume Pinot",
-    "date": 1398967816,
-    "message": "BigUint always use u64 as the internal machine unsigned integer\n\nThis change allow a speedup of ~1.5 on shootout-pidigits on a i32\nsystem.  `DoubleBigDigit` is used to abstract the internal\nunsigned integer used in computation to simplity future\narchitecture specialization.\n\n`BigDigit::from_uint` and `BigDigit::to_uint` become\n`BigDigit::from_doublebigdigit` and `BigDigit::to_doublebigdigit`.\n\n[breaking-change]"
+    "hash": "7e11b22713aebd28ceaaa2ecef937c9b9d247c2f",
+    "author": "bors",
+    "date": 1419454032,
+    "message": "auto merge of #20117 : lfairy/rust/rename-include-bin, r=alexcrichton\n\nAccording to [RFC 344][], methods that return `&[u8]` should have names ending in `bytes`. Though `include_bin!` is a macro not a method, it seems reasonable to follow the convention anyway.\r\n\r\nWe keep the old name around for now, but trigger a deprecation warning when it is used.\r\n\r\n[RFC 344]: https://github.com/rust-lang/rfcs/blob/master/text/0344-conventions-galore.md\r\n\r\n[breaking-change]"
   },
   {
-    "hash": "781ac3e777a5f47bdfaba05ee17f8b79845670b1",
-    "author": "Huon Wilson",
-    "date": 1399278041,
-    "message": "std: deprecate cast::transmute_mut.\n\nTurning a `&T` into an `&mut T` carries a large risk of undefined\nbehaviour, and needs to be done very very carefully. Providing a\nconvenience function for exactly this task is a bad idea, just tempting\npeople into doing the wrong thing.\n\nThe right thing is to use types like `Cell`, `RefCell` or `Unsafe`.\n\nFor memory safety, Rust has that guarantee that `&mut` pointers do not\nalias with any other pointer, that is, if you have a `&mut T` then that\nis the only usable pointer to that `T`. This allows Rust to assume that\nwrites through a `&mut T` do not affect the values of any other `&` or\n`&mut` references. `&` pointers have no guarantees about aliasing or\nnot, so it's entirely possible for the same pointer to be passed into\nboth arguments of a function like\n\n    fn foo(x: &int, y: &int) { ... }\n\nConverting either of `x` or `y` to a `&mut` pointer and modifying it\nwould affect the other value: invalid behaviour.\n\n(Similarly, it's undefined behaviour to modify the value of an immutable\nlocal, like `let x = 1;`.)\n\nAt a low-level, the *only* safe way to obtain an `&mut` out of a `&` is\nusing the `Unsafe` type (there are higher level wrappers around it, like\n`Cell`, `RefCell`, `Mutex` etc.). The `Unsafe` type is registered with\nthe compiler so that it can reason a little about these `&` to `&mut`\ncasts, but it is still up to the user to ensure that the `&mut`s\nobtained out of an `Unsafe` never alias.\n\n(Note that *any* conversion from `&` to `&mut` can be invalid, including\na plain `transmute`, or casting `&T` -> `*T` -> `*mut T` -> `&mut T`.)\n\n[breaking-change]"
+    "hash": "85c1a4b1ba09dae786b3554e0ab596814efabe0e",
+    "author": "Chris Wong",
+    "date": 1419325592,
+    "message": "Rename include_bin! to include_bytes!\n\nAccording to [RFC 344][], methods that return `&[u8]` should have names\nending in `bytes`. Though `include_bin!` is a macro not a method, it\nseems reasonable to follow the convention anyway.\n\nWe keep the old name around for now, but trigger a deprecation warning\nwhen it is used.\n\n[RFC 344]: https://github.com/rust-lang/rfcs/blob/master/text/0344-conventions-galore.md\n\n[breaking-change]"
   },
   {
-    "hash": "ceb29314a7e6fc2d9f3527e36534b2d1608394d8",
-    "author": "Sean McArthur",
-    "date": 1399313933,
-    "message": "log: Logger receiveis a LogRecord\n\nThe logging macros now create a LogRecord, and pass that to the\nLogger, instead of passing a `level` and `args`. The new signature is:\n\n    trait Logger {\n        fn log(&mut self, record: &LogRecord);\n    }\n\nThe LogRecord includes additional values that may be useful to custom\nloggers, and also allows for further expansion if not values are found\nuseful.\n\nDefaultLogger's formatting was taken from Python's default formatting:\n`LEVEL:from: message`\n\nAlso included: fmt::Arguments now implement Show, so they can be used to\nextend format strings.\n\n[breaking-change]"
+    "hash": "96a3c7c6a051ab2f5fc01fe9e686f7fffcc87c61",
+    "author": "bors",
+    "date": 1419373270,
+    "message": "auto merge of #19758 : tbu-/rust/pr_fp_name, r=alexcrichton\n\nThis is a [breaking-change]."
   },
   {
-    "hash": "8d1d7d9b5f3920d70b1edcc258a86106527e83f7",
+    "hash": "16f01cc13f6a092873096c44eed546561b88d245",
+    "author": "Tobias Bucher",
+    "date": 1419338529,
+    "message": "Rename and namespace `FPCategory`\n\nRename `FPCategory` to `FpCategory` and `Fp* to `*` in order to adhere to the\nnaming convention\n\nThis is a [breaking-change].\n\nExisting code like this:\n```\nuse std::num::{FPCategory, FPNaN};\n```\nshould be adjusted to this:\n```\nuse std::num::FpCategory as Fp\n```\n\nIn the following code you can use the constants `Fp::Nan`, `Fp::Normal`, etc."
+  },
+  {
+    "hash": "22050e3ed44d9b4d79edced506b470a425e0d302",
+    "author": "Florian Wilkens",
+    "date": 1419266734,
+    "message": "Added missing renames:\n\nlibcollections:\n    AbsEntries -> AbsIter, Entries -> Iter, MoveEntries -> IntoIter, MutEntries -> IterMut\n    DifferenceItems -> Difference, SymDifferenceItems -> SymmetricDifference, IntersectionItems -> Intersection, UnionItems -> Union\n\nlibstd/hash/{table, map}:\n    Entries -> Iter, MoveItems -> IntoIter, MutEntries -> IterMut\n\nAlso a [breaking-change]."
+  },
+  {
+    "hash": "f8cfd2480b69a1cc266fc91d0b60c825a9dc18a7",
+    "author": "Florian Wilkens",
+    "date": 1419249535,
+    "message": "Renaming of the Iter types as in RFC #344\n\nlibcore: slice::Items -> slice::Iter, slice::MutItems -> slice::IterMut\nlibcollections: *::Items -> *::Iter, *::MoveItems -> *::IntoIter, *::MutItems -> *::IterMut\n\nThis is of course a [breaking-change]."
+  },
+  {
+    "hash": "fac17defcb8d0642c25bf8f791e1dc5b4e110be8",
+    "author": "Alex Crichton",
+    "date": 1419281296,
+    "message": "rollup merge of #20140: frewsxcv/rm-reexports\n\nPart of #19253\n\nI would have removed this public reexport in #19842, but #19812 hadn't merged (and snapshotted) at the time\n\nIn #19407, I changed the codebase to stop utilizing this reexport\n\n[breaking-change]"
+  },
+  {
+    "hash": "02feaf2a804e4e810d5a3adbedbcbe3905692286",
+    "author": "Corey Farwell",
+    "date": 1419276503,
+    "message": "Remove cmp::Ordering::* public reexport\n\nPart of #19253\n\nI would have removed this public reexport in #19842, but #19812 hadn't merged (and snapshotted) at the time\n\nIn #19407, I changed the codebase to stop utilizing this reexport\n\n[breaking-change]"
+  },
+  {
+    "hash": "4baeacef5a539fa29b88c951d6eca996d6101148",
+    "author": "Alex Crichton",
+    "date": 1419281251,
+    "message": "rollup merge of #20075: skade/remove-notrust\n\nInternally refactor all mentions of `notrust` to the\npositive statement `rust`.\n\n[breaking-change] Change remaining `notrust` markers to\nthe thing they actually represent, e.g. `sh` or `plain`.\n\nThis supersedes #19693 ."
+  },
+  {
+    "hash": "7311b6347de4205b71e8a221140a527e789fd353",
+    "author": "Alex Crichton",
+    "date": 1419281231,
+    "message": "rollup merge of #20053: csouth3/misc-stab\n\nThis pull request:\n\n*Renames `BinaryHeap::top` to `BinaryHeap::peek`\n*Stabilizes `front/back/front_mut/back_mut` in `DList` and `RingBuf`\n*Stabilizes `swap` in `RingBuf`\n\nin accordance with rust-lang/rfcs#509.\n\nNote that this PR does not address `Bitv::{get,set}` or HashMap's iterators, nor does it move `std::vec` to `std::collections::vec`, all of which still need to be done.\n\nBecause of the method renaming, this is a [breaking-change]."
+  },
+  {
+    "hash": "abf492d44f0a3b705be8c0920bfb4771f039b843",
+    "author": "Chase Southwood",
+    "date": 1419222736,
+    "message": "Misc Stabilization for collections\n\nThis commit:\n\n*Renames `BinaryHeap::top` to `BinaryHeap::peek`\n*Stabilizes `front/back/front_mut/back_mut` in `DList` and `RingBuf`\n*Stabilizes `swap` in `RingBuf`\n\nBecause of the method renaming, this is a [breaking-change]."
+  },
+  {
+    "hash": "b04bc5cc49a398df712092a68ab9ad83019498ad",
+    "author": "Alex Crichton",
+    "date": 1419281191,
+    "message": "rollup merge of #20033: alexcrichton/deprecate-serialise\n\nThis commit completes the deprecation story for the in-tree serialization\nlibrary. The compiler will now emit a warning whenever it encounters\n`deriving(Encodable)` or `deriving(Decodable)`, and the library itself is now\nmarked `#[unstable]` for when feature staging is enabled.\n\nAll users of serialization can migrate to the `rustc-serialize` crate on\ncrates.io which provides the exact same interface as the libserialize library\nin-tree. The new deriving modes are named `RustcEncodable` and `RustcDecodable`\nand require `extern crate \"rustc-serialize\" as rustc_serialize` at the crate\nroot in order to expand correctly.\n\nTo migrate all crates, add the following to your `Cargo.toml`:\n\n    [dependencies]\n    rustc-serialize = \"0.1.1\"\n\nAnd then add the following to your crate root:\n\n    extern crate \"rustc-serialize\" as rustc_serialize;\n\nFinally, rename `Encodable` and `Decodable` deriving modes to `RustcEncodable`\nand `RustcDecodable`.\n\n[breaking-change]"
+  },
+  {
+    "hash": "a76a80276852f05f30adaa4d2a8a2729b5fc0bfa",
+    "author": "Alex Crichton",
+    "date": 1419236096,
+    "message": "serialize: Fully deprecate the library\n\nThis commit completes the deprecation story for the in-tree serialization\nlibrary. The compiler will now emit a warning whenever it encounters\n`deriving(Encodable)` or `deriving(Decodable)`, and the library itself is now\nmarked `#[unstable]` for when feature staging is enabled.\n\nAll users of serialization can migrate to the `rustc-serialize` crate on\ncrates.io which provides the exact same interface as the libserialize library\nin-tree. The new deriving modes are named `RustcEncodable` and `RustcDecodable`\nand require `extern crate \"rustc-serialize\" as rustc_serialize` at the crate\nroot in order to expand correctly.\n\nTo migrate all crates, add the following to your `Cargo.toml`:\n\n    [dependencies]\n    rustc-serialize = \"0.1.1\"\n\nAnd then add the following to your crate root:\n\n    extern crate \"rustc-serialize\" as rustc_serialize;\n\nFinally, rename `Encodable` and `Decodable` deriving modes to `RustcEncodable`\nand `RustcDecodable`.\n\n[breaking-change]"
+  },
+  {
+    "hash": "2f55a9db0de8b2a2d72c7139eae38272d4d8cf41",
+    "author": "Alex Crichton",
+    "date": 1419281152,
+    "message": "rollup merge of #19216: Gankro/bitv\n\nPart of #18424\n\nThis commit changes the semantics of `reserve` and `capacity` for Bitv and BitvSet to match conventions. It also introduces the notion of `reserve_index` and `reserve_index_exact` for collections with maximum-index-based capacity semantics.\n\nDeprecates free function constructors in favour of functions on Bitv itself.\n\nChanges `Bitv::pop` to return an Option rather than panicking.\n\nDeprecates and renames several methods in favour of conventions.\n\nMarks several blessed methods as unstable.\n\nThis commit also substantially refactors Bitv and BitvSet's implementations. The new implementation is simpler, cleaner, better documented, and more robust against overflows. It also reduces coupling between Bitv and BitvSet. Tests have been seperated into seperate submodules.\n\nFixes #16958\n\n[breaking-change]"
+  },
+  {
+    "hash": "9c5101542d2a4983ade627bc593e16c0bb5f23ba",
+    "author": "Alexis Beingessner",
+    "date": 1419084602,
+    "message": "Conventions and cleanup for Bitv and BitvSet\n\nPart of #18424\n\nThis commit changes the semantics of `reserve` and `capacity` for Bitv and BitvSet to match conventions. It also introduces the notion of `reserve_index` and `reserve_index_exact` for collections with maximum-index-based capacity semantics.\n\nDeprecates free function constructors in favour of functions on Bitv itself.\n\nChanges `Bitv::pop` to return an Option rather than panicking.\n\nDeprecates and renames several methods in favour of conventions.\n\nMarks several blessed methods as unstable.\n\nThis commit also substantially refactors Bitv and BitvSet's implementations. The new implementation is simpler, cleaner, better documented, and more robust against overflows. It also reduces coupling between Bitv and BitvSet. Tests have been seperated into seperate submodules.\n\nFixes #16958\n\n[breaking-change]"
+  },
+  {
+    "hash": "cf350ea5eb562fcfb67775ad4d847e441a8006a4",
+    "author": "bluss",
+    "date": 1419022490,
+    "message": "hashset: Clean up and rename the HashSet iterators\n\nThis removes the type SetAlgebraItems and replaces it with the\nstructs Intersection and Difference.\n\nRename the existing HashSet iterators according to RFC #344:\n\n* SetItems -> Iter\n* SetMoveItems -> IntoIter\n* Remaining set combination iterators renamed to Union and SymmetricDifference\n\n[breaking-change]"
+  },
+  {
+    "hash": "25f8051f2ebdc9444e0f75e91dc0cbb45d194181",
+    "author": "Alex Crichton",
+    "date": 1419182801,
+    "message": "rollup merge of #19842: frewsxcv/rm-reexports\n\nRemove most of the public reexports mentioned in #19253\n\nThese are all leftovers from the enum namespacing transition\n\nIn particular:\n\n* src/libstd/num/strconv.rs\n * ExponentFormat\n * SignificantDigits\n * SignFormat\n* src/libstd/path/windows.rs\n * PathPrefix\n* src/libstd/sys/windows/timer.rs\n * Req\n* src/libcollections/str.rs\n * MaybeOwned\n* src/libstd/collections/hash/map.rs\n * Entry\n* src/libstd/collections/hash/table.rs\n * BucketState\n* src/libstd/dynamic_lib.rs\n * Rtld\n* src/libstd/os.rs\n * MemoryMapKind\n * MapOption\n * MapError\n* src/libstd/sys/common/net.rs\n * SocketStatus\n * InAddr\n* src/libstd/sys/unix/timer.rs\n * Req\n\n[breaking-change]"
+  },
+  {
+    "hash": "98af642f5c8f60ae141a5d3ff92e8cc4e4317342",
+    "author": "Corey Farwell",
+    "date": 1419182801,
+    "message": "Remove a ton of public reexports\n\nRemove most of the public reexports mentioned in #19253\n\nThese are all leftovers from the enum namespacing transition\n\nIn particular:\n\n* src/libstd/num/strconv.rs\n * ExponentFormat\n * SignificantDigits\n * SignFormat\n* src/libstd/path/windows.rs\n * PathPrefix\n* src/libstd/sys/windows/timer.rs\n * Req\n* src/libcollections/str.rs\n * MaybeOwned\n* src/libstd/collections/hash/map.rs\n * Entry\n* src/libstd/collections/hash/table.rs\n * BucketState\n* src/libstd/dynamic_lib.rs\n * Rtld\n* src/libstd/io/net/ip.rs\n * IpAddr\n* src/libstd/os.rs\n * MemoryMapKind\n * MapOption\n * MapError\n* src/libstd/sys/common/net.rs\n * SocketStatus\n * InAddr\n* src/libstd/sys/unix/timer.rs\n * Req\n\n[breaking-change]"
+  },
+  {
+    "hash": "0efafac398ff7f28c5f0fe756c15b9008b3e0534",
+    "author": "bors",
+    "date": 1418977732,
+    "message": "auto merge of #19654 : aturon/rust/merge-rt, r=alexcrichton\n\nThis PR substantially narrows the notion of a \"runtime\" in Rust, and allows calling into Rust code directly without any setup or teardown. \r\n\r\nAfter this PR, the basic \"runtime support\" in Rust will consist of:\r\n\r\n* Unwinding and backtrace support\r\n* Stack guards\r\n\r\nOther support, such as helper threads for timers or the notion of a \"current thread\" are initialized automatically upon first use.\r\n\r\nWhen using Rust in an embedded context, it should now be possible to call a Rust function directly as a C function with absolutely no setup, though in that case panics will cause the process to abort. In this regard, the C/Rust interface will look much like the C/C++ interface.\r\n\r\nIn more detail, this PR:\r\n\r\n* Merges `librustrt` back into `std::rt`, undoing the facade. While doing so, it removes a substantial amount of redundant functionality (such as mutexes defined in the `rt` module). Code using `librustrt` can now call into `std::rt` to e.g. start executing Rust code with unwinding support.\r\n\r\n* Allows all runtime data to be initialized lazily, including the \"current thread\", the \"at_exit\" infrastructure, and the \"args\" storage.\r\n\r\n* Deprecates and largely removes `std::task` along with the widespread requirement that there be a \"current task\" for many APIs in `std`. The entire task infrastructure is replaced with `std::thread`, which provides a more standard API for manipulating and creating native OS threads. In particular, it's possible to join on a created thread, and to get a handle to the currently-running thread. In addition, threads are equipped with some basic blocking support in the form of `park`/`unpark` operations (following a tradition in some OSes as well as the JVM). See the `std::thread` documentation for more details.\r\n\r\n* Channels are refactored to use a new internal blocking infrastructure that itself sits on top of `park`/`unpark`.\r\n\r\nOne important change here is that a Rust program ends when its main thread does, following most threading models. On the other hand, threads will often be created with an RAII-style join handle that will re-institute blocking semantics naturally (and with finer control).\r\n\r\nThis is very much a:\r\n\r\n[breaking-change]\r\n\r\nCloses #18000\r\nr? @alexcrichton"
+  },
+  {
+    "hash": "903c5a8f69714382ec9fc22745f902c3e219cb68",
     "author": "Aaron Turon",
-    "date": 1399328676,
-    "message": "Change std::io::FilePermission to a typesafe representation\n\nThis patch changes `std::io::FilePermissions` from an exposed `u32`\nrepresentation to a typesafe representation (that only allows valid\nflag combinations) using the `std::bitflags`, thus ensuring a greater\ndegree of safety on the Rust side.\n\nDespite the change to the type, most code should continue to work\nas-is, sincde the new type provides bit operations in the style of C\nflags. To get at the underlying integer representation, use the `bits`\nmethod; to (unsafely) convert to `FilePermissions`, use\n`FilePermissions::from_bits`.\n\nCloses #6085.\n\n[breaking-change]"
+    "date": 1418974553,
+    "message": "Disable at_exit handlers\n\nThe [final step](https://github.com/rust-lang/rust/pull/19654) of\nruntime removal changes the threading/process model so that the process\nshuts down when the main thread exits. But several shared resources,\nlike the helper thread for timeouts, are shut down when the main thread\nexits (but before the process ends), and they are not prepared to be\nused after shut down, but other threads may try to access them during\nthe shutdown sequence of the main thread.\n\nAs an interim solution, the `at_exit` cleanup routine is simply skipped.\n\nUltimately, these resources should be made to safely handle asynchronous\nshutdown, usually by panicking if called from a detached thread when the\nmain thread is ending.\n\nSee issue for details https://github.com/rust-lang/rust/issues/20012\n\nThis is a [breaking-change] for anyone relying on `at_exit`."
   },
   {
-    "hash": "c217a844793034c181bd4457b9797b97a2c66f58",
-    "author": "bors",
-    "date": 1399499799,
-    "message": "auto merge of #14005 : alexcrichton/rust/extern-unsafe, r=pcwalton\n\nPreviously, the parser would not allow you to simultaneously implement a\r\nfunction with a different abi as well as being unsafe at the same time. This\r\nextends the parser to allow functions of the form:\r\n\r\n    unsafe extern fn foo() {\r\n        // ...\r\n    }\r\n\r\nThe closure type grammar was also changed to reflect this reversal, types\r\npreviously written as \"extern unsafe fn()\" must now be written as\r\n\"unsafe extern fn()\". The parser currently has a hack which allows the old\r\nstyle, but this will go away once a snapshot has landed.\r\n\r\nCloses #10025\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "08237cad8d2ce9287aedf99e57384407cc9dc42d",
-    "author": "Alex Crichton",
-    "date": 1399435439,
-    "message": "rustc: Enable writing \"unsafe extern fn() {}\"\n\nPreviously, the parser would not allow you to simultaneously implement a\nfunction with a different abi as well as being unsafe at the same time. This\nextends the parser to allow functions of the form:\n\n    unsafe extern fn foo() {\n        // ...\n    }\n\nThe closure type grammar was also changed to reflect this reversal, types\npreviously written as \"extern unsafe fn()\" must now be written as\n\"unsafe extern fn()\". The parser currently has a hack which allows the old\nstyle, but this will go away once a snapshot has landed.\n\nCloses #10025\n\n[breaking-change]"
-  },
-  {
-    "hash": "87115fd001440652291c509a77bda74fa511dab0",
-    "author": "bors",
-    "date": 1399486005,
-    "message": "auto merge of #13901 : alexcrichton/rust/facade, r=brson\n\nThis is the second step in implementing #13851. This PR cannot currently land until a snapshot exists with #13892, but I imagine that this review will take longer.\r\n\r\nThis PR refactors a large amount of functionality outside of the standard library into a new library, libcore. This new library has 0 dependencies (in theory). In practice, this library currently depends on these symbols being available:\r\n\r\n* `rust_begin_unwind` and `rust_fail_bounds_check` - These are the two entry points of failure in libcore. The symbols are provided by libstd currently. In the future (see the bullets on #13851) this will be officially supported with nice error mesages. Additionally, there will only be one failure entry point once `std::fmt` migrates to libcore.\r\n* `memcpy` - This is often generated by LLVM. This is also quite trivial to implement for any platform, so I'm not too worried about this.\r\n* `memcmp` - This is required for comparing strings. This function is quite common *everywhere*, so I don't feel to bad about relying on a consumer of libcore to define it.\r\n* `malloc` and `free` - This is quite unfortunate, and is a temporary stopgap until we deal with the `~` situation. More details can be found in the module `core::should_not_exist`\r\n* `fmod` and `fmodf` - These exist because the `Rem` trait is defined in libcore, so the `Rem` implementation for floats must also be defined in libcore. I imagine that any platform using floating-point modulus will have these symbols anyway, and otherwise they will be optimized out.\r\n* `fdim` and `fdimf` - Like `fmod`, these are from the `Signed` trait being defined in libcore. I don't expect this to be much of a problem\r\n\r\nThese dependencies all \"Just Work\" for now because libcore only exists as an rlib, not as a dylib.\r\n\r\nThe commits themselves are organized to show that the overall diff of this extraction is not all that large. Most modules were able to be moved with very few modifications. The primary module left out of this iteration is `std::fmt`. I plan on migrating the `fmt` module to libcore, but I chose to not do so at this time because it had implications on the `Writer` trait that I wanted to deal with in isolation. There are a few breaking changes in these commits, but they are fairly minor, and are all labeled with `[breaking-change]`.\r\n\r\nThe nastiest parts of this movement come up with `~[T]` and `~str` being language-defined types today. I believe that much of this nastiness will get better over time as we migrate towards `Vec<T>` and `Str` (or whatever the types will be named). There will likely always be some extension traits, but the situation won't be as bad as it is today.\r\n\r\nKnown deficiencies:\r\n\r\n* rustdoc will get worse in terms of readability. This is the next issue I will tackle as part of #13851. If others think that the rustdoc change should happen first, I can also table this to fix rustdoc first.\r\n* The compiler reveals that all these types are reexports via error messages like `core::option::Option`. This is filed as #13065, and I believe that issue would have a higher priority now. I do not currently plan on fixing that as part of #13851. If others believe that this issue should be fixed, I can also place it on the roadmap for #13851.\r\n\r\nI recommend viewing these changes on a commit-by-commit basis. The overall change is likely too overwhelming to take in."
-  },
-  {
-    "hash": "f12b51705b064bbbeb86ad65663de476d07ad51f",
-    "author": "Alex Crichton",
-    "date": 1399475774,
-    "message": "core: Remove generics from Option::expect\n\nThe prospects of a generic failure function such as this existing in libcore are\nbleak, due to monomorphization not working across the crate boundary, and\nallocation into a ~Any is not allowed in libcore.\n\nThe argument to expect() is now &str instead of <M: Send + Any>\n\n[breaking-change]"
-  },
-  {
-    "hash": "9bae6ec828fdc7f87838ee008cccef90e31b9f84",
-    "author": "Alex Crichton",
-    "date": 1399475774,
-    "message": "core: Inherit possible string functionality\n\nThis moves as much allocation as possible from teh std::str module into\ncore::str. This includes essentially all non-allocating functionality, mostly\niterators and slicing and such.\n\nThis primarily splits the Str trait into only having the as_slice() method,\nadding a new StrAllocating trait to std::str which contains the relevant new\nallocation methods. This is a breaking change if any of the methods of \"trait\nStr\" were overriden. The old functionality can be restored by implementing both\nthe Str and StrAllocating traits.\n\n[breaking-change]"
-  },
-  {
-    "hash": "c5229e5d2ea6168ec80a7feeea1a513b2b3176c0",
-    "author": "Alex Crichton",
-    "date": 1399475758,
-    "message": "core: Inhert ~/@/& cmp traits, remove old modules\n\nThis commit removes the std::{managed, reference} modules. The modules serve\nessentially no purpose, and the only free function removed was `managed::ptr_eq`\nwhich can be achieved by comparing references.\n\n[breaking-change]"
-  },
-  {
-    "hash": "b9ff86e27f53af10de0302033b659061d659b69b",
-    "author": "bors",
-    "date": 1399537599,
-    "message": "auto merge of #13835 : alexcrichton/rust/localdata, r=brson\n\nThis commit brings the local_data api up to modern rust standards with a few key\r\nimprovements:\r\n\r\n* All functionality is now exposed as a method on the keys themselves. Instead\r\n  of importing std::local_data, you now use \"key.set()\" and \"key.get()\".\r\n\r\n* All closures have been removed in favor of RAII functionality. This means that\r\n  get() and get_mut() no long require closures, but rather return\r\n  Option<SmartPointer> where the smart pointer takes care of relinquishing the\r\n  borrow and also implements the necessary Deref traits\r\n\r\n* The modify() function was removed to cut the local_data interface down to its\r\n  bare essentials (similarly to how RefCell removed set/get).\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "ab92ea526d455b402efbccc7160c8aec0237c88f",
-    "author": "Alex Crichton",
-    "date": 1399531419,
-    "message": "std: Modernize the local_data api\n\nThis commit brings the local_data api up to modern rust standards with a few key\nimprovements:\n\n* The `pop` and `set` methods have been combined into one method, `replace`\n\n* The `get_mut` method has been removed. All interior mutability should be done\n  through `RefCell`.\n\n* All functionality is now exposed as a method on the keys themselves. Instead\n  of importing std::local_data, you now use \"key.replace()\" and \"key.get()\".\n\n* All closures have been removed in favor of RAII functionality. This means that\n  get() and get_mut() no long require closures, but rather return\n  Option<SmartPointer> where the smart pointer takes care of relinquishing the\n  borrow and also implements the necessary Deref traits\n\n* The modify() function was removed to cut the local_data interface down to its\n  bare essentials (similarly to how RefCell removed set/get).\n\n[breaking-change]"
-  },
-  {
-    "hash": "a990920c6fff9b762c3d0968ff0a5fdcce6d2b39",
-    "author": "bors",
-    "date": 1399608102,
-    "message": "auto merge of #13963 : kballard/rust/remove_owned_vec_from_iterator, r=pcwalton\n\nWith `~[T]` no longer growable, the `FromIterator` impl for `~[T]` doesn't make\r\nmuch sense. Not only that, but nearly everywhere it is used is to convert from\r\na `Vec<T>` into a `~[T]`, for the sake of maintaining existing APIs. This turns\r\nout to be a performance loss, as it means every API that returns `~[T]`, even a\r\nsupposedly non-copying one, is in fact doing extra allocations and memcpy's.\r\nEven `&[T].to_owned()` is going through `Vec<T>` first.\r\n\r\nRemove the `FromIterator` impl for `~[T]`, and adjust all the APIs that relied\r\non it to start using `Vec<T>` instead. This includes rewriting\r\n`&[T].to_owned()` to be more efficient, among other performance wins.\r\n\r\nAlso add a new mechanism to go from `Vec<T>` -> `~[T]`, just in case anyone\r\ntruly needs that, using the new trait `FromVec`.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "bf1e065371f8e50f84318b45fb21a949faa9449f",
-    "author": "Kevin Ballard",
-    "date": 1399575981,
-    "message": "Remove FromIterator impl for ~[T]\n\nAs part of the shift from ~[T] to Vec<T>, recently ~[T] was made\nnon-growable. However, the FromIterator implementation for ~[T] was left\nintact (albeit implemented inefficiently), which basically provided a\nloophole to grow a ~[T] despite its non-growable nature. This is a\nproblem, both for performance reasons and because it encourages APIs to\ncontinue returning ~[T] when they should return Vec<T>. Removing\nFromIterator forces these APIs to adopt the correct type.\n\nFurthermore, during today's weekly meeting it was decided that we should\nremove all instances of ~[T] from the standard libraries in favor of\nVec<T>. Removing the FromIterator impl makes sense to do as a result.\n\nThis commit only includes the removal of the FromIterator impl. The\nsubsequent commits involve handling all of the breakage that results,\nincluding changing APIs to use Vec<T> instead of ~[T]. The precise API\nchanges are documented in the subsequent commit messages, but each\ncommit is not individually marked as a breaking change.\n\nFinally, a new trait FromVec is introduced that provides a mechanism to\nconvert Vec<T> back into ~[T] if truly necessary. It is a bit awkward to\nuse by design, and is anticipated that it will be more useful in a\npost-DST world to convert to an arbitrary Foo<[T]> smart pointer.\n\n[breaking-change]"
-  },
-  {
-    "hash": "d8781b36fc0e4518ebc732a874f57cf9bfdcaed3",
-    "author": "bors",
-    "date": 1399577199,
-    "message": "auto merge of #13985 : alexcrichton/rust/libfmt, r=brson\n\nThis code does not belong in libstd, and rather belongs in a dedicated crate. In\r\nthe future, the syntax::ext::format module should move to the fmt_macros crate\r\n(hence the name of the crate), but for now the fmt_macros crate will only\r\ncontain the format string parser.\r\n\r\nThe entire fmt_macros crate is marked #[experimental] because it is not meant\r\nfor general consumption, only the format!() interface is officially supported,\r\nnot the internals.\r\n\r\nThis is a breaking change for anyone using the internals of std::fmt::parse.\r\nSome of the flags have moved to std::fmt::rt, while the actual parsing support\r\nhas all moved to the fmt_macros library.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "80487ddcadda819e709beb9b996b12d322aa11a6",
-    "author": "Alex Crichton",
-    "date": 1399566959,
-    "message": "std: Extract format string parsing out of libstd\n\nThis code does not belong in libstd, and rather belongs in a dedicated crate. In\nthe future, the syntax::ext::format module should move to the fmt_macros crate\n(hence the name of the crate), but for now the fmt_macros crate will only\ncontain the format string parser.\n\nThe entire fmt_macros crate is marked #[experimental] because it is not meant\nfor general consumption, only the format!() interface is officially supported,\nnot the internals.\n\nThis is a breaking change for anyone using the internals of std::fmt::parse.\nSome of the flags have moved to std::fmt::rt, while the actual parsing support\nhas all moved to the fmt_macros library.\n\n[breaking-change]"
-  },
-  {
-    "hash": "f94d671bfae5d8e9a4a4add310b1c40af0ab62a6",
-    "author": "Alex Crichton",
-    "date": 1399795982,
-    "message": "core: Remove the cast module\n\nThis commit revisits the `cast` module in libcore and libstd, and scrutinizes\nall functions inside of it. The result was to remove the `cast` module entirely,\nfolding all functionality into the `mem` module. Specifically, this is the fate\nof each function in the `cast` module.\n\n* transmute - This function was moved to `mem`, but it is now marked as\n              #[unstable]. This is due to planned changes to the `transmute`\n              function and how it can be invoked (see the #[unstable] comment).\n              For more information, see RFC 5 and #12898\n\n* transmute_copy - This function was moved to `mem`, with clarification that is\n                   is not an error to invoke it with T/U that are different\n                   sizes, but rather that it is strongly discouraged. This\n                   function is now #[stable]\n\n* forget - This function was moved to `mem` and marked #[stable]\n\n* bump_box_refcount - This function was removed due to the deprecation of\n                      managed boxes as well as its questionable utility.\n\n* transmute_mut - This function was previously deprecated, and removed as part\n                  of this commit.\n\n* transmute_mut_unsafe - This function doesn't serve much of a purpose when it\n                         can be achieved with an `as` in safe code, so it was\n                         removed.\n\n* transmute_lifetime - This function was removed because it is likely a strong\n                       indication that code is incorrect in the first place.\n\n* transmute_mut_lifetime - This function was removed for the same reasons as\n                           `transmute_lifetime`\n\n* copy_lifetime - This function was moved to `mem`, but it is marked\n                  `#[unstable]` now due to the likelihood of being removed in\n                  the future if it is found to not be very useful.\n\n* copy_mut_lifetime - This function was also moved to `mem`, but had the same\n                      treatment as `copy_lifetime`.\n\n* copy_lifetime_vec - This function was removed because it is not used today,\n                      and its existence is not necessary with DST\n                      (copy_lifetime will suffice).\n\nIn summary, the cast module was stripped down to these functions, and then the\nfunctions were moved to the `mem` module.\n\n    transmute - #[unstable]\n    transmute_copy - #[stable]\n    forget - #[stable]\n    copy_lifetime - #[unstable]\n    copy_mut_lifetime - #[unstable]\n\n[breaking-change]"
-  },
-  {
-    "hash": "7cbec5566ce23701691a065866799f7057262acc",
-    "author": "Alex Crichton",
-    "date": 1400282217,
-    "message": "rustc: Stop leaking enum variants into children\n\nThis plugs a leak where resolve was treating enums defined in parent modules as\nin-scope for all children modules when resolving a pattern identifier. This\neliminates the code path in resolve entirely.\n\nIf this breaks any existing code, then it indicates that the variants need to be\nexplicitly imported into the module.\n\nCloses #14221\n\n[breaking-change]"
-  },
-  {
-    "hash": "463436ffeb6ba833d00a69fd65c5b22acba9a9d7",
-    "author": "bors",
-    "date": 1399979210,
-    "message": "auto merge of #14167 : cmr/rust/cmplx, r=alexcrichton\n\n[breaking-change]"
-  },
-  {
-    "hash": "2886938169060f7a4e4ef50994bd4908bdcfcb20",
-    "author": "Corey Richardson",
-    "date": 1399955260,
-    "message": "num: rename Cmplx to Complex\n\nCmplx is a uselessly short name. Change it to be more clear.\n\n[breaking-change]"
-  },
-  {
-    "hash": "a57889a58012a53146de7ba54e234a025a9b30c4",
-    "author": "Tom Lee",
-    "date": 1399956108,
-    "message": "Easier interface for TCP ::connect and ::bind.\n\nPrior to this commit, TcpStream::connect and TcpListener::bind took a\nsingle SocketAddr argument. This worked well enough, but the API felt a\nlittle too \"low level\" for most simple use cases.\n\nA great example is connecting to rust-lang.org on port 80. Rust users would\nneed to:\n\n  1. resolve the IP address of rust-lang.org using\n     io::net::addrinfo::get_host_addresses.\n\n  2. check for errors\n\n  3. if all went well, use the returned IP address and the port number\n     to construct a SocketAddr\n\n  4. pass this SocketAddr to TcpStream::connect.\n\nI'm modifying the type signature of TcpStream::connect and\nTcpListener::bind so that the API is a little easier to use.\n\nTcpStream::connect now accepts two arguments: a string describing the\nhost/IP of the host we wish to connect to, and a u16 representing the\nremote port number.\n\nSimilarly, TcpListener::bind has been modified to take two arguments:\na string describing the local interface address (e.g. \"0.0.0.0\" or\n\"127.0.0.1\") and a u16 port number.\n\nHere's how to port your Rust code to use the new TcpStream::connect API:\n\n  // old ::connect API\n  let addr = SocketAddr{ip: Ipv4Addr{127, 0, 0, 1}, port: 8080};\n  let stream = TcpStream::connect(addr).unwrap()\n\n  // new ::connect API (minimal change)\n  let addr = SocketAddr{ip: Ipv4Addr{127, 0, 0, 1}, port: 8080};\n  let stream = TcpStream::connect(addr.ip.to_str(), addr.port()).unwrap()\n\n  // new ::connect API (more compact)\n  let stream = TcpStream::connect(\"127.0.0.1\", 8080).unwrap()\n\n  // new ::connect API (hostname)\n  let stream = TcpStream::connect(\"rust-lang.org\", 80)\n\nSimilarly, for TcpListener::bind:\n\n  // old ::bind API\n  let addr = SocketAddr{ip: Ipv4Addr{0, 0, 0, 0}, port: 8080};\n  let mut acceptor = TcpListener::bind(addr).listen();\n\n  // new ::bind API (minimal change)\n  let addr = SocketAddr{ip: Ipv4Addr{0, 0, 0, 0}, port: 8080};\n  let mut acceptor = TcpListener::bind(addr.ip.to_str(), addr.port()).listen()\n\n  // new ::bind API (more compact)\n  let mut acceptor = TcpListener::bind(\"0.0.0.0\", 8080).listen()\n\n[breaking-change]"
-  },
-  {
-    "hash": "8c55fcd1f2ef3674d4bda4e38e2e7cacdd7cd5b8",
-    "author": "Yuri Kunde Schlesner",
-    "date": 1399949549,
-    "message": "Add `stat` method to `std::io::fs::File` to stat without a Path.\n\nThe `FileStat` struct contained a `path` field, which was filled by the\n`stat` and `lstat` function. Since this field isn't in fact returned by\nthe operating system (it was copied from the paths passed to the\nfunctions) it was removed, as in the `fstat` case we aren't working with\na `Path`, but directly with a fd.\n\nIf your code used the `path` field of `FileStat` you will now have to\nmanually store the path passed to `stat` along with the returned struct.\n\n[breaking-change]"
-  },
-  {
-    "hash": "826aeea007a99192c992688fb52ebc6530f715c7",
-    "author": "Kevin Butler",
-    "date": 1399949549,
-    "message": "libcore: remove fails from slice.rs and remove duplicated length checking\n\ncore::slice::raw::{shift_ptr,pop_ptr} now returns Option<*T> rather than\n*T. They no longer fail on empty slices.\n\n[breaking-change]"
-  },
-  {
-    "hash": "e4414739a5897ff2a4b35de5f7e1436b6e3f3f10",
-    "author": "bors",
-    "date": 1400036488,
-    "message": "auto merge of #13127 : kballard/rust/read_at_least, r=alexcrichton\n\nReader.read_at_least() ensures that at least a given number of bytes\r\nhave been read. The most common use-case for this is ensuring at least 1\r\nbyte has been read. If the reader returns 0 enough times in a row, a new\r\nerror kind NoProgress will be returned instead of looping infinitely.\r\n\r\nThis change is necessary in order to properly support Readers that\r\nrepeatedly return 0, either because they're broken, or because they're\r\nattempting to do a non-blocking read on some resource that never becomes\r\navailable.\r\n\r\nAlso add .push() and .push_at_least() methods. push() is like read() but\r\nthe results are appended to the passed Vec.\r\n\r\nRemove Reader.fill() and Reader.push_exact() as they end up being thin\r\nwrappers around read_at_least() and push_at_least().\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "972f2e585528515eaab4bee7270acda7f7375398",
-    "author": "Kevin Ballard",
-    "date": 1400031920,
-    "message": "io: Add .read_at_least() to Reader\n\nReader.read_at_least() ensures that at least a given number of bytes\nhave been read. The most common use-case for this is ensuring at least 1\nbyte has been read. If the reader returns 0 enough times in a row, a new\nerror kind NoProgress will be returned instead of looping infinitely.\n\nThis change is necessary in order to properly support Readers that\nrepeatedly return 0, either because they're broken, or because they're\nattempting to do a non-blocking read on some resource that never becomes\navailable.\n\nAlso add .push() and .push_at_least() methods. push() is like read() but\nthe results are appended to the passed Vec.\n\nRemove Reader.fill() and Reader.push_exact() as they end up being thin\nwrappers around read_at_least() and push_at_least().\n\n[breaking-change]"
-  },
-  {
-    "hash": "f09592a5d154177f0c9d739c9fe60742ec4cd951",
-    "author": "Alex Crichton",
-    "date": 1400027262,
-    "message": "io: Implement process wait timeouts\n\nThis implements set_timeout() for std::io::Process which will affect wait()\noperations on the process. This follows the same pattern as the rest of the\ntimeouts emerging in std::io::net.\n\nThe implementation was super easy for everything except libnative on unix\n(backwards from usual!), which required a good bit of signal handling. There's a\ndoc comment explaining the strategy in libnative. Internally, this also required\nrefactoring the \"helper thread\" implementation used by libnative to allow for an\nextra helper thread (not just the timer).\n\nThis is a breaking change in terms of the io::Process API. It is now possible\nfor wait() to fail, and subsequently wait_with_output(). These two functions now\nreturn IoResult<T> due to the fact that they can time out.\n\nAdditionally, the wait_with_output() function has moved from taking `&mut self`\nto taking `self`. If a timeout occurs while waiting with output, the semantics\nare undesirable in almost all cases if attempting to re-wait on the process.\nEquivalent functionality can still be achieved by dealing with the output\nhandles manually.\n\n[breaking-change]\n\ncc #13523"
-  },
-  {
-    "hash": "df802a2754a5d536bbec264136a08d166d3bb81a",
-    "author": "Florian Zeitz",
-    "date": 1400027047,
-    "message": "std: Rename str::Normalizations to str::Decompositions\n\nThe Normalizations iterator has been renamed to Decompositions.\nIt does not currently include all forms of Unicode normalization,\nbut only encompasses decompositions.\nIf implemented recomposition would likely be a separate iterator\nwhich works on the result of this one.\n\n[breaking-change]"
-  },
-  {
-    "hash": "cbc31df4fc084b47a5c6456df2efb6e28b82a7da",
-    "author": "Alex Crichton",
-    "date": 1400027047,
-    "message": "std: Move the owned module from core to std\n\nThe compiler was updated to recognize that implementations for ty_uniq(..) are\nallowed if the Box lang item is located in the current crate. This enforces the\nidea that libcore cannot allocated, and moves all related trait implementations\nfrom libcore to libstd.\n\nThis is a breaking change in that the AnyOwnExt trait has moved from the any\nmodule to the owned module. Any previous users of std::any::AnyOwnExt should now\nuse std::owned::AnyOwnExt instead. This was done because the trait is intended\nfor Box traits and only Box traits.\n\n[breaking-change]"
-  },
-  {
-    "hash": "03053580cafaded02e1ab450b6d5c5ff36ab3fa7",
-    "author": "bors",
-    "date": 1400060183,
-    "message": "auto merge of #14179 : luqmana/rust/acp, r=alexcrichton\n\nIt's a bit odd to single out just android when we don't do this for any other cross compiling targets. Android builds will still work since we just pass the full path for gcc and ar with `-C linker` and `-C ar`.\r\n\r\nI did add the flag to compiletest though so it can find gdb. Though, i'm pretty sure we don't run debuginfo tests on android anyways right now.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "d0d800f125ad95ec392ae01d38e66b9c82527f89",
-    "author": "Luqman Aden",
-    "date": 1400048174,
-    "message": "Get rid of the android-cross-path flag to rustc.\n\nThere's no need to include this specific flag just for android. We can\nalready deal with what it tries to solve by using -C linker=/path/to/cc\nand -C ar=/path/to/ar. The Makefiles for rustc already set this up when\nwe're crosscompiling.\n\nI did add the flag to compiletest though so it can find gdb. Though, I'm\npretty sure we don't run debuginfo tests on android anyways right now.\n\n[breaking-change]"
-  },
-  {
-    "hash": "046062d3bf0597fb2f40f7cacbbe4f438506247d",
+    "hash": "a27fbac86849e07a0a6c746869d8f78319bd3a16",
     "author": "Aaron Turon",
-    "date": 1400133151,
-    "message": "Process::new etc should support non-utf8 commands/args\n\nThe existing APIs for spawning processes took strings for the command\nand arguments, but the underlying system may not impose utf8 encoding,\nso this is overly limiting.\n\nThe assumption we actually want to make is just that the command and\narguments are viewable as [u8] slices with no interior NULLs, i.e., as\nCStrings. The ToCStr trait is a handy bound for types that meet this\nrequirement (such as &str and Path).\n\nHowever, since the commands and arguments are often a mixture of\nstrings and paths, it would be inconvenient to take a slice with a\nsingle T: ToCStr bound. So this patch revamps the process creation API\nto instead use a builder-style interface, called `Command`, allowing\narguments to be added one at a time with differing ToCStr\nimplementations for each.\n\nThe initial cut of the builder API has some drawbacks that can be\naddressed once issue #13851 (libstd as a facade) is closed. These are\ndetailed as FIXMEs.\n\nCloses #11650.\n\n[breaking-change]"
+    "date": 1418974312,
+    "message": "Revise std::thread API to join by default\n\nThis commit is part of a series that introduces a `std::thread` API to\nreplace `std::task`.\n\nIn the new API, `spawn` returns a `JoinGuard`, which by default will\njoin the spawned thread when dropped. It can also be used to join\nexplicitly at any time, returning the thread's result. Alternatively,\nthe spawned thread can be explicitly detached (so no join takes place).\n\nAs part of this change, Rust processes now terminate when the main\nthread exits, even if other detached threads are still running, moving\nRust closer to standard threading models. This new behavior may break code\nthat was relying on the previously implicit join-all.\n\nIn addition to the above, the new thread API also offers some built-in\nsupport for building blocking abstractions in user space; see the module\ndoc for details.\n\nCloses #18000\n\n[breaking-change]"
   },
   {
-    "hash": "cf0619383d2ce0f7bd822f82cf487c7fa33d0b76",
-    "author": "Alex Crichton",
-    "date": 1400221326,
-    "message": "core: Inherit the std::fmt module\n\nThis commit moves all possible functionality from the standard library's string\nformatting utilities into the core library. This is a breaking change, due to a\nfew tweaks in the semantics of formatting:\n\n1. In order to break the dependency on the std::io module, a new trait,\n   FormatWriter was introduced in core::fmt. This is the trait which is used\n   (instead of Writer) to format data into a stream.\n2. The new FormatWriter trait has one method, write(), which takes some bytes\n   and can return an error, but the error contains very little information. The\n   intent for this trait is for an adaptor writer to be used around the standard\n   library's Writer trait.\n3. The fmt::write{,ln,_unsafe} methods no longer take &mut io::Writer, but\n   rather &mut FormatWriter. Since this trait is less common, all functions were\n   removed except fmt::write, and it is not intended to be invoked directly.\n\nThe main API-breaking change here is that the fmt::Formatter structure will no\nlonger expose its `buf` field. All previous code writing directly to `f.buf`\nusing writer methods or the `write!` macro will now instead use `f` directly.\n\nThe Formatter object itself implements the `Writer` trait itself for\nconvenience, although it does not implement the `FormatWriter` trait. The\nfallout of these changes will be in the following commits.\n\n[breaking-change]"
+    "hash": "9b03b72d7fb82f07d35e7dcda02754c6da90ae58",
+    "author": "Aaron Turon",
+    "date": 1418974295,
+    "message": "Remove rt::bookkeeping\n\nThis commit removes the runtime bookkeeping previously used to ensure\nthat all Rust tasks were joined before the runtime was shut down.\n\nThis functionality will be replaced by an RAII style `Thread` API, that\nwill also offer a detached mode.\n\nSince this changes the semantics of shutdown, it is a:\n\n[breaking-change]"
   },
   {
-    "hash": "ba0a984a862f4f4246a3be014b9b244525bedd20",
-    "author": "Alex Crichton",
-    "date": 1400221326,
-    "message": "core: Move intrinsic float functionality from std\n\nThe Float trait in libstd is quite a large trait which has dependencies on cmath\n(libm) and such, which libcore cannot satisfy. It also has many functions that\nlibcore can implement, however, as LLVM has intrinsics or they're just bit\ntwiddling.\n\nThis commit moves what it can of the Float trait from the standard library into\nlibcore to allow floats to be usable in the core library. The remaining\nfunctions are now resident in a FloatMath trait in the standard library (in the\nprelude now). Previous code which was generic over just the Float trait may now\nneed to be generic over the FloatMath trait.\n\n[breaking-change]"
-  },
-  {
-    "hash": "ba7844a7fff0061e5b4528c2ecd5adf765145b70",
-    "author": "Kevin Ballard",
-    "date": 1400114155,
-    "message": "Change StrBuf::from_utf8() to return Result\n\nThis allows the original vector to be recovered in the event that it is\nnot UTF-8.\n\n[breaking-change]"
-  },
-  {
-    "hash": "d0f3cb05df41b14b58553fab6a533e0e4c947b06",
-    "author": "Kevin Ballard",
-    "date": 1400114155,
-    "message": "Change str::from_utf8_owned() to return Result\n\nThis allows the original vector to be recovered in the event that it is\nnot valid UTF-8.\n\n[breaking-change]"
-  },
-  {
-    "hash": "e878721d70349e2055f0ef854085de92e9498fde",
-    "author": "Patrick Walton",
-    "date": 1400794922,
-    "message": "libcore: Remove all uses of `~str` from `libcore`.\n\n[breaking-change]"
-  },
-  {
-    "hash": "42be687fa1a1070195c25a8e607d1209a9f8c88b",
-    "author": "bors",
-    "date": 1400511091,
-    "message": "auto merge of #14279 : aochagavia/rust/pr2, r=huonw\n\nThe breaking changes are:\r\n\r\n* Changed `DList::insert_ordered` to use `TotalOrd`, not `Ord`\r\n* Changed `PriorityQueue` to use `TotalOrd`, not `Ord`\r\n* Deprecated `PriorityQueue::maybe_top()` (renamed to replace `PriorityQueue::top()`)\r\n* Deprecated `PriorityQueue::maybe_pop()` (renamed to replace `PriorityQueue::pop()`)\r\n* Deprecated `PriorityQueue::to_vec()` (renamed to `PriorityQueue::into_vec()`)\r\n* Deprecated `PriorityQueue::to_sorted_vec()` (renamed to `PriorityQueue::into_sorted_vec()`)\r\n* Changed `PriorityQueue::replace(...)` to return an `Option<T>` instead of failing when the queue is empty.\r\n\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "ed156772bd95b8d621d50102922e5f5ac886d4a1",
-    "author": "bors",
-    "date": 1400505093,
-    "message": "auto merge of #14251 : alexcrichton/rust/hierarchy, r=huonw\n\nThis is an implementation of RFC 16. A module can now only be loaded if the\r\nmodule declaring `mod name;` \"owns\" the current directory. A module is\r\nconsidered as owning its directory if it meets one of the following criteria:\r\n\r\n* It is the top-level crate file\r\n* It is a `mod.rs` file\r\n* It was loaded via `#[path]`\r\n* It was loaded via `include!`\r\n* The module was declared via an inline `mod foo { ... }` statement\r\n\r\nFor example, this directory structure is now invalid\r\n\r\n    // lib.rs\r\n    mod foo;\r\n\r\n    // foo.rs\r\n    mod bar;\r\n\r\n    // bar.rs;\r\n    fn bar() {}\r\n\r\nWith this change `foo.rs` must be renamed to `foo/mod.rs`, and `bar.rs` must be\r\nrenamed to `foo/bar.rs`. This makes it clear that `bar` is a submodule of `foo`,\r\nand can only be accessed through `foo`.\r\n\r\nRFC: 0016-module-file-system-hierarchy\r\nCloses #14180\r\n\r\n[breaking-change]"
+    "hash": "2b3477d373603527d23cc578f3737857b7b253d7",
+    "author": "Aaron Turon",
+    "date": 1418974294,
+    "message": "libs: merge librustrt into libstd\n\nThis commit merges the `rustrt` crate into `std`, undoing part of the\nfacade. This merger continues the paring down of the runtime system.\n\nCode relying on the public API of `rustrt` will break; some of this API\nis now available through `std::rt`, but is likely to change and/or be\nremoved very soon.\n\n[breaking-change]"
   }
 ]
