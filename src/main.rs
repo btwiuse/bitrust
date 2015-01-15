@@ -5,7 +5,7 @@ extern crate "rustc-serialize" as rustc_serialize;
 
 use std::io::File;
 use std::os;
-use git2::Repository;
+use git2::{Repository, Oid};
 use git2::Error as GitError;
 use rustc_serialize::json;
 
@@ -17,9 +17,12 @@ struct Commit {
     message: String
 }
 
-fn fetch_commits(repo: &Repository, query: &str, amount: usize) -> Result<Vec<Commit>, GitError> {
+fn fetch_commits(repo: &Repository, start: &Option<Oid>, query: &str, amount: usize) -> Result<Vec<Commit>, GitError> {
     let mut revs = try!(repo.revwalk());
-    try!(revs.push_head());
+    match *start {
+        Some(commit_id) => try!(revs.push(commit_id)),
+        _ => try!(revs.push_head()),
+    }
 
     let commits = revs
     .filter_map(|commit_id| { repo.find_commit(commit_id).ok() })
@@ -46,12 +49,15 @@ fn fetch_commits(repo: &Repository, query: &str, amount: usize) -> Result<Vec<Co
 }
 
 fn main() {
+    let args = os::args();
+    let start = if args.len() >= 2 { Some(Oid::from_str(&args[1][]).unwrap()) } else { None };
+
     let cwd = os::getcwd().unwrap();
     let repo = Repository::open(&cwd.join("rust")).unwrap();
 
     let mut output = File::create(&cwd.join("log.json")).unwrap();
 
-    let commits = fetch_commits(&repo, "[breaking-change]", 100).unwrap();
+    let commits = fetch_commits(&repo, &start, "[breaking-change]", 100).unwrap();
 
     match write!(&mut output, "{}", json::as_pretty_json(&commits)) {
         Ok(_) => println!("wrote commits to `log.json`."),
