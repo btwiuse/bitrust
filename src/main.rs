@@ -8,7 +8,6 @@ use std::os;
 use git2::Repository;
 use git2::Error as GitError;
 use rustc_serialize::json;
-use rustc_serialize::hex::ToHex;
 
 #[derive(RustcDecodable, RustcEncodable)]
 struct Commit {
@@ -32,15 +31,12 @@ fn fetch_commits(repo: &Repository, query: &str, amount: usize) -> Result<Vec<Co
     })
     .map(|commit| {
         Commit {
-            hash: commit.id().as_bytes().to_hex().to_string(),
+            hash: commit.id().to_string(),
             author: commit.author().name()
                 .or(commit.author().email())
-                .or(Some("Some dude"))
-                .unwrap().trim().to_string(),
+                .unwrap_or("Some dude").trim().to_string(),
             date: commit.time().seconds(),
-            message: commit.message()
-                .or(Some(""))
-                .unwrap().trim().to_string()
+            message: commit.message().unwrap_or("").trim().to_string()
         }
     })
     .take(amount)
