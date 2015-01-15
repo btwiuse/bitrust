@@ -24,6 +24,8 @@ fn fetch_commits(repo: &Repository, start: &Option<Oid>, query: &str, amount: us
         _ => try!(revs.push_head()),
     }
 
+    revs.set_sorting(git2::SORT_TOPOLOGICAL | git2::SORT_TIME);
+
     let commits = revs
     .filter_map(|commit_id| { repo.find_commit(commit_id).ok() })
     .filter_map(|commit| {
