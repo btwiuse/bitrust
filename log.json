@@ -1,5 +1,11 @@
 [
   {
+    "hash": "0419b4ab1225595b022d8ed4e425526b4d850995",
+    "author": "Alex Crichton",
+    "date": 1421359920,
+    "message": "rollup merge of #21167: FlaPer87/coherence-impls\n\nFixes #21080\n\nr? @nikomatsakis\n\n[breaking-change]"
+  },
+  {
     "hash": "3d0d9bb6fbdf6ead9396f0874cf38f3ef7c9be5c",
     "author": "bors",
     "date": 1421103380,
@@ -592,11 +598,5 @@
     "author": "Aaron Turon",
     "date": 1418974295,
     "message": "Remove rt::bookkeeping\n\nThis commit removes the runtime bookkeeping previously used to ensure\nthat all Rust tasks were joined before the runtime was shut down.\n\nThis functionality will be replaced by an RAII style `Thread` API, that\nwill also offer a detached mode.\n\nSince this changes the semantics of shutdown, it is a:\n\n[breaking-change]"
-  },
-  {
-    "hash": "2b3477d373603527d23cc578f3737857b7b253d7",
-    "author": "Aaron Turon",
-    "date": 1418974294,
-    "message": "libs: merge librustrt into libstd\n\nThis commit merges the `rustrt` crate into `std`, undoing part of the\nfacade. This merger continues the paring down of the runtime system.\n\nCode relying on the public API of `rustrt` will break; some of this API\nis now available through `std::rt`, but is likely to change and/or be\nremoved very soon.\n\n[breaking-change]"
   }
 ]
