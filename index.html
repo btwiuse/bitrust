@@ -4,6 +4,7 @@
     <meta charset="UTF-8"/>
     <title>Rust Breaking Changes</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap.min.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 </head>
 <body>
     <div class="container" ng-app="bitrust">
@@ -36,7 +37,10 @@
             <article class="panel panel-default" ng-repeat="commit in commits | filter:search | orderBy:'-date'">
                 <header class="panel-heading">
                     <h2 class="panel-title">
-                        <a href="https://github.com/rust-lang/rust/commit/{{commit.hash}}"  title="{{commit.hash}}">{{short_hash(commit.hash)}}:</a> {{get_subject(commit.message)}}
+                        <a href="https://github.com/rust-lang/rust/commit/{{commit.hash}}" title="{{commit.hash}}">
+                            <span class="text-primary">{{short_hash(commit.hash)}}:</span>
+                            {{get_subject(commit.message)}}
+                        </a>
                     </h2>
                 </header>
                 <div class="panel-body" ng-bind-html="get_message(commit.message) | markdown"> </div>
