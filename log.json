@@ -1,5 +1,17 @@
 [
   {
+    "hash": "cbeb77ec7a42b988703fa0b0c857f26d464fdc2f",
+    "author": "Alex Crichton",
+    "date": 1421426896,
+    "message": "rustc: Fix a leak in dependency= paths\n\nWith the addition of separate search paths to the compiler, it was intended that\napplications such as Cargo could require a `--extern` flag per `extern crate`\ndirective in the source. The system can currently be subverted, however, due to\nthe `existing_match()` logic in the crate loader.\n\nWhen loading crates we first attempt to match an `extern crate` directive\nagainst all previously loaded crates to avoid reading metadata twice. This \"hit\nthe cache if possible\" step was erroneously leaking crates across the search\npath boundaries, however. For example:\n\n    extern crate b;\n    extern crate a;\n\nIf `b` depends on `a`, then it will load crate `a` when the `extern crate b`\ndirective is being processed. When the compiler reaches `extern crate a` it will\nuse the previously loaded version no matter what. If the compiler was not\ninvoked with `-L crate=path/to/a`, it will still succeed.\n\nThis behavior is allowing `extern crate` declarations in Cargo without a\ncorresponding declaration in the manifest of a dependency, which is considered\na bug.\n\nThis commit fixes this problem by keeping track of the origin search path for a\ncrate. Crates loaded from the dependency search path are not candidates for\ncrates which are loaded from the crate search path.\n\nAs a result of this fix, this is a likely a breaking change for a number of\nCargo packages. If the compiler starts informing that a crate can no longer be\nfound, it likely means that the dependency was forgotten in your Cargo.toml.\n\n[breaking-change]"
+  },
+  {
+    "hash": "ee2bfae011e368e224d6d4f4c9fad13606ee99da",
+    "author": "bors",
+    "date": 1421413859,
+    "message": "auto merge of #20972 : FlaPer87/rust/oibit-send-and-friends, r=nikomatsakis\n\nThis PR adds rules for negative implementations. It follows pretty much what the [RFC](https://github.com/rust-lang/rfcs/blob/master/text/0019-opt-in-builtin-traits.md) says with 1 main difference:\r\n\r\nInstead of positive implementations override negative implementations, this have been implemented in a way that a negative implementation of `Trait` for `T` will overlap with a positive implementation, causing a coherence error.\r\n\r\n@nikomatsakis r?\r\n\r\ncc #13231\r\n\r\n[breaking-change]"
+  },
+  {
     "hash": "0419b4ab1225595b022d8ed4e425526b4d850995",
     "author": "Alex Crichton",
     "date": 1421359920,
@@ -586,17 +598,5 @@
     "author": "Aaron Turon",
     "date": 1418974553,
     "message": "Disable at_exit handlers\n\nThe [final step](https://github.com/rust-lang/rust/pull/19654) of\nruntime removal changes the threading/process model so that the process\nshuts down when the main thread exits. But several shared resources,\nlike the helper thread for timeouts, are shut down when the main thread\nexits (but before the process ends), and they are not prepared to be\nused after shut down, but other threads may try to access them during\nthe shutdown sequence of the main thread.\n\nAs an interim solution, the `at_exit` cleanup routine is simply skipped.\n\nUltimately, these resources should be made to safely handle asynchronous\nshutdown, usually by panicking if called from a detached thread when the\nmain thread is ending.\n\nSee issue for details https://github.com/rust-lang/rust/issues/20012\n\nThis is a [breaking-change] for anyone relying on `at_exit`."
-  },
-  {
-    "hash": "a27fbac86849e07a0a6c746869d8f78319bd3a16",
-    "author": "Aaron Turon",
-    "date": 1418974312,
-    "message": "Revise std::thread API to join by default\n\nThis commit is part of a series that introduces a `std::thread` API to\nreplace `std::task`.\n\nIn the new API, `spawn` returns a `JoinGuard`, which by default will\njoin the spawned thread when dropped. It can also be used to join\nexplicitly at any time, returning the thread's result. Alternatively,\nthe spawned thread can be explicitly detached (so no join takes place).\n\nAs part of this change, Rust processes now terminate when the main\nthread exits, even if other detached threads are still running, moving\nRust closer to standard threading models. This new behavior may break code\nthat was relying on the previously implicit join-all.\n\nIn addition to the above, the new thread API also offers some built-in\nsupport for building blocking abstractions in user space; see the module\ndoc for details.\n\nCloses #18000\n\n[breaking-change]"
-  },
-  {
-    "hash": "9b03b72d7fb82f07d35e7dcda02754c6da90ae58",
-    "author": "Aaron Turon",
-    "date": 1418974295,
-    "message": "Remove rt::bookkeeping\n\nThis commit removes the runtime bookkeeping previously used to ensure\nthat all Rust tasks were joined before the runtime was shut down.\n\nThis functionality will be replaced by an RAII style `Thread` API, that\nwill also offer a detached mode.\n\nSince this changes the semantics of shutdown, it is a:\n\n[breaking-change]"
   }
 ]
