@@ -1,5 +1,17 @@
 [
   {
+    "hash": "34fa70fba5425cbbb96bce783e9fd5c23dd9b471",
+    "author": "Alex Crichton",
+    "date": 1421509867,
+    "message": "std: Move the bitflags! macro to a gated crate\n\nIn accordance with [collections reform part 2][rfc] this macro has been moved to\nan external [bitflags crate][crate] which is [available though\ncrates.io][cratesio]. Inside the standard distribution the macro has been moved\nto a crate called `rustc_bitflags` for current users to continue using.\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0509-collections-reform-part-2.md\n[crate]: https://github.com/rust-lang/bitflags\n[cratesio]: http://crates.io/crates/bitflags\n\nThe major user of `bitflags!` in terms of a public-facing possibly-stable API\ntoday is the `FilePermissions` structure inside of `std::io`. This user,\nhowever, will likely no longer use `bitflags!` after I/O reform has landed. To\nprevent breaking APIs today, this structure remains as-is.\n\nCurrent users of the `bitflags!` macro should add this to their `Cargo.toml`:\n\n    bitflags = \"0.1\"\n\nand this to their crate root:\n\n    #[macro_use] extern crate bitflags;\n\nDue to the removal of a public macro, this is a:\n\n[breaking-change]"
+  },
+  {
+    "hash": "873ae555e9a42fd12b0a92134112ec000d749ab2",
+    "author": "Simonas Kazlauskas",
+    "date": 1421509789,
+    "message": "Revert stability for Bitv and BitvSet\n\nThe collections were promoted to stable by mistake and do not match RFC 509.\nThis reverts the stability back to unstable.\n\n[breaking-change] since previously stable API became unstable.\n\nFixes #21193"
+  },
+  {
     "hash": "cbeb77ec7a42b988703fa0b0c857f26d464fdc2f",
     "author": "Alex Crichton",
     "date": 1421426896,
@@ -586,17 +598,5 @@
     "author": "Corey Farwell",
     "date": 1419182801,
     "message": "Remove a ton of public reexports\n\nRemove most of the public reexports mentioned in #19253\n\nThese are all leftovers from the enum namespacing transition\n\nIn particular:\n\n* src/libstd/num/strconv.rs\n * ExponentFormat\n * SignificantDigits\n * SignFormat\n* src/libstd/path/windows.rs\n * PathPrefix\n* src/libstd/sys/windows/timer.rs\n * Req\n* src/libcollections/str.rs\n * MaybeOwned\n* src/libstd/collections/hash/map.rs\n * Entry\n* src/libstd/collections/hash/table.rs\n * BucketState\n* src/libstd/dynamic_lib.rs\n * Rtld\n* src/libstd/io/net/ip.rs\n * IpAddr\n* src/libstd/os.rs\n * MemoryMapKind\n * MapOption\n * MapError\n* src/libstd/sys/common/net.rs\n * SocketStatus\n * InAddr\n* src/libstd/sys/unix/timer.rs\n * Req\n\n[breaking-change]"
-  },
-  {
-    "hash": "0efafac398ff7f28c5f0fe756c15b9008b3e0534",
-    "author": "bors",
-    "date": 1418977732,
-    "message": "auto merge of #19654 : aturon/rust/merge-rt, r=alexcrichton\n\nThis PR substantially narrows the notion of a \"runtime\" in Rust, and allows calling into Rust code directly without any setup or teardown. \r\n\r\nAfter this PR, the basic \"runtime support\" in Rust will consist of:\r\n\r\n* Unwinding and backtrace support\r\n* Stack guards\r\n\r\nOther support, such as helper threads for timers or the notion of a \"current thread\" are initialized automatically upon first use.\r\n\r\nWhen using Rust in an embedded context, it should now be possible to call a Rust function directly as a C function with absolutely no setup, though in that case panics will cause the process to abort. In this regard, the C/Rust interface will look much like the C/C++ interface.\r\n\r\nIn more detail, this PR:\r\n\r\n* Merges `librustrt` back into `std::rt`, undoing the facade. While doing so, it removes a substantial amount of redundant functionality (such as mutexes defined in the `rt` module). Code using `librustrt` can now call into `std::rt` to e.g. start executing Rust code with unwinding support.\r\n\r\n* Allows all runtime data to be initialized lazily, including the \"current thread\", the \"at_exit\" infrastructure, and the \"args\" storage.\r\n\r\n* Deprecates and largely removes `std::task` along with the widespread requirement that there be a \"current task\" for many APIs in `std`. The entire task infrastructure is replaced with `std::thread`, which provides a more standard API for manipulating and creating native OS threads. In particular, it's possible to join on a created thread, and to get a handle to the currently-running thread. In addition, threads are equipped with some basic blocking support in the form of `park`/`unpark` operations (following a tradition in some OSes as well as the JVM). See the `std::thread` documentation for more details.\r\n\r\n* Channels are refactored to use a new internal blocking infrastructure that itself sits on top of `park`/`unpark`.\r\n\r\nOne important change here is that a Rust program ends when its main thread does, following most threading models. On the other hand, threads will often be created with an RAII-style join handle that will re-institute blocking semantics naturally (and with finer control).\r\n\r\nThis is very much a:\r\n\r\n[breaking-change]\r\n\r\nCloses #18000\r\nr? @alexcrichton"
-  },
-  {
-    "hash": "903c5a8f69714382ec9fc22745f902c3e219cb68",
-    "author": "Aaron Turon",
-    "date": 1418974553,
-    "message": "Disable at_exit handlers\n\nThe [final step](https://github.com/rust-lang/rust/pull/19654) of\nruntime removal changes the threading/process model so that the process\nshuts down when the main thread exits. But several shared resources,\nlike the helper thread for timeouts, are shut down when the main thread\nexits (but before the process ends), and they are not prepared to be\nused after shut down, but other threads may try to access them during\nthe shutdown sequence of the main thread.\n\nAs an interim solution, the `at_exit` cleanup routine is simply skipped.\n\nUltimately, these resources should be made to safely handle asynchronous\nshutdown, usually by panicking if called from a detached thread when the\nmain thread is ending.\n\nSee issue for details https://github.com/rust-lang/rust/issues/20012\n\nThis is a [breaking-change] for anyone relying on `at_exit`."
   }
 ]
