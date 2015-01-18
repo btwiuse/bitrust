@@ -34,17 +34,21 @@
                 </div>
             </div>
 
-            <article class="panel panel-default" ng-repeat="commit in commits | filter:search | orderBy:'-date'">
-                <header class="panel-heading">
+            <article class="panel panel-default" ng-repeat="commit in commits | filter:search | orderBy:'-date' track by commit.hash">
+                <header class="panel-heading" ng-click="open[commit.hash] = !open[commit.hash]">
+                    <button class="btn btn-default btn-sm pull-right" style="margin-top: -6px;">
+                        <span ng-show="open[commit.hash]">&minus;</span>
+                        <span ng-hide="open[commit.hash]">&plus;</span>
+                    </button>
                     <h2 class="panel-title">
-                        <a href="https://github.com/rust-lang/rust/commit/{{commit.hash}}" title="{{commit.hash}}">
+                        <a href="https://github.com/rust-lang/rust/commit/{{commit.hash}}" title="{{commit.hash}}" ng-click="$event.stopPropagation()">
                             <span class="text-primary">{{short_hash(commit.hash)}}:</span>
                             {{get_subject(commit.message)}}
                         </a>
                     </h2>
                 </header>
-                <div class="panel-body" ng-bind-html="get_message(commit.message) | markdown"> </div>
-                <footer class="panel-footer">
+                <div class="panel-body" ng-class="{collapse: true, in: open[commit.hash]}" ng-bind-html="get_message(commit.message) | markdown"> </div>
+                <footer class="panel-footer" ng-class="{collapse: true, in: open[commit.hash]}">
                     {{commit.author}}, {{(commit.date * 1000) | date:"yyyy-MM-dd HH:mm:ss Z"}}
                 </footer>
             </article>
@@ -85,6 +89,7 @@
             };
 
             // Get data
+            $scope.open = {};
             $scope.loading = true;
             $http.get('./log.json')
             .success(function (data) {
