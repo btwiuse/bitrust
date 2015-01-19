@@ -1,5 +1,17 @@
 [
   {
+    "hash": "cda3490f8fb099a1ddd1f253a75c29110042dc01",
+    "author": "bors",
+    "date": 1421682281,
+    "message": "Auto merge of #21269 - alexcrichton:issue-6936, r=pnkfelix\n\nThis commit modifies resolve to prevent conflicts with typedef names in the same\r\nmethod that conflits are prevented with enum names. This is a breaking change\r\ndue to the differing semantics in resolve, and any errors generated on behalf of\r\nthis change require that a conflicting typedef, module, or structure to be\r\nrenamed so they do not conflict.\r\n\r\n[breaking-change]\r\nCloses #6936"
+  },
+  {
+    "hash": "2549cbec9dfe02cdc93a3cf3bfe9638e5a4c2948",
+    "author": "Alex Crichton",
+    "date": 1421634355,
+    "message": "rustc_resolve: Do not allow mods to shadow types\n\nThis commit modifies resolve to prevent conflicts with typedef names in the same\nmethod that conflits are prevented with enum names. This is a breaking change\ndue to the differing semantics in resolve, and any errors generated on behalf of\nthis change require that a conflicting typedef, module, or structure to be\nrenamed so they do not conflict.\n\n[breaking-change]\nCloses #6936"
+  },
+  {
     "hash": "7b87900d72cf53037119e3bac1506a9786ca508a",
     "author": "bors",
     "date": 1421662763,
@@ -586,17 +598,5 @@
     "author": "Alex Crichton",
     "date": 1419281152,
     "message": "rollup merge of #19216: Gankro/bitv\n\nPart of #18424\n\nThis commit changes the semantics of `reserve` and `capacity` for Bitv and BitvSet to match conventions. It also introduces the notion of `reserve_index` and `reserve_index_exact` for collections with maximum-index-based capacity semantics.\n\nDeprecates free function constructors in favour of functions on Bitv itself.\n\nChanges `Bitv::pop` to return an Option rather than panicking.\n\nDeprecates and renames several methods in favour of conventions.\n\nMarks several blessed methods as unstable.\n\nThis commit also substantially refactors Bitv and BitvSet's implementations. The new implementation is simpler, cleaner, better documented, and more robust against overflows. It also reduces coupling between Bitv and BitvSet. Tests have been seperated into seperate submodules.\n\nFixes #16958\n\n[breaking-change]"
-  },
-  {
-    "hash": "9c5101542d2a4983ade627bc593e16c0bb5f23ba",
-    "author": "Alexis Beingessner",
-    "date": 1419084602,
-    "message": "Conventions and cleanup for Bitv and BitvSet\n\nPart of #18424\n\nThis commit changes the semantics of `reserve` and `capacity` for Bitv and BitvSet to match conventions. It also introduces the notion of `reserve_index` and `reserve_index_exact` for collections with maximum-index-based capacity semantics.\n\nDeprecates free function constructors in favour of functions on Bitv itself.\n\nChanges `Bitv::pop` to return an Option rather than panicking.\n\nDeprecates and renames several methods in favour of conventions.\n\nMarks several blessed methods as unstable.\n\nThis commit also substantially refactors Bitv and BitvSet's implementations. The new implementation is simpler, cleaner, better documented, and more robust against overflows. It also reduces coupling between Bitv and BitvSet. Tests have been seperated into seperate submodules.\n\nFixes #16958\n\n[breaking-change]"
-  },
-  {
-    "hash": "cf350ea5eb562fcfb67775ad4d847e441a8006a4",
-    "author": "bluss",
-    "date": 1419022490,
-    "message": "hashset: Clean up and rename the HashSet iterators\n\nThis removes the type SetAlgebraItems and replaces it with the\nstructs Intersection and Difference.\n\nRename the existing HashSet iterators according to RFC #344:\n\n* SetItems -> Iter\n* SetMoveItems -> IntoIter\n* Remaining set combination iterators renamed to Union and SymmetricDifference\n\n[breaking-change]"
   }
 ]
