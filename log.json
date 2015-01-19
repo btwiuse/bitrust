@@ -1,5 +1,17 @@
 [
   {
+    "hash": "7b87900d72cf53037119e3bac1506a9786ca508a",
+    "author": "bors",
+    "date": 1421662763,
+    "message": "Auto merge of #20874 - klutzy:windows-dynamic-lib, r=alexcrichton\n\nThis is a [breaking-change] since `std::dynamic_lib::dl` is now\r\nprivate.\r\n\r\nWhen `LoadLibraryW()` fails, original code called `errno()` to get error\r\ncode.  However, there was local allocation of `Vec` before\r\n`LoadLibraryW()`, and it drops before `errno()`, and the drop\r\n(deallocation) changed `errno`! Therefore `dynamic_lib::open()` thought\r\nit always succeeded.\r\nThis commit fixes the issue.\r\n\r\nThis commit also sets Windows error mode during `LoadLibrary()` to\r\nprevent \"dll load failed\" dialog."
+  },
+  {
+    "hash": "d053ccb45fafc12a52629f209122c1ce9bbfabed",
+    "author": "klutzy",
+    "date": 1421593965,
+    "message": "std::dynamic_lib: Fix Windows error handling\n\nThis is a [breaking-change] since `std::dynamic_lib::dl` is now\nprivate.\n\nWhen `LoadLibraryW()` fails, original code called `errno()` to get error\ncode.  However, there was local allocation of `Vec` before\n`LoadLibraryW()`, and it drops before `errno()`, and the drop\n(deallocation) changed `errno`! Therefore `dynamic_lib::open()` thought\nit always succeeded.\nThis commit fixes the issue.\n\nThis commit also sets Windows error mode during `LoadLibrary()` to\nprevent \"dll load failed\" dialog."
+  },
+  {
     "hash": "34fa70fba5425cbbb96bce783e9fd5c23dd9b471",
     "author": "Alex Crichton",
     "date": 1421509867,
@@ -586,17 +598,5 @@
     "author": "bluss",
     "date": 1419022490,
     "message": "hashset: Clean up and rename the HashSet iterators\n\nThis removes the type SetAlgebraItems and replaces it with the\nstructs Intersection and Difference.\n\nRename the existing HashSet iterators according to RFC #344:\n\n* SetItems -> Iter\n* SetMoveItems -> IntoIter\n* Remaining set combination iterators renamed to Union and SymmetricDifference\n\n[breaking-change]"
-  },
-  {
-    "hash": "25f8051f2ebdc9444e0f75e91dc0cbb45d194181",
-    "author": "Alex Crichton",
-    "date": 1419182801,
-    "message": "rollup merge of #19842: frewsxcv/rm-reexports\n\nRemove most of the public reexports mentioned in #19253\n\nThese are all leftovers from the enum namespacing transition\n\nIn particular:\n\n* src/libstd/num/strconv.rs\n * ExponentFormat\n * SignificantDigits\n * SignFormat\n* src/libstd/path/windows.rs\n * PathPrefix\n* src/libstd/sys/windows/timer.rs\n * Req\n* src/libcollections/str.rs\n * MaybeOwned\n* src/libstd/collections/hash/map.rs\n * Entry\n* src/libstd/collections/hash/table.rs\n * BucketState\n* src/libstd/dynamic_lib.rs\n * Rtld\n* src/libstd/os.rs\n * MemoryMapKind\n * MapOption\n * MapError\n* src/libstd/sys/common/net.rs\n * SocketStatus\n * InAddr\n* src/libstd/sys/unix/timer.rs\n * Req\n\n[breaking-change]"
-  },
-  {
-    "hash": "98af642f5c8f60ae141a5d3ff92e8cc4e4317342",
-    "author": "Corey Farwell",
-    "date": 1419182801,
-    "message": "Remove a ton of public reexports\n\nRemove most of the public reexports mentioned in #19253\n\nThese are all leftovers from the enum namespacing transition\n\nIn particular:\n\n* src/libstd/num/strconv.rs\n * ExponentFormat\n * SignificantDigits\n * SignFormat\n* src/libstd/path/windows.rs\n * PathPrefix\n* src/libstd/sys/windows/timer.rs\n * Req\n* src/libcollections/str.rs\n * MaybeOwned\n* src/libstd/collections/hash/map.rs\n * Entry\n* src/libstd/collections/hash/table.rs\n * BucketState\n* src/libstd/dynamic_lib.rs\n * Rtld\n* src/libstd/io/net/ip.rs\n * IpAddr\n* src/libstd/os.rs\n * MemoryMapKind\n * MapOption\n * MapError\n* src/libstd/sys/common/net.rs\n * SocketStatus\n * InAddr\n* src/libstd/sys/unix/timer.rs\n * Req\n\n[breaking-change]"
   }
 ]
