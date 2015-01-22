@@ -1,5 +1,23 @@
 [
   {
+    "hash": "092ba6a8563b5c95f5aa53a705eaba6cc94e2da7",
+    "author": "Aaron Turon",
+    "date": 1421855145,
+    "message": "Deprecate slicing methods in favor of notation\n\nThis commit deprecates `slice`, `slice_from`, `slice_to` and their\nmutable variants in favor of slice notation.\n\nThe `as_slice` methods are left intact, for now.\n\n[breaking-change]"
+  },
+  {
+    "hash": "fba0bf63a90379e8825012a817167774e14a627f",
+    "author": "Aaron Turon",
+    "date": 1421855145,
+    "message": "Stabilize Index traits and most range notation\n\nThis commit marks as `#[stable]`:\n\n* The `Index` and `IndexMut` traits. These are stabilized as taking the\n  index itself *by reference*; after extensive discussion it was\n  determined that this is a better match with our choices\n  elsewhere (e.g. making comparison operators auto-reference), and that\n  the use cases for by-value indices are better handled through\n  `IndexSet`.\n\n* The `Range`, `RangeFrom` and `RangeTo` structs, introduced for range\n  notation.\n\n* Various impls of `Index` and `IndexMut`.\n\nThe `FullRange` struct is left unstable as we may wish to rename it to\n`RangeFull` in the future.\n\nThis commit also *removes* the `Step` trait in favor of direct\nimplementation of iterator traits on ranges for integers. The `Step`\ntrait was not a terribly useful factoring internally, and it is likely\nthat external integer types are best off implementing range iterators\ndirectly. It was removed to simplify the API surface. We can always\nreintroduce `Step` later if it turns out to be useful.\n\nDue to this removal, this is a:\n\n[breaking-change]"
+  },
+  {
+    "hash": "3cb9fa26ef9905c00a29ea577fb55a12a91c8e7b",
+    "author": "Alex Crichton",
+    "date": 1421822173,
+    "message": "std: Rename Show/String to Debug/Display\n\nThis commit is an implementation of [RFC 565][rfc] which is a stabilization of\nthe `std::fmt` module and the implementations of various formatting traits.\nSpecifically, the following changes were performed:\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0565-show-string-guidelines.md\n\n* The `Show` trait is now deprecated, it was renamed to `Debug`\n* The `String` trait is now deprecated, it was renamed to `Display`\n* Many `Debug` and `Display` implementations were audited in accordance with the\n  RFC and audited implementations now have the `#[stable]` attribute\n  * Integers and floats no longer print a suffix\n  * Smart pointers no longer print details that they are a smart pointer\n  * Paths with `Debug` are now quoted and escape characters\n* The `unwrap` methods on `Result` now require `Display` instead of `Debug`\n* The `Error` trait no longer has a `detail` method and now requires that\n  `Display` must be implemented. With the loss of `String`, this has moved into\n  libcore.\n* `impl<E: Error> FromError<E> for Box<Error>` now exists\n* `derive(Show)` has been renamed to `derive(Debug)`. This is not currently\n  warned about due to warnings being emitted on stage1+\n\nWhile backwards compatibility is attempted to be maintained with a blanket\nimplementation of `Display` for the old `String` trait (and the same for\n`Show`/`Debug`) this is still a breaking change due to primitives no longer\nimplementing `String` as well as modifications such as `unwrap` and the `Error`\ntrait. Most code is fairly straightforward to update with a rename or tweaks of\nmethod calls.\n\n[breaking-change]\nCloses #21436"
+  },
+  {
     "hash": "8d05f6c74c34c1d72fd91be3057fe7d4581aca3a",
     "author": "Barosl LEE",
     "date": 1421774211,
@@ -580,23 +598,5 @@
     "author": "Corey Farwell",
     "date": 1419276503,
     "message": "Remove cmp::Ordering::* public reexport\n\nPart of #19253\n\nI would have removed this public reexport in #19842, but #19812 hadn't merged (and snapshotted) at the time\n\nIn #19407, I changed the codebase to stop utilizing this reexport\n\n[breaking-change]"
-  },
-  {
-    "hash": "4baeacef5a539fa29b88c951d6eca996d6101148",
-    "author": "Alex Crichton",
-    "date": 1419281251,
-    "message": "rollup merge of #20075: skade/remove-notrust\n\nInternally refactor all mentions of `notrust` to the\npositive statement `rust`.\n\n[breaking-change] Change remaining `notrust` markers to\nthe thing they actually represent, e.g. `sh` or `plain`.\n\nThis supersedes #19693 ."
-  },
-  {
-    "hash": "7311b6347de4205b71e8a221140a527e789fd353",
-    "author": "Alex Crichton",
-    "date": 1419281231,
-    "message": "rollup merge of #20053: csouth3/misc-stab\n\nThis pull request:\n\n*Renames `BinaryHeap::top` to `BinaryHeap::peek`\n*Stabilizes `front/back/front_mut/back_mut` in `DList` and `RingBuf`\n*Stabilizes `swap` in `RingBuf`\n\nin accordance with rust-lang/rfcs#509.\n\nNote that this PR does not address `Bitv::{get,set}` or HashMap's iterators, nor does it move `std::vec` to `std::collections::vec`, all of which still need to be done.\n\nBecause of the method renaming, this is a [breaking-change]."
-  },
-  {
-    "hash": "abf492d44f0a3b705be8c0920bfb4771f039b843",
-    "author": "Chase Southwood",
-    "date": 1419222736,
-    "message": "Misc Stabilization for collections\n\nThis commit:\n\n*Renames `BinaryHeap::top` to `BinaryHeap::peek`\n*Stabilizes `front/back/front_mut/back_mut` in `DList` and `RingBuf`\n*Stabilizes `swap` in `RingBuf`\n\nBecause of the method renaming, this is a [breaking-change]."
   }
 ]
