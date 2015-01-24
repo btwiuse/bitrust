@@ -1,5 +1,11 @@
 [
   {
+    "hash": "e5c1f166a8282072089de2ad62a5b2427bd2bebf",
+    "author": "bors",
+    "date": 1422076335,
+    "message": "Auto merge of #21458 - alexcrichton:remove-some-code, r=brson\n\nThe base64 support can be trivially removed (there are no in-tree users) and the regex support is a whopping 4k lines of code to maintain for a few non-critical uses in-tree. This commit migrates all current users in-tree away from regexes to custom matching code.\r\n\r\nThe most critical application affected by this migration is that the testing framework no longer considers filter arguments as regexes, but rather just a substring matching. It is expected that more featureful testing frameworks can evolve outside of the in-tree libtest version over time which can properly depend on libregex from crates.io.\r\n\r\n[breaking-change]"
+  },
+  {
     "hash": "092ba6a8563b5c95f5aa53a705eaba6cc94e2da7",
     "author": "Aaron Turon",
     "date": 1421855145,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1419281296,
     "message": "rollup merge of #20140: frewsxcv/rm-reexports\n\nPart of #19253\n\nI would have removed this public reexport in #19842, but #19812 hadn't merged (and snapshotted) at the time\n\nIn #19407, I changed the codebase to stop utilizing this reexport\n\n[breaking-change]"
-  },
-  {
-    "hash": "02feaf2a804e4e810d5a3adbedbcbe3905692286",
-    "author": "Corey Farwell",
-    "date": 1419276503,
-    "message": "Remove cmp::Ordering::* public reexport\n\nPart of #19253\n\nI would have removed this public reexport in #19842, but #19812 hadn't merged (and snapshotted) at the time\n\nIn #19407, I changed the codebase to stop utilizing this reexport\n\n[breaking-change]"
   }
 ]
