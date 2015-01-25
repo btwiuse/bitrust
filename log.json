@@ -1,5 +1,17 @@
 [
   {
+    "hash": "43046becce78147fa43808626bbb48569086b6a5",
+    "author": "bors",
+    "date": 1422165030,
+    "message": "Auto merge of #21558 - alexcrichton:result-debug, r=aturon\n\nThis commit relaxes the bound on `Result::unwrap` and `Result::unwrap_err` from\r\nthe `Display` trait to the `Debug` trait for generating an error message about\r\nthe unwrapping operation.\r\n\r\nThis commit is a breaking change and any breakage should be mitigated by\r\nensuring that `Debug` is implemented on the relevant type.\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "08246520c0fef902b169233e26e15cf58ef1cd8b",
+    "author": "Alex Crichton",
+    "date": 1422051094,
+    "message": "std: Relax Result::unwrap() to Debug\n\nThis commit relaxes the bound on `Result::unwrap` and `Result::unwrap_err` from\nthe `Display` trait to the `Debug` trait for generating an error message about\nthe unwrapping operation.\n\nThis commit is a breaking change and any breakage should be mitigated by\nensuring that `Debug` is implemented on the relevant type.\n\n[breaking-change]"
+  },
+  {
     "hash": "e5c1f166a8282072089de2ad62a5b2427bd2bebf",
     "author": "bors",
     "date": 1422076335,
@@ -586,17 +598,5 @@
     "author": "Florian Wilkens",
     "date": 1419266734,
     "message": "Added missing renames:\n\nlibcollections:\n    AbsEntries -> AbsIter, Entries -> Iter, MoveEntries -> IntoIter, MutEntries -> IterMut\n    DifferenceItems -> Difference, SymDifferenceItems -> SymmetricDifference, IntersectionItems -> Intersection, UnionItems -> Union\n\nlibstd/hash/{table, map}:\n    Entries -> Iter, MoveItems -> IntoIter, MutEntries -> IterMut\n\nAlso a [breaking-change]."
-  },
-  {
-    "hash": "f8cfd2480b69a1cc266fc91d0b60c825a9dc18a7",
-    "author": "Florian Wilkens",
-    "date": 1419249535,
-    "message": "Renaming of the Iter types as in RFC #344\n\nlibcore: slice::Items -> slice::Iter, slice::MutItems -> slice::IterMut\nlibcollections: *::Items -> *::Iter, *::MoveItems -> *::IntoIter, *::MutItems -> *::IterMut\n\nThis is of course a [breaking-change]."
-  },
-  {
-    "hash": "fac17defcb8d0642c25bf8f791e1dc5b4e110be8",
-    "author": "Alex Crichton",
-    "date": 1419281296,
-    "message": "rollup merge of #20140: frewsxcv/rm-reexports\n\nPart of #19253\n\nI would have removed this public reexport in #19842, but #19812 hadn't merged (and snapshotted) at the time\n\nIn #19407, I changed the codebase to stop utilizing this reexport\n\n[breaking-change]"
   }
 ]
