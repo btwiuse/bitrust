@@ -1,5 +1,23 @@
 [
   {
+    "hash": "62273575139a80c2b208a3a27e0c2392b1425be6",
+    "author": "Alex Crichton",
+    "date": 1422638516,
+    "message": "std: Stabilize the std::fmt module\n\nThis commit performs a final stabilization pass over the std::fmt module,\nmarking all necessary APIs as stable. One of the more interesting aspects of\nthis module is that it exposes a good deal of its runtime representation to the\noutside world in order for `format_args!` to be able to construct the format\nstrings. Instead of hacking the compiler to assume that these items are stable,\nthis commit instead lays out a story for the stabilization and evolution of\nthese APIs.\n\nThere are three primary details used by the `format_args!` macro:\n\n1. `Arguments` - an opaque package of a \"compiled format string\". This structure\n   is passed around and the `write` function is the source of truth for\n   transforming a compiled format string into a string at runtime. This must be\n   able to be constructed in stable code.\n\n2. `Argument` - an opaque structure representing an argument to a format string.\n   This is *almost* a trait object as it's just a pointer/function pair, but due\n   to the function originating from one of many traits, it's not actually a\n   trait object. Like `Arguments`, this must be constructed from stable code.\n\n3. `fmt::rt` - this module contains the runtime type definitions primarily for\n   the `rt::Argument` structure. Whenever an argument is formatted with\n   nonstandard flags, a corresponding `rt::Argument` is generated describing how\n   the argument is being formatted. This can be used to construct an\n   `Arguments`.\n\nThe primary interface to `std::fmt` is the `Arguments` structure, and as such\nthis type name is stabilize as-is today. It is expected for libraries to pass\naround an `Arguments` structure to represent a pending formatted computation.\n\nThe remaining portions are largely \"cruft\" which would rather not be stabilized,\nbut due to the stability checks they must be. As a result, almost all pieces\nhave been renamed to represent that they are \"version 1\" of the formatting\nrepresentation. The theory is that at a later date if we change the\nrepresentation of these types we can add new definitions called \"version 2\" and\ncorresponding constructors for `Arguments`.\n\nOne of the other remaining large questions about the fmt module were how the\npending I/O reform would affect the signatures of methods in the module. Due to\n[RFC 526][rfc], however, the writers of fmt are now incompatible with the\nwriters of io, so this question has largely been solved. As a result the\ninterfaces are largely stabilized as-is today.\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0526-fmt-text-writer.md\n\nSpecifically, the following changes were made:\n\n* The contents of `fmt::rt` were all moved under `fmt::rt::v1`\n* `fmt::rt` is stable\n* `fmt::rt::v1` is stable\n* `Error` is stable\n* `Writer` is stable\n* `Writer::write_str` is stable\n* `Writer::write_fmt` is stable\n* `Formatter` is stable\n* `Argument` has been renamed to `ArgumentV1` and is stable\n* `ArgumentV1::new` is stable\n* `ArgumentV1::from_uint` is stable\n* `Arguments::new_v1` is stable (renamed from `new`)\n* `Arguments::new_v1_formatted` is stable (renamed from `with_placeholders`)\n* All formatting traits are now stable, as well as the `fmt` method.\n* `fmt::write` is stable\n* `fmt::format` is stable\n* `Formatter::pad_integral` is stable\n* `Formatter::pad` is stable\n* `Formatter::write_str` is stable\n* `Formatter::write_fmt` is stable\n* Some assorted top level items which were only used by `format_args!` were\n  removed in favor of static functions on `ArgumentV1` as well.\n* The formatting-flag-accessing methods remain unstable\n\nWithin the contents of the `fmt::rt::v1` module, the following actions were\ntaken:\n\n* Reexports of all enum variants were removed\n* All prefixes on enum variants were removed\n* A few miscellaneous enum variants were renamed\n* Otherwise all structs, fields, and variants were marked stable.\n\nIn addition to these actions in the `std::fmt` module, many implementations of\n`Show` and `String` were stabilized as well.\n\nIn some other modules:\n\n* `ToString` is now stable\n* `ToString::to_string` is now stable\n* `Vec` no longer implements `fmt::Writer` (this has moved to `String`)\n\nThis is a breaking change due to all of the changes to the `fmt::rt` module, but\nthis likely will not have much impact on existing programs.\n\nCloses #20661\n[breaking-change]"
+  },
+  {
+    "hash": "341e858bd882061b823dac236fd718d473f8ab2e",
+    "author": "Alex Crichton",
+    "date": 1422648164,
+    "message": "rollup merge of #20790: japaric/for-loops\n\nAs per [RFC #235][rfc], you can now do:\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0235-collections-conventions.md#intoiterator-and-iterable\n\n``` rust\nlet mut v = vec![1];\n\n// iterate over immutable references\nfor x in &v {\n    assert_eq!(x, &1);\n}\n\n// iterate over mutable references\nfor x in &mut v {\n    assert_eq!(x, &mut 1);\n}\n\n// iterate over values, this consumes `v`\nfor x in v {\n    assert_eq!(x, 1);\n}\n```\n\n[breaking-change]s\n\nFor loops now \"consume\" (move) the iterator, this breaks iterating over mutable references to iterators, and also breaks multiple iterations over the same iterator:\n\n``` rust\nfn foo(mut it: &mut Iter) {  // `Iter` implements `Iterator`\n    for x in it { .. }  //~ error: `&mut Iter` doesn't implement Iterator\n}\n\nfn bar() {\n    for x in it { .. }  //~ note: `it` moved here\n    for x in it { .. }  //~ error: `it` has been moved\n}\n```\n\nBoth cases can be fixed using the `by_ref()` adapter to create an iterator from the mutable reference:\n\n``` rust\nfn foo(mut it: &mut Iter) {\n    for x in it.by_ref() { .. }\n}\n\nfn bar() {\n    for x in it.by_ref() { .. }\n    for x in it { .. }\n}\n```\n\nThis PR also makes iterator non-implicitly copyable, as this was source of subtle bugs in the libraries. You can still use `clone()` to explictly copy the iterator.\n\nFinally, since the for loops are implemented in the frontend and use global paths to `IntoIterator`, `Iterator` and `Option` variants, users of the `core` crate will have to use add an `std` module to the root of their crate to be able to use for loops:\n\n``` rust\n#![no_std]\n\nextern crate core;\n\nfn main() {\n    for x in 0..10 {}\n}\n\n#[doc(hidden)]\nmod std {\n    // these imports are needed to use for-loops\n    pub use core::iter;\n    pub use core::option;\n}\n```\n\n---\n\nr? @nikomatsakis @aturon\ncc #18424\ncloses #18045"
+  },
+  {
+    "hash": "a9d465fec902588b71937de96e66d160d2adebf5",
+    "author": "Nick Cameron",
+    "date": 1422572420,
+    "message": "Use absolute path to FullRange, rather than assuming it is in the prelude\n\nCloses #21263\n\n[breaking-change]\n\nIf you are using `core::ops::FullRange` you should change to using `core::ops::RangeFull`"
+  },
+  {
     "hash": "d77f6d5366b330f9c2061cad0d3ff638c9cc05b7",
     "author": "bors",
     "date": 1422356846,
@@ -580,23 +598,5 @@
     "author": "bors",
     "date": 1419717103,
     "message": "auto merge of #19916 : SimonSapin/rust/ascii-reform, r=sfackler\n\nImplements [RFC 486](https://github.com/rust-lang/rfcs/pull/486). Fixes #19908.\r\n\r\n* Rename `to_ascii_{lower,upper}` to `to_ascii_{lower,upper}case`, per #14401\r\n* Remove the `Ascii` type and associated traits: `AsciiCast`, `OwnedAsciiCast`, `AsciiStr`, `IntoBytes`, and `IntoString`.\r\n* As a replacement, add `.is_ascii()` to `AsciiExt`, and implement `AsciiExt` for `u8` and `char`.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "3a6ccdc263d9a169c2d317a6f78664e1f18d3b15",
-    "author": "Simon Sapin",
-    "date": 1419506377,
-    "message": "Remove Ascii, AsciiCast, OwnedAsciiCast, AsciiStr, IntoBytes, IntoString.\n\nAs a replacement, add is_ascii() to AsciiExt, and implement AsciiExt for u8 and char.\n\n[breaking-change]"
-  },
-  {
-    "hash": "1e5811ef9271644db0d0ddaae351976b0d4abdd2",
-    "author": "Simon Sapin",
-    "date": 1419445984,
-    "message": "Rename to_ascii_{lower,upper} to to_ascii_{lower,upper}case, per #14401\n\n[breaking-change]"
-  },
-  {
-    "hash": "df0c6d93852c51b6936d4b72b6b4be5f1932fb8a",
-    "author": "Nick Cameron",
-    "date": 1419627325,
-    "message": "save-analysis: emit names of items that a glob import actually imports.\n\nThere is also some work here to make resolve a bit more stable - it no longer overwrites a specific import with a glob import.\n\n[breaking-change]\n\nImport shadowing of single/list imports by globs is now forbidden. An interesting case is where a glob import imports a re-export (`pub use`) of a single import. This still counts as a single import for the purposes of shadowing .You can usually fix any bustage by re-ordering such imports. A single import may still shadow (override) a glob import or the prelude."
   }
 ]
