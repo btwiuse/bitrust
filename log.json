@@ -1,5 +1,11 @@
 [
   {
+    "hash": "f1f9cb705df95171fce4e575374c959509e58dea",
+    "author": "bors",
+    "date": 1422785691,
+    "message": "Auto merge of #21809 - japaric:no-copy, r=alexcrichton\n\nRemoves `Copy` from `ops::Range` (`a..b`) and `ops::RangeFrom` (`a..`)\r\n\r\n[breaking-change]\r\n\r\n---\r\n\r\nI forgot about these two in #20790, this PR also adds `Clone` to the `Peekable` adapter which used to be `Copy`able.\r\n\r\nr? @nikomatsakis or anyone"
+  },
+  {
     "hash": "62273575139a80c2b208a3a27e0c2392b1425be6",
     "author": "Alex Crichton",
     "date": 1422638516,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1419736308,
     "message": "auto merge of #20136 : eddyb/rust/format-args, r=alexcrichton\n\nWe have the technology: no longer do you need to write closures to use `format_args!`.\r\nThis is a `[breaking-change]`, as it forces you to clean up old hacks - if you had code like this:\r\n```rust\r\nformat_args!(fmt::format, \"{} {} {}\", a, b, c)\r\nformat_args!(|args| { w.write_fmt(args) }, \"{} {} {}\", x, y, z)\r\n```\r\nchange it to this: \r\n```rust\r\nfmt::format(format_args!(\"{} {} {}\", a, b, c))\r\nw.write_fmt(format_args!(\"{} {} {}\", x, y, z))\r\n```\r\nTo allow them to be called with `format_args!(...)` directly, several functions were modified to\r\ntake `fmt::Arguments` by value instead of by reference. Also, `fmt::Arguments` derives `Copy`\r\nnow in order to preserve all usecases that were previously possible."
-  },
-  {
-    "hash": "070ab63807dc80fa6a6c5ee80531284761ab42de",
-    "author": "bors",
-    "date": 1419717103,
-    "message": "auto merge of #19916 : SimonSapin/rust/ascii-reform, r=sfackler\n\nImplements [RFC 486](https://github.com/rust-lang/rfcs/pull/486). Fixes #19908.\r\n\r\n* Rename `to_ascii_{lower,upper}` to `to_ascii_{lower,upper}case`, per #14401\r\n* Remove the `Ascii` type and associated traits: `AsciiCast`, `OwnedAsciiCast`, `AsciiStr`, `IntoBytes`, and `IntoString`.\r\n* As a replacement, add `.is_ascii()` to `AsciiExt`, and implement `AsciiExt` for `u8` and `char`.\r\n\r\n[breaking-change]"
   }
 ]
