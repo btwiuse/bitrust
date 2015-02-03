@@ -1,5 +1,23 @@
 [
   {
+    "hash": "99b2bd4bfa332c5a723114d09e8bb74d5a0c7376",
+    "author": "Alex Crichton",
+    "date": 1422903676,
+    "message": "rollup merge of #21842: alexcrichton/issue-21839\n\nNow that associated types are fully implemented the iterator adaptors only need\ntype parameters which are associated with actual storage. All other type\nparameters can either be derived from these (e.g. they are an associated type)\nor can be bare on the `impl` block itself.\n\nThis is a breaking change due to the removal of type parameters on these\niterator adaptors, but code can fairly easily migrate by just deleting the\nrelevant type parameters for each adaptor. Other behavior should not be\naffected.\n\nCloses #21839\n[breaking-change]"
+  },
+  {
+    "hash": "0e4448409ef61c703b98e4c5b2fd99447308942d",
+    "author": "Alex Crichton",
+    "date": 1422824723,
+    "message": "std: Remove extra type params on iter adaptors\n\nNow that associated types are fully implemented the iterator adaptors only need\ntype parameters which are associated with actual storage. All other type\nparameters can either be derived from these (e.g. they are an associated type)\nor can be bare on the `impl` block itself.\n\nThis is a breaking change due to the removal of type parameters on these\niterator adaptors, but code can fairly easily migrate by just deleting the\nrelevant type parameters for each adaptor. Other behavior should not be\naffected.\n\nCloses #21839\n[breaking-change]"
+  },
+  {
+    "hash": "70ed3a48dfa301c5bb56de3e0a7c25214539b83c",
+    "author": "Alex Crichton",
+    "date": 1422817695,
+    "message": "std: Add a new `env` module\n\nThis is an implementation of [RFC 578][rfc] which adds a new `std::env` module\nto replace most of the functionality in the current `std::os` module. More\ndetails can be found in the RFC itself, but as a summary the following methods\nhave all been deprecated:\n\n[rfc]: https://github.com/rust-lang/rfcs/pull/578\n\n* `os::args_as_bytes`   => `env::args`\n* `os::args`            => `env::args`\n* `os::consts`          => `env::consts`\n* `os::dll_filename`    => no replacement, use `env::consts` directly\n* `os::page_size`       => `env::page_size`\n* `os::make_absolute`   => use `env::current_dir` + `join` instead\n* `os::getcwd`          => `env::current_dir`\n* `os::change_dir`      => `env::set_current_dir`\n* `os::homedir`         => `env::home_dir`\n* `os::tmpdir`          => `env::temp_dir`\n* `os::join_paths`      => `env::join_paths`\n* `os::split_paths`     => `env::split_paths`\n* `os::self_exe_name`   => `env::current_exe`\n* `os::self_exe_path`   => use `env::current_exe` + `pop`\n* `os::set_exit_status` => `env::set_exit_status`\n* `os::get_exit_status` => `env::get_exit_status`\n* `os::env`             => `env::vars`\n* `os::env_as_bytes`    => `env::vars`\n* `os::getenv`          => `env::var` or `env::var_string`\n* `os::getenv_as_bytes` => `env::var`\n* `os::setenv`          => `env::set_var`\n* `os::unsetenv`        => `env::remove_var`\n\nMany function signatures have also been tweaked for various purposes, but the\nmain changes were:\n\n* `Vec`-returning APIs now all return iterators instead\n* All APIs are now centered around `OsString` instead of `Vec<u8>` or `String`.\n  There is currently on convenience API, `env::var_string`, which can be used to\n  get the value of an environment variable as a unicode `String`.\n\nAll old APIs are `#[deprecated]` in-place and will remain for some time to allow\nfor migrations. The semantics of the APIs have been tweaked slightly with regard\nto dealing with invalid unicode (panic instead of replacement).\n\nThe new `std::env` module is all contained within the `env` feature, so crates\nmust add the following to access the new APIs:\n\n    #![feature(env)]\n\n[breaking-change]"
+  },
+  {
     "hash": "f1f9cb705df95171fce4e575374c959509e58dea",
     "author": "bors",
     "date": 1422785691,
@@ -580,23 +598,5 @@
     "author": "Alex Crichton",
     "date": 1419873489,
     "message": "std: Return Result from RWLock/Mutex methods\n\nAll of the current std::sync primitives have poisoning enable which means that\nwhen a task fails inside of a write-access lock then all future attempts to\nacquire the lock will fail. This strategy ensures that stale data whose\ninvariants are possibly not upheld are never viewed by other tasks to help\npropagate unexpected panics (bugs in a program) among tasks.\n\nCurrently there is no way to test whether a mutex or rwlock is poisoned. One\nmethod would be to duplicate all the methods with a sister foo_catch function,\nfor example. This pattern is, however, against our [error guidelines][errors].\nAs a result, this commit exposes the fact that a task has failed internally\nthrough the return value of a `Result`.\n\n[errors]: https://github.com/rust-lang/rfcs/blob/master/text/0236-error-conventions.md#do-not-provide-both-result-and-fail-variants\n\nAll methods now return a `LockResult<T>` or a `TryLockResult<T>` which\ncommunicates whether the lock was poisoned or not. In a `LockResult`, both the\n`Ok` and `Err` variants contains the `MutexGuard<T>` that is being returned in\norder to allow access to the data if poisoning is not desired. This also means\nthat the lock is *always* held upon returning from `.lock()`.\n\nA new type, `PoisonError`, was added with one method `into_guard` which can\nconsume the assertion that a lock is poisoned to gain access to the underlying\ndata.\n\nThis is a breaking change because the signatures of these methods have changed,\noften incompatible ways. One major difference is that the `wait` methods on a\ncondition variable now consume the guard and return it in as a `LockResult` to\nindicate whether the lock was poisoned while waiting. Most code can be updated\nby calling `.unwrap()` on the return value of `.lock()`.\n\n[breaking-change]"
-  },
-  {
-    "hash": "4e2afb0052618ca3d758fffd0cf50559be774391",
-    "author": "Nick Cameron",
-    "date": 1419897985,
-    "message": "Remove ExprSlice by hacking the compiler\n\n[breaking-change]\n\nThe `mut` in slices is now redundant. Mutability is 'inferred' from position. This means that if mutability is only obvious from the type, you will need to use explicit calls to the slicing methods."
-  },
-  {
-    "hash": "19f73b4ef6fb1d24f19738a8665889396fc1b0c8",
-    "author": "bors",
-    "date": 1419876150,
-    "message": "auto merge of #20058 : Kimundi/rust/str_pattern_pre, r=alexcrichton\n\nThis stabilizes most methods on `&str` working with patterns in a way that is forwards-compatible with a generic string pattern matching API:\r\n- Methods that are using the primary name for their operation are marked as `#[stable]`, as they can be upgraded to a full `Pattern` API later without existing code breaking. Example: `contains(&str)`\r\n- Methods that are using a more specific name in order to not clash with the primary one are marked as `#[unstable]`, as they will likely be removed once their functionality is merged into the primary one. Example: `contains_char<C: CharEq>(C)`\r\n- The method docs got changed to consistently refer to the pattern types as a pattern.\r\n- Methods whose names do not match in the context of the more generic API got renamed. Example: `trim_chars -> trim_matches` \r\n\r\nAdditionally, all methods returning iterators got changed to return unique new types with changed names in accordance with the new naming guidelines.\r\n\r\nSee also https://github.com/rust-lang/rfcs/pull/528\r\n\r\nDue to some deprecations and type changes, this is a \r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "3e6b29f8ad1ddfcb134d743a66ee5f467e16c350",
-    "author": "bors",
-    "date": 1419736308,
-    "message": "auto merge of #20136 : eddyb/rust/format-args, r=alexcrichton\n\nWe have the technology: no longer do you need to write closures to use `format_args!`.\r\nThis is a `[breaking-change]`, as it forces you to clean up old hacks - if you had code like this:\r\n```rust\r\nformat_args!(fmt::format, \"{} {} {}\", a, b, c)\r\nformat_args!(|args| { w.write_fmt(args) }, \"{} {} {}\", x, y, z)\r\n```\r\nchange it to this: \r\n```rust\r\nfmt::format(format_args!(\"{} {} {}\", a, b, c))\r\nw.write_fmt(format_args!(\"{} {} {}\", x, y, z))\r\n```\r\nTo allow them to be called with `format_args!(...)` directly, several functions were modified to\r\ntake `fmt::Arguments` by value instead of by reference. Also, `fmt::Arguments` derives `Copy`\r\nnow in order to preserve all usecases that were previously possible."
   }
 ]
