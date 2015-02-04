@@ -1,5 +1,23 @@
 [
   {
+    "hash": "d30f225b492163b14005d5069b7924f3fecf868c",
+    "author": "Alex Crichton",
+    "date": 1422996083,
+    "message": "std: Remove `iter::ByRef` and generalize impls\n\nThis removes the `ByRef` iterator adaptor to stay in line with the changes to\n`std::io`. The `by_ref` method instead just returns `&mut Self`.\n\nThis also removes the implementation of `Iterator for &mut Iterator` and instead\ngeneralizes it to `Iterator for &mut I` where `I: Iterator + ?Sized`. The\n`Box<I>` implementations were also updated.\n\nThis is a breaking change due to the removal of the `std::iter::ByRef` type. All\nmentions of `ByRef<'a, T>` should be replaced with `&mut T` to migrate forward.\n\n[breaking-change]"
+  },
+  {
+    "hash": "8550bf74c1149eb54fc568bb53b78fd2b6caec98",
+    "author": "Alex Crichton",
+    "date": 1423006553,
+    "message": "rollup merge of #21759: aturon/new-path\n\nThis PR implements [path reform](https://github.com/rust-lang/rfcs/pull/474), and motivation and details for the change can be found there.\n\nFor convenience, the old path API is being kept as `old_path` for the time being. Updating after this PR is just a matter of changing imports to `old_path` (which is likely not needed, since the prelude entries still export the old path API).\n\nThis initial PR does not include additional normalization or platform-specific path extensions. These will be done in follow up commits or PRs.\n\n[breaking-change]\n\nCloses #20034\nCloses #12056\nCloses #11594\nCloses #14028\nCloses #14049\nCloses #10035"
+  },
+  {
+    "hash": "3e39f0bc0e96f76610104918edaa5912f4f352df",
+    "author": "Aaron Turon",
+    "date": 1423002882,
+    "message": "Rename std::path to std::old_path\n\nAs part of [RFC 474](https://github.com/rust-lang/rfcs/pull/474), this\ncommit renames `std::path` to `std::old_path`, leaving the existing path\nAPI in place to ease migration to the new one. Updating should be as\nsimple as adjusting imports, and the prelude still maps to the old path\nAPIs for now.\n\n[breaking-change]"
+  },
+  {
     "hash": "99b2bd4bfa332c5a723114d09e8bb74d5a0c7376",
     "author": "Alex Crichton",
     "date": 1422903676,
@@ -580,23 +598,5 @@
     "author": "Alex Crichton",
     "date": 1419899766,
     "message": "rollup merge of #20215: csouth3/hashmap-rename\n\nRename struct `Entries` to `Iter` in hash/table.rs and hash/map.rs, to match the naming convention of rust-lang/rfcs#344.\n\nThis is a [breaking-change]."
-  },
-  {
-    "hash": "625697354db8a13450f6d56c7a384c202a79c9db",
-    "author": "Chase Southwood",
-    "date": 1419473988,
-    "message": "Rename remaining hashmap and hashtable iterators to match naming\nconventions.\n\nThis is a [breaking-change]."
-  },
-  {
-    "hash": "cc20d6009ebf46b7ec75020ebfe35ff0ef064d1b",
-    "author": "Alex Crichton",
-    "date": 1419899750,
-    "message": "rollup merge of #19661: alexcrichton/mutex-result\n\nAll of the current std::sync primitives have poisoning enable which means that\nwhen a task fails inside of a write-access lock then all future attempts to\nacquire the lock will fail. This strategy ensures that stale data whose\ninvariants are possibly not upheld are never viewed by other tasks to help\npropagate unexpected panics (bugs in a program) among tasks.\n\nCurrently there is no way to test whether a mutex or rwlock is poisoned. One\nmethod would be to duplicate all the methods with a sister foo_catch function,\nfor example. This pattern is, however, against our [error guidelines][errors].\nAs a result, this commit exposes the fact that a task has failed internally\nthrough the return value of a `Result`.\n\n[errors]: https://github.com/rust-lang/rfcs/blob/master/text/0236-error-conventions.md#do-not-provide-both-result-and-fail-variants\n\nAll methods now return a `LockResult<T>` or a `TryLockResult<T>` which\ncommunicates whether the lock was poisoned or not. In a `LockResult`, both the\n`Ok` and `Err` variants contains the `MutexGuard<T>` that is being returned in\norder to allow access to the data if poisoning is not desired. This also means\nthat the lock is *always* held upon returning from `.lock()`.\n\nA new type, `PoisonError`, was added with one method `into_guard` which can\nconsume the assertion that a lock is poisoned to gain access to the underlying\ndata.\n\nThis is a breaking change because the signatures of these methods have changed,\noften incompatible ways. One major difference is that the `wait` methods on a\ncondition variable now consume the guard and return it in as a `LockResult` to\nindicate whether the lock was poisoned while waiting. Most code can be updated\nby calling `.unwrap()` on the return value of `.lock()`.\n\n[breaking-change]"
-  },
-  {
-    "hash": "76e5ed655c762b812c3da4749a55f1bb1b52c787",
-    "author": "Alex Crichton",
-    "date": 1419873489,
-    "message": "std: Return Result from RWLock/Mutex methods\n\nAll of the current std::sync primitives have poisoning enable which means that\nwhen a task fails inside of a write-access lock then all future attempts to\nacquire the lock will fail. This strategy ensures that stale data whose\ninvariants are possibly not upheld are never viewed by other tasks to help\npropagate unexpected panics (bugs in a program) among tasks.\n\nCurrently there is no way to test whether a mutex or rwlock is poisoned. One\nmethod would be to duplicate all the methods with a sister foo_catch function,\nfor example. This pattern is, however, against our [error guidelines][errors].\nAs a result, this commit exposes the fact that a task has failed internally\nthrough the return value of a `Result`.\n\n[errors]: https://github.com/rust-lang/rfcs/blob/master/text/0236-error-conventions.md#do-not-provide-both-result-and-fail-variants\n\nAll methods now return a `LockResult<T>` or a `TryLockResult<T>` which\ncommunicates whether the lock was poisoned or not. In a `LockResult`, both the\n`Ok` and `Err` variants contains the `MutexGuard<T>` that is being returned in\norder to allow access to the data if poisoning is not desired. This also means\nthat the lock is *always* held upon returning from `.lock()`.\n\nA new type, `PoisonError`, was added with one method `into_guard` which can\nconsume the assertion that a lock is poisoned to gain access to the underlying\ndata.\n\nThis is a breaking change because the signatures of these methods have changed,\noften incompatible ways. One major difference is that the `wait` methods on a\ncondition variable now consume the guard and return it in as a `LockResult` to\nindicate whether the lock was poisoned while waiting. Most code can be updated\nby calling `.unwrap()` on the return value of `.lock()`.\n\n[breaking-change]"
   }
 ]
