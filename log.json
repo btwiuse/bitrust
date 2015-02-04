@@ -1,5 +1,17 @@
 [
   {
+    "hash": "c3e1f77291803d26b2897c0953dce5cf7e70ab65",
+    "author": "bors",
+    "date": 1423039647,
+    "message": "Auto merge of #21892 - huonw:deprecate-rand, r=alexcrichton\n\nUse [`rand`](https://crates.io/crates/rand) and [`derive_rand`](https://crates.io/crates/derive_rand) from crates.io.\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "df1ac7aa63ea89a067c57663eab035f7b83f6933",
+    "author": "Huon Wilson",
+    "date": 1423003180,
+    "message": "Deprecate in-tree `rand`, `std::rand` and `#[derive(Rand)]`.\n\nUse the crates.io crate `rand` (version 0.1 should be a drop in\nreplacement for `std::rand`) and `rand_macros` (`#[derive_Rand]` should\nbe a drop-in replacement).\n\n[breaking-change]"
+  },
+  {
     "hash": "d30f225b492163b14005d5069b7924f3fecf868c",
     "author": "Alex Crichton",
     "date": 1422996083,
@@ -586,17 +598,5 @@
     "author": "Nick Cameron",
     "date": 1419830349,
     "message": "Remove the glob/shadowing exception bug\n\n[breaking-change]\n\nThis and the other commit in this PR change the rules for shadowing and globs to be\nstricter. There were previously bugs where some glob imports would not be checked\nfor shadowing. Those are now fixed and you may have to adjust your imports to use\nfewer globs."
-  },
-  {
-    "hash": "1e89bbcb67020892bc0af5af218c35f0fd453fa4",
-    "author": "Simonas Kazlauskas",
-    "date": 1419767195,
-    "message": "Rename TaskRng to ThreadRng\n\nSince runtime is removed, rust has no tasks anymore and everything is moving\nfrom being task-* to thread-*. Let’s rename TaskRng as well!\n\n* Rename TaskRng to ThreadRng\n* Rename task_rng to thread_rng\n\n[breaking-change]"
-  },
-  {
-    "hash": "748440c5b3bad8a837918400973e9d6cbb58fa7a",
-    "author": "Alex Crichton",
-    "date": 1419899766,
-    "message": "rollup merge of #20215: csouth3/hashmap-rename\n\nRename struct `Entries` to `Iter` in hash/table.rs and hash/map.rs, to match the naming convention of rust-lang/rfcs#344.\n\nThis is a [breaking-change]."
   }
 ]
