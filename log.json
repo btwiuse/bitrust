@@ -1,5 +1,59 @@
 [
   {
+    "hash": "74b8740719c1b427f79b67d6bc51e9d448dd9c49",
+    "author": "bors",
+    "date": 1423355043,
+    "message": "Auto merge of #21988 - kmcallister:no-std, r=sfackler\n\nFixes #21833.\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton \r\n\r\nThe tests in #21912 will also need `#[feature(no_std)]`. If you're okay with both PRs, I can merge and test them."
+  },
+  {
+    "hash": "d788588dce5525b2bf5674b0c90c791a70582330",
+    "author": "Keegan McAllister",
+    "date": 1423334998,
+    "message": "Feature-gate #![no_std]\n\nFixes #21833.\n\n[breaking-change]"
+  },
+  {
+    "hash": "61626b306314768b273892e3a547b896ef7a4dfd",
+    "author": "bors",
+    "date": 1423333255,
+    "message": "Auto merge of #21984 - pnkfelix:make-for-loops-a-terminating-scope, r=nikomatsakis\n\nmake `for PAT in ITER_EXPR { ... }` a terminating-scope for ITER_EXPR.\r\n\r\nIn effect, temporary anonymous values created during the evaluation of ITER_EXPR no longer not live for the entirety of the block surrounding the for-loop; instead they only live for the extent of the for-loop itself, and no longer.\r\n\r\n----\r\n\r\nThere is one case I know of that this breaks, demonstrated to me by @nikomatsakis  (but it is also a corner-case that is useless in practice).  Here is that case:\r\n\r\n```\r\nfn main() {\r\n    let mut foo: Vec<&i8> = Vec::new();\r\n    for i in &[1, 2, 3] { foo.push(i) }\r\n}\r\n```\r\n\r\nNote that if you add any code following the for-loop above, or even a semicolon to the end of it, then the code will stop compiling (i.e., it gathers a vector of references but the gathered vector cannot actually be used.)\r\n\r\n(The above code, despite being useless, did occur in one run-pass test by accident; that test is updated here to accommodate the new striction.)\r\n\r\n----\r\n\r\nSo, technically this is a:\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "b445bf2bd1139236fd815bf93610ddaf17726111",
+    "author": "Felix S. Klock II",
+    "date": 1423177657,
+    "message": "make `for PAT in ITER_EXPR { ... }` a terminating-scope for ITER_EXPR.\n\nIn effect, temporary anonymous values created during the evaluation of\nITER_EXPR no longer not live for the entirety of the block surrounding\nthe for-loop; instead they only live for the extent of the for-loop\nitself, and no longer.\n\n----\n\nThere is one case I know of that this breaks, demonstrated to me by\nniko (but it is also a corner-case that is useless in practice).  Here\nis that case:\n\n```\nfn main() {\n    let mut foo: Vec<&i8> = Vec::new();\n    for i in &[1, 2, 3] { foo.push(i) }\n}\n```\n\nNote that if you add any code following the for-loop above, or even a\nsemicolon to the end of it, then the code will stop compiling (i.e.,\nit gathers a vector of references but the gathered vector cannot\nactually be used.)\n\n(The above code, despite being useless, did occur in one run-pass test\nby accident; that test is updated here to accommodate the new\nstriction.)\n\n----\n\nSo, technically this is a:\n\n[breaking-change]"
+  },
+  {
+    "hash": "8661b3dc0fbb9e21b94266ba62e23cebb8f0603f",
+    "author": "bors",
+    "date": 1423318118,
+    "message": "Auto merge of #21971 - pnkfelix:fsk-restrict-fixdsz-array-moves, r=nikomatsakis\n\nRevised version of PR #21930.\r\n\r\nRestrictions on moves into and out-from fixed-length arrays.\r\n\r\n(There was only one use of this \"feature\" in the compiler source.)\r\n\r\nNote 1: the change to the error message in tests/compile-fail/borrowck-use-in-index-lvalue.rs, where we now report that *w is uninitialized (rather than w), was unintended fallout from the implementation strategy used here. The change appears harmless to me, but I welcome advice on how to bring back the old message, which was slightly cleaner (i.e. less unintelligible) since that the syntactic form *w does not actually appear in the source text.\r\n\r\nNote 2: the move out-from restriction to only apply to expr[i], and not destructuring bind (e.g. f([a, b, c]: Array) { ... }) since the latter is compatible with nonzeroing drop, AFAICT.\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "cc8f35f874c81be1a5950d2527902b7dd5a94513",
+    "author": "Felix S. Klock II",
+    "date": 1423313040,
+    "message": "Restrictions on moves out-from and into fixed-length arrays.\n\nNo longer legal: `fn foo(a: [D; 5]) { drop(a); a[2] = D::new(); }`;\none must first initialize the entirety of `a` before assigning to its\nindividual elements.\n\nNo longer legal: `fn foo(arr: [D; 5]) -> D { arr[2] }`, unless `D`\nimplements `Copy`. This \"move out-from\" restriction only affects\n`expr[i]`, and not destructuring (e.g. `f([a, b, c]: Array) { ... }`).\n\nuses mem_categorization to distinguish destructuring-bind from array\nindexing.\n\nSee discussion on RFC PR 533.\n\n[breaking-change]"
+  },
+  {
+    "hash": "0b6dbbc9cfb747df1db646bba16561c022704056",
+    "author": "bors",
+    "date": 1423282462,
+    "message": "Auto merge of #21949 - japaric:index, r=nikomatsakis\n\ncloses #21630\r\n\r\nOverloaded indexing (`&[mut] foo[bar]`) only works when `<Self as Index>::Output` is the same as `<Self as IndexMut>::Output` (see issue above). To restrict implementations of `IndexMut` that doesn't work, this PR makes `IndexMut` a supertrait over `Index`, i.e. `trait IndexMut<I>: Index<I>`, just like in the `trait DerefMut: Deref` case.\r\n\r\nThis breaks all downstream implementations of `IndexMut`, in most cases this simply means removing the `type Output = ..` bit, which is now redundant, from `IndexMut` implementations:\r\n\r\n``` diff\r\n impl Index<Foo> for Bar {\r\n     type Output = Baz;\r\n     ..\r\n }\r\n\r\n impl IndexMut<Foo> for Bar {\r\n-    type Output = Baz;\r\n     ..\r\n }\r\n```\r\n\r\n[breaking-change]\r\n\r\n---\r\n\r\nr? @nikomatsakis"
+  },
+  {
+    "hash": "df7db970dcdb7b7fb1080b9d66baf2e45b689914",
+    "author": "Manish Goregaokar",
+    "date": 1423250071,
+    "message": "Rollup merge of #22009 - japaric:no-mov, r=alexcrichton\n\n If you were still using `MaybeOwnedVector`, update your code to use `CowVec`.\n\n[breaking-change]\n\n---\n\nWe already removed `MaybeOwned` (the string equivalent) long time ago and with a much shorter deprecation period. It's time to let go."
+  },
+  {
+    "hash": "d1a1d339ef3fb89599f74c0cbae2183c7cf2ee25",
+    "author": "Manish Goregaokar",
+    "date": 1423219867,
+    "message": "Rollup merge of #21951 - Gankro:entry, r=aturon\n\n This also removes two erroneous re-exports of the Entry variants, and so is incidentally a [breaking-change], though presumably no one should have been using those.\n\nr? @aturon"
+  },
+  {
     "hash": "c3e1f77291803d26b2897c0953dce5cf7e70ab65",
     "author": "bors",
     "date": 1423039647,
@@ -544,59 +598,5 @@
     "author": "bors",
     "date": 1420084862,
     "message": "auto merge of #20363 : japaric/rust/moar-uc, r=nmatsakis\n\nThe the last argument of the `ItemDecorator::expand` method has changed to `Box<FnMut>`. Syntax extensions will break.\r\n\r\n[breaking-change]\r\n\r\n---\r\n\r\nThis PR removes pretty much all the remaining uses of boxed closures from the libraries. There are still boxed closures under the `test` directory, but I think those should be removed or replaced with unboxed closures at the same time we remove boxed closures from the language.\r\n\r\nIn a few places I had to do some contortions (see the first commit for an example) to work around issue #19596. I have marked those workarounds with FIXMEs. In the future when `&mut F where F: FnMut` implements the `FnMut` trait, we should be able to remove those workarounds. I've take care to avoid placing the workaround functions in the public API.\r\n\r\nSince `let f = || {}` always gets type checked as a boxed closure, I have explictly annotated those closures (with e.g. `|&:| {}`) to force the compiler to type check them as unboxed closures.\r\n\r\nInstead of removing the type aliases (like `GetCrateDataCb`), I could have replaced them with newtypes. But this seemed like overcomplicating things for little to no gain.\r\n\r\nI think we should be able to remove the boxed closures from the languge after this PR lands. (I'm being optimistic here)\r\n\r\nr? @alexcrichton or @aturon \r\ncc @nikomatsakis"
-  },
-  {
-    "hash": "e91d810b9b36d6bb163970cd0e8bbf4692f704bb",
-    "author": "Aaron Turon",
-    "date": 1419969742,
-    "message": "Libs: Unify concat and concat_vec\n\nWe've long had traits `StrVector` and `VectorVector` providing\n`concat`/`connect` and `concat_vec`/`connect_vec` respectively. The\nreason for the distinction is that coherence rules did not used to be\nrobust enough to allow impls on e.g. `Vec<String>` versus `Vec<&[T]>`.\n\nThis commit consolidates the traits into a single `SliceConcatExt` trait\nprovided by `slice` and the preldue (where it replaces `StrVector`,\nwhich is removed.)\n\n[breaking-change]"
-  },
-  {
-    "hash": "4f863a338e0a7c33f81a8ac138103f1a0e8b33c5",
-    "author": "Aaron Turon",
-    "date": 1419969742,
-    "message": "Second pass stabilization: slice\n\nThis commit takes a second pass through the `slice` module to\nstabilize its API. The changes are as follows:\n\n**Stable**:\n\n* `as_mut_slice`\n* `as_ptr`, `as_mut_ptr`\n* `binary_search_by` (was: `binary_search`)\n* `binary_search` (was: `binary_search_elem`)\n* `chunks`, `chunks_mut`\n* `contains`\n* `ends_with`\n* `first`, `first_mut` (was: `head`)\n* `get_unchecked`, `get_unchecked_mut` (was: `unsafe_get`)\n* `get`\n* `is_empty`\n* `iter`, `iter_mut`\n* `len`\n* `reverse`\n* `sort_by`\n* `sort`\n* `split_at`, `split_at_mut`\n* `split_mut`, `splitn_mut`, `rsplitn_mut`\n* `split`, `splitn`, `rsplitn`\n* `starts_with`\n* `swap`\n* `to_vec`\n* `windows`\n\n**Deprecated**:\n\n* `head`, `head_mut` (renamed as above)\n* `unsafe_get`, `unsafe_mut` (renamed as above)\n* `binary_search_elem` (renamed as above)\n* `partitioned`, deprecated in favor of a new, more\n  general iterator consumer called `partition`.\n* `BinarySearchResult`, deprecated in favor of `Result<uint, uint>`\n\n[breaking-change]"
-  },
-  {
-    "hash": "9d919d2302b5df42e3bf8979560e0da21f4b2bad",
-    "author": "Aaron Turon",
-    "date": 1419969742,
-    "message": "Second pass stabilization: vec\n\nThis commit takes a second pass through the `vec` module to\nstabilize its API. The changes are as follows:\n\n**Stable**:\n\n* `dedup`\n* `from_raw_parts`\n* `insert`\n* `into_iter`\n* `is_empty`\n* `remove`\n* `reserve_exact`\n* `reserve`\n* `retain`\n* `swap_remove`\n* `truncate`\n\n**Deprecated**:\n\n* `from_fn`, `from_elem`, `grow_fn` and `grow`, all deprecated in\n  favor of iterators. See https://github.com/rust-lang/rfcs/pull/509\n\n* `partition`, `partitioned`, deprecated in favor of a new, more\n  general iterator consumer called `partition`.\n\n* `unzip`, deprecated in favor of a new, more general iterator\n  consumer called `unzip`.\n\nA few remaining methods are left at experimental status.\n\n[breaking-change]"
-  },
-  {
-    "hash": "38f9805f11721d854a59818e0ad7b8a0b6282301",
-    "author": "Alex Crichton",
-    "date": 1419985582,
-    "message": "rollup merge of #20348: frewsxcv/rm-reexports\n\nPart of #19253\n\n[breaking-change]"
-  },
-  {
-    "hash": "1d26fb9e07e664b312ca9d7b666f6d1dd52285ed",
-    "author": "Corey Farwell",
-    "date": 1419968631,
-    "message": "Remove core::atomic::Ordering::* public reexport\n\nPart of #19253\n\n[breaking-change]"
-  },
-  {
-    "hash": "b94bcbf56eab163517e8ffc93888284b8dbb6238",
-    "author": "Aaron Turon",
-    "date": 1419979466,
-    "message": "Stabilize cmp\n\nThis patch marks `PartialEq`, `Eq`, `PartialOrd`, and `Ord` as\n`#[stable]`, as well as the majorify of manual implementaitons of these\ntraits. The traits match the [reform\nRFC](https://github.com/rust-lang/rfcs/pull/439).\n\nAlong the way, two changes are made:\n\n* The recently-added type parameters for `Ord` and `Eq` are\n  removed. These were mistakenly added while adding them to `PartialOrd`\n  and `PartialEq`, but they don't make sense given the laws that are\n  required for (and use cases for) `Ord` and `Eq`.\n\n* More explicit laws are added for `PartialEq` and `PartialOrd`,\n  connecting them to their associated mathematical concepts.\n\nIn the future, many of the impls should be generalized; see\nsince generalizing later is not a breaking change.\n\n[breaking-change]"
-  },
-  {
-    "hash": "79db01a30d22950ad1597d495b76d2f58da859dc",
-    "author": "Alex Crichton",
-    "date": 1419899812,
-    "message": "rollup merge of #20306: alexcrichton/second-pass-string\n\nThis commit performs a second pass over the `std::string` module, performing the\nfollowing actions:\n\n* The name `std::string` is now stable.\n* The `String::from_utf8` function is now stable after having been altered to\n  return a new `FromUtf8Error` structure. The `FromUtf8Error` structure is now\n  stable as well as its `into_bytes` and `utf8_error` methods.\n* The `String::from_utf8_lossy` function is now stable.\n* The `String::from_chars` method is now deprecated in favor of `.collect()`\n* The `String::from_raw_parts` method is now stable\n* The `String::from_str` function remains experimental\n* The `String::from_raw_buf` function remains experimental\n* The `String::from_raw_buf_len` function remains experimental\n* The `String::from_utf8_unchecked` function is now stable\n* The `String::from_char` function is now deprecated in favor of\n  `repeat(c).take(n).collect()`\n* The `String::grow` function is now deprecated in favor of\n  `.extend(repeat(c).take(n)`\n* The `String::capacity` method is now stable\n* The `String::reserve` method is now stable\n* The `String::reserve_exact` method is now stable\n* The `String::shrink_to_fit` method is now stable\n* The `String::pop` method is now stable\n* The `String::as_mut_vec` method is now stable\n* The `String::is_empty` method is now stable\n* The `IntoString` trait is now deprecated (there are no implementors)\n* The `String::truncate` method is now stable\n* The `String::insert` method is now stable\n* The `String::remove` method is now stable\n* The `String::push` method is now stable\n* The `String::push_str` method is now stable\n* The `String::from_utf16` function is now stable after its error type has now\n  become an opaque structure to carry more semantic information in the future.\n\nA number of these changes are breaking changes, but the migrations should be\nfairly straightforward on a case-by-case basis (outlined above where possible).\n\n[breaking-change]"
-  },
-  {
-    "hash": "b26daf3a67a4e283a5e2c49227b60a2321434de0",
-    "author": "Alex Crichton",
-    "date": 1419891076,
-    "message": "std: Second pass stabilization for `string`\n\nThis commit performs a second pass over the `std::string` module, performing the\nfollowing actions:\n\n* The name `std::string` is now stable.\n* The `String::from_utf8` function is now stable after having been altered to\n  return a new `FromUtf8Error` structure. The `FromUtf8Error` structure is now\n  stable as well as its `into_bytes` and `utf8_error` methods.\n* The `String::from_utf8_lossy` function is now stable.\n* The `String::from_chars` method is now deprecated in favor of `.collect()`\n* The `String::from_raw_parts` method is now stable\n* The `String::from_str` function remains experimental\n* The `String::from_raw_buf` function remains experimental\n* The `String::from_raw_buf_len` function remains experimental\n* The `String::from_utf8_unchecked` function is now stable\n* The `String::from_char` function is now deprecated in favor of\n  `repeat(c).take(n).collect()`\n* The `String::grow` function is now deprecated in favor of\n  `.extend(repeat(c).take(n)`\n* The `String::capacity` method is now stable\n* The `String::reserve` method is now stable\n* The `String::reserve_exact` method is now stable\n* The `String::shrink_to_fit` method is now stable\n* The `String::pop` method is now stable\n* The `String::as_mut_vec` method is now stable\n* The `String::is_empty` method is now stable\n* The `IntoString` trait is now deprecated (there are no implementors)\n* The `String::truncate` method is now stable\n* The `String::insert` method is now stable\n* The `String::remove` method is now stable\n* The `String::push` method is now stable\n* The `String::push_str` method is now stable\n* The `String::from_utf16` function is now stable after its error type has now\n  become an opaque structure to carry more semantic information in the future.\n\nA number of these changes are breaking changes, but the migrations should be\nfairly straightforward on a case-by-case basis (outlined above where possible).\n\n[breaking-change]"
-  },
-  {
-    "hash": "f53314cd70dd194ea40c55a5d8ceae7b94409aea",
-    "author": "Nick Cameron",
-    "date": 1419830349,
-    "message": "Remove the glob/shadowing exception bug\n\n[breaking-change]\n\nThis and the other commit in this PR change the rules for shadowing and globs to be\nstricter. There were previously bugs where some glob imports would not be checked\nfor shadowing. Those are now fixed and you may have to adjust your imports to use\nfewer globs."
   }
 ]
