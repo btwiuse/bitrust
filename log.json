@@ -1,5 +1,11 @@
 [
   {
+    "hash": "105f70b50097a5776ef0d1a6da6753c25d191aa6",
+    "author": "Felix S. Klock II",
+    "date": 1423651625,
+    "message": "Add `box_patterns` feature gate.\n\nSwitch feature-gate checker from `box_syntax` to `box_patterns` when\nvisiting a pattern.\n\n(Having to opt into both `box_syntax` and `box_patterns` seemed\nunnecessary.)\n\n[breaking-change]"
+  },
+  {
     "hash": "605225a366b62f29f5fd4b03cc298fff03bc3bdf",
     "author": "Alex Crichton",
     "date": 1423526293,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1420217646,
     "message": "std: Stabilize the prelude module\n\nThis commit is an implementation of [RFC 503][rfc] which is a stabilization\nstory for the prelude. Most of the RFC was directly applied, removing reexports.\nSome reexports are kept around, however:\n\n* `range` remains until range syntax has landed to reduce churn.\n* `Path` and `GenericPath` remain until path reform lands. This is done to\n  prevent many imports of `GenericPath` which will soon be removed.\n* All `io` traits remain until I/O reform lands so imports can be rewritten all\n  at once to `std::io::prelude::*`.\n\nThis is a breaking change because many prelude reexports have been removed, and\nthe RFC can be consulted for the exact list of removed reexports, as well as to\nfind the locations of where to import them.\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0503-prelude-stabilization.md\n[breaking-change]\n\nCloses #20068"
-  },
-  {
-    "hash": "71b46b18a274edc7f7fb60b490e5ebbb9c911462",
-    "author": "bors",
-    "date": 1420213885,
-    "message": "auto merge of #20356 : Gankro/rust/stab, r=aturon\n\nThis stabilizes most of libcollections, carefully avoiding sections of API which are being managed in other PRs. APIs which are not stable are marked explicitly unstable with a reason.\r\n\r\nDeprecates:\r\n\r\n* DList\r\n  * rotate_forward\r\n  * rotate_backward\r\n  * prepend\r\n  * insert_when\r\n  * insert_ordered\r\n  * merge\r\n\r\n* VecMap\r\n  * update\r\n  * update_with_key\r\n\r\n* Renames and newtypes the Bitv and BitvSet iterators to match conventions.\r\n\r\n* Removes the Copy impl from DList's Iter.\r\n\r\nas such this is a\r\n\r\n[breaking-change]"
   }
 ]
