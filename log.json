@@ -1,5 +1,29 @@
 [
   {
+    "hash": "605225a366b62f29f5fd4b03cc298fff03bc3bdf",
+    "author": "Alex Crichton",
+    "date": 1423526293,
+    "message": "std: Rename IntoIterator::Iter to IntoIter\n\nThis is in preparation for stabilization of the `IntoIterator` trait. All\nimplementations and references to `Iter` need to be renamed to `IntoIter`.\n\n[breaking-change]"
+  },
+  {
+    "hash": "64a4decec779ee0a30585a12352d20a54b722506",
+    "author": "Alex Crichton",
+    "date": 1423526293,
+    "message": "std: Remove typarms from IteratorExt::cloned\n\nWith associated types an where clauses none of the type parameters are\nnecessary.\n\n[breaking-change]"
+  },
+  {
+    "hash": "94c06a1be0ccfcf1a8e105fc98d126de372dbd40",
+    "author": "bors",
+    "date": 1423566952,
+    "message": "Auto merge of #22026 - kmcallister:plugin, r=sfackler\n\n```rust\r\n#[plugin] #[no_link] extern crate bleh;\r\n```\r\n\r\nbecomes a crate attribute\r\n\r\n```rust\r\n#![plugin(bleh)]\r\n```\r\n\r\nThe feature gate is still required.\r\n\r\nIt's almost never correct to link a plugin into the resulting library / executable, because it will bring all of libsyntax and librustc with it. However if you really want this behavior, you can get it with a separate `extern crate` item in addition to the `plugin` attribute.\r\n\r\nFixes #21043.\r\nFixes #20769.\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "93b642d9743edea728ef08b2d6fd17229caaad43",
+    "author": "Keegan McAllister",
+    "date": 1423517247,
+    "message": "Use a crate attribute to load plugins\n\n    #[plugin] #[no_link] extern crate bleh;\n\nbecomes a crate attribute\n\n    #![plugin(bleh)]\n\nThe feature gate is still required.\n\nIt's almost never correct to link a plugin into the resulting library /\nexecutable, because it will bring all of libsyntax and librustc with it.\nHowever if you really want this behavior, you can get it with a separate\n`extern crate` item in addition to the `plugin` attribute.\n\nFixes #21043.\nFixes #20769.\n\n[breaking-change]"
+  },
+  {
     "hash": "74b8740719c1b427f79b67d6bc51e9d448dd9c49",
     "author": "bors",
     "date": 1423355043,
@@ -574,29 +598,5 @@
     "author": "bors",
     "date": 1420213885,
     "message": "auto merge of #20356 : Gankro/rust/stab, r=aturon\n\nThis stabilizes most of libcollections, carefully avoiding sections of API which are being managed in other PRs. APIs which are not stable are marked explicitly unstable with a reason.\r\n\r\nDeprecates:\r\n\r\n* DList\r\n  * rotate_forward\r\n  * rotate_backward\r\n  * prepend\r\n  * insert_when\r\n  * insert_ordered\r\n  * merge\r\n\r\n* VecMap\r\n  * update\r\n  * update_with_key\r\n\r\n* Renames and newtypes the Bitv and BitvSet iterators to match conventions.\r\n\r\n* Removes the Copy impl from DList's Iter.\r\n\r\nas such this is a\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "d45b5d2ed9b43b3ad573482fb8820a382f20289e",
-    "author": "Nick Cameron",
-    "date": 1420147699,
-    "message": "Disallow [_, ..n] syntax for fixed length arrays and repeating array constructors\n\nCloses #19999\n\n[breaking-change]\n\nUse [_; n] instead."
-  },
-  {
-    "hash": "39d74026663597a8d4ad0ab04e6d117bf9fd6ad4",
-    "author": "bors",
-    "date": 1420127468,
-    "message": "auto merge of #20190 : cmr/rust/gate-macro-args, r=alexcrichton\n\nUses the same approach as https://github.com/rust-lang/rust/pull/17286 (and\r\nsubsequent changes making it more correct), where the visitor will skip any\r\npieces of the AST that are from \"foreign code\", where the spans don't line up,\r\nindicating that that piece of code is due to a macro expansion.\r\n\r\nIf this breaks your code, read the error message to determine which feature\r\ngate you should add to your crate.\r\n\r\nCloses #18102\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "41da99dff417eadf8f296a93529d9810f79e1d1b",
-    "author": "Corey Richardson",
-    "date": 1420114006,
-    "message": "Feature gate macro arguments\n\nUses the same approach as https://github.com/rust-lang/rust/pull/17286 (and\nsubsequent changes making it more correct), where the visitor will skip any\npieces of the AST that are from \"foreign code\", where the spans don't line up,\nindicating that that piece of code is due to a macro expansion.\n\nIf this breaks your code, read the error message to determine which feature\ngate you should add to your crate, and bask in the knowledge that your code\nwon't mysteriously break should you try to use the 1.0 release.\n\nCloses #18102\n\n[breaking-change]"
-  },
-  {
-    "hash": "47b8479e73e40395f1b1b2d0c6281f28f80301e4",
-    "author": "bors",
-    "date": 1420084862,
-    "message": "auto merge of #20363 : japaric/rust/moar-uc, r=nmatsakis\n\nThe the last argument of the `ItemDecorator::expand` method has changed to `Box<FnMut>`. Syntax extensions will break.\r\n\r\n[breaking-change]\r\n\r\n---\r\n\r\nThis PR removes pretty much all the remaining uses of boxed closures from the libraries. There are still boxed closures under the `test` directory, but I think those should be removed or replaced with unboxed closures at the same time we remove boxed closures from the language.\r\n\r\nIn a few places I had to do some contortions (see the first commit for an example) to work around issue #19596. I have marked those workarounds with FIXMEs. In the future when `&mut F where F: FnMut` implements the `FnMut` trait, we should be able to remove those workarounds. I've take care to avoid placing the workaround functions in the public API.\r\n\r\nSince `let f = || {}` always gets type checked as a boxed closure, I have explictly annotated those closures (with e.g. `|&:| {}`) to force the compiler to type check them as unboxed closures.\r\n\r\nInstead of removing the type aliases (like `GetCrateDataCb`), I could have replaced them with newtypes. But this seemed like overcomplicating things for little to no gain.\r\n\r\nI think we should be able to remove the boxed closures from the languge after this PR lands. (I'm being optimistic here)\r\n\r\nr? @alexcrichton or @aturon \r\ncc @nikomatsakis"
   }
 ]
