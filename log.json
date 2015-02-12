@@ -1,5 +1,35 @@
 [
   {
+    "hash": "f9a1087f2730ab021d5356a5df703baeccffc020",
+    "author": "Felix S. Klock II",
+    "date": 1423659460,
+    "message": "Feature-gate the `#[unsafe_no_drop_flag]` attribute.\n\nSee RFC 320, \"Non-zeroing dynamic drops.\"\n\nFix #22173\n\n[breaking-change]"
+  },
+  {
+    "hash": "9492275106dd4d564a036517ff4726feacaf0720",
+    "author": "Alex Crichton",
+    "date": 1423692144,
+    "message": "rollup merge of #22188: alexcrichton/envv2\n\nThis commit tweaks the interface of the `std::env` module to make it more\nergonomic for common usage:\n\n* `env::var` was renamed to `env::var_os`\n* `env::var_string` was renamed to `env::var`\n* `env::args` was renamed to `env::args_os`\n* `env::args` was re-added as a panicking iterator over string values\n* `env::vars` was renamed to `env::vars_os`\n* `env::vars` was re-added as a panicking iterator over string values.\n\nThis should make common usage (e.g. unicode values everywhere) more ergonomic\nas well as \"the default\". This is also a breaking change due to the differences\nof what's yielded from each of these functions, but migration should be fairly\neasy as the defaults operate over `String` which is a common type to use.\n\n[breaking-change]"
+  },
+  {
+    "hash": "a828e7948069f310dc5b33be8edb65e5e8e0cf9a",
+    "author": "Alex Crichton",
+    "date": 1423691195,
+    "message": "std: Tweak the std::env OsString/String interface\n\nThis commit tweaks the interface of the `std::env` module to make it more\nergonomic for common usage:\n\n* `env::var` was renamed to `env::var_os`\n* `env::var_string` was renamed to `env::var`\n* `env::args` was renamed to `env::args_os`\n* `env::args` was re-added as a panicking iterator over string values\n* `env::vars` was renamed to `env::vars_os`\n* `env::vars` was re-added as a panicking iterator over string values.\n\nThis should make common usage (e.g. unicode values everywhere) more ergonomic\nas well as \"the default\". This is also a breaking change due to the differences\nof what's yielded from each of these functions, but migration should be fairly\neasy as the defaults operate over `String` which is a common type to use.\n\n[breaking-change]"
+  },
+  {
+    "hash": "bbbb571fee01532f63b105150654db8db0b01bf7",
+    "author": "Alex Crichton",
+    "date": 1423685699,
+    "message": "rustc: Fix a number of stability lint holes\n\nThere are a number of holes that the stability lint did not previously cover,\nincluding:\n\n* Types\n* Bounds on type parameters on functions and impls\n* Where clauses\n* Imports\n* Patterns (structs and enums)\n\nThese holes have all been fixed by overriding the `visit_path` function on the\nAST visitor instead of a few specialized cases. This change also necessitated a\nfew stability changes:\n\n* The `collections::fmt` module is now stable (it was already supposed to be).\n* The `thread_local::imp::Key` type is now stable (it was already supposed to\n  be).\n* The `std::rt::{begin_unwind, begin_unwind_fmt}` functions are now stable.\n  These are required via the `panic!` macro.\n* The `std::old_io::stdio::{println, println_args}` functions are now stable.\n  These are required by the `print!` and `println!` macros.\n* The `ops::{FnOnce, FnMut, Fn}` traits are now `#[stable]`. This is required to\n  make bounds with these traits stable. Note that manual implementations of\n  these traits are still gated by default, this stability only allows bounds\n  such as `F: FnOnce()`.\n\nAdditionally, the compiler now has special logic to ignore its own generated\n`__test` module for the `--test` harness in terms of stability.\n\nCloses #8962\nCloses #16360\nCloses #20327\n\n[breaking-change]"
+  },
+  {
+    "hash": "e02b6d17486ecef8541d03bb6a38c52d1a35b339",
+    "author": "Felix S. Klock II",
+    "date": 1423641027,
+    "message": "destructor checker (dropck).\n\nLargely adapted from pcwalton's original branch, with following\nnotable modifications:\n\nUse `regionck::type_must_outlive` to generate `SafeDestructor`\nconstraints.  (this plugged some soundness holes in the analysis).\n\nAvoid exponential time blowup on compile-fail/huge-struct.rs by\nkeeping the breadcrumbs until end of traversal.\n\nAvoid premature return from regionck::visit_expr.\n\nFactored drop-checking code out into dropck module.\n\nAdded `SafeDestructor` to enum `SubregionOrigin` (for error reporting).\n\n----\n\nSince this imposes restrictions on the lifetimes used in types with\ndestructors, this is a (wait for it)\n\n[breaking-change]"
+  },
+  {
     "hash": "105f70b50097a5776ef0d1a6da6753c25d191aa6",
     "author": "Felix S. Klock II",
     "date": 1423651625,
@@ -568,35 +598,5 @@
     "author": "Alex Crichton",
     "date": 1420180313,
     "message": "std: Second pass stabilization for `boxed`\n\nThis commit performs a second pass over the `std::boxed` module, taking the\nfollowing actions:\n\n* `boxed` is now stable\n* `Box` is now stable\n* `BoxAny` is removed in favor of a direct `impl Box<Any>`\n* `Box::downcast` remains unstable while the name of the `downcast` family of\n  methods is determined.\n\nThis is a breaking change due to the removal of the `BoxAny` trait (note that\nthe `downcast` method still exists), and existing consumers of `BoxAny` simply\nneed to remove the import in their modules.\n\n[breaking-change]"
-  },
-  {
-    "hash": "a6f5b980cc44621efeed847e8d359f3b90c29080",
-    "author": "Alex Crichton",
-    "date": 1420070700,
-    "message": "rustc: Re-jigger -L and -l for MSYS compatibility\n\nAs discovered in #20376, the MSYS shell will silently rewrite arguemnts that\nlook like unix paths into their windows path counterparts for compatibility, but\nthe recently added `:kind` syntax added to the `-L` flag does not allow for this\nform of rewriting. This means that the syntax can be difficult to use at an MSYS\nprompt, as well as causing tests to fail when run manuall right now.\n\nThis commit takes the other option presented in the original issue to prefix the\npath with `kind=` instead of suffixing it with `:kind`. For consistence, the\n`-l` flag is also now migrating to `kind=name`.\n\nThis is a breaking change due to the *removal* of behavior with `-L`. All code\nusing `:kind` should now pass `kind=` for `-L` arguments. This is not currently,\nbut will become, a breaking change for `-l` flags. The old `name:kind` syntax is\nstill accepted, but all code should update to `kind=name`.\n\n[breaking-change]\nCloses #20376"
-  },
-  {
-    "hash": "e423fcf0e0166da55f88233e0be5eacba55bc0bc",
-    "author": "Alex Crichton",
-    "date": 1420178686,
-    "message": "std: Enforce Unicode in fmt::Writer\n\nThis commit is an implementation of [RFC 526][rfc] which is a change to alter\nthe definition of the old `fmt::FormatWriter`. The new trait, renamed to\n`Writer`, now only exposes one method `write_str` in order to guarantee that all\nimplementations of the formatting traits can only produce valid Unicode.\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0526-fmt-text-writer.md\n\nOne of the primary improvements of this patch is the performance of the\n`.to_string()` method by avoiding an almost-always redundant UTF-8 check. This\nis a breaking change due to the renaming of the trait as well as the loss of the\n`write` method, but migration paths should be relatively easy:\n\n* All usage of `write` should move to `write_str`. If truly binary data was\n  being written in an implementation of `Show`, then it will need to use a\n  different trait or an altogether different code path.\n\n* All usage of `write!` should continue to work as-is with no modifications.\n\n* All usage of `Show` where implementations just delegate to another should\n  continue to work as-is.\n\n[breaking-change]\n\nCloses #20352"
-  },
-  {
-    "hash": "bc83a009f655dd3896be4a7cd33cac8032a605f2",
-    "author": "Alex Crichton",
-    "date": 1419884209,
-    "message": "std: Second pass stabilization for `comm`\n\nThis commit is a second pass stabilization for the `std::comm` module,\nperforming the following actions:\n\n* The entire `std::comm` module was moved under `std::sync::mpsc`. This movement\n  reflects that channels are just yet another synchronization primitive, and\n  they don't necessarily deserve a special place outside of the other\n  concurrency primitives that the standard library offers.\n* The `send` and `recv` methods have all been removed.\n* The `send_opt` and `recv_opt` methods have been renamed to `send` and `recv`.\n  This means that all send/receive operations return a `Result` now indicating\n  whether the operation was successful or not.\n* The error type of `send` is now a `SendError` to implement a custom error\n  message and allow for `unwrap()`. The error type contains an `into_inner`\n  method to extract the value.\n* The error type of `recv` is now `RecvError` for the same reasons as `send`.\n* The `TryRecvError` and `TrySendError` types have had public reexports removed\n  of their variants and the variant names have been tweaked with enum\n  namespacing rules.\n* The `Messages` iterator is renamed to `Iter`\n\nThis functionality is now all `#[stable]`:\n\n* `Sender`\n* `SyncSender`\n* `Receiver`\n* `std::sync::mpsc`\n* `channel`\n* `sync_channel`\n* `Iter`\n* `Sender::send`\n* `Sender::clone`\n* `SyncSender::send`\n* `SyncSender::try_send`\n* `SyncSender::clone`\n* `Receiver::recv`\n* `Receiver::try_recv`\n* `Receiver::iter`\n* `SendError`\n* `RecvError`\n* `TrySendError::{mod, Full, Disconnected}`\n* `TryRecvError::{mod, Empty, Disconnected}`\n* `SendError::into_inner`\n* `TrySendError::into_inner`\n\nThis is a breaking change due to the modification of where this module is\nlocated, as well as the changing of the semantics of `send` and `recv`. Most\nprograms just need to rename imports of `std::comm` to `std::sync::mpsc` and\nadd calls to `unwrap` after a send or a receive operation.\n\n[breaking-change]"
-  },
-  {
-    "hash": "c32d03f4172580e3f33e4844ed3c01234dca2d53",
-    "author": "Alex Crichton",
-    "date": 1419872301,
-    "message": "std: Stabilize the prelude module\n\nThis commit is an implementation of [RFC 503][rfc] which is a stabilization\nstory for the prelude. Most of the RFC was directly applied, removing reexports.\nSome reexports are kept around, however:\n\n* `range` remains until range syntax has landed to reduce churn.\n* `Path` and `GenericPath` remain until path reform lands. This is done to\n  prevent many imports of `GenericPath` which will soon be removed.\n* All `io` traits remain until I/O reform lands so imports can be rewritten all\n  at once to `std::io::prelude::*`.\n\nThis is a breaking change because many prelude reexports have been removed, and\nthe RFC can be consulted for the exact list of removed reexports, as well as to\nfind the locations of where to import them.\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0503-prelude-stabilization.md\n[breaking-change]\n\nCloses #20068"
-  },
-  {
-    "hash": "56290a004493a5d2e211f056601533253497df60",
-    "author": "Alex Crichton",
-    "date": 1420217646,
-    "message": "std: Stabilize the prelude module\n\nThis commit is an implementation of [RFC 503][rfc] which is a stabilization\nstory for the prelude. Most of the RFC was directly applied, removing reexports.\nSome reexports are kept around, however:\n\n* `range` remains until range syntax has landed to reduce churn.\n* `Path` and `GenericPath` remain until path reform lands. This is done to\n  prevent many imports of `GenericPath` which will soon be removed.\n* All `io` traits remain until I/O reform lands so imports can be rewritten all\n  at once to `std::io::prelude::*`.\n\nThis is a breaking change because many prelude reexports have been removed, and\nthe RFC can be consulted for the exact list of removed reexports, as well as to\nfind the locations of where to import them.\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0503-prelude-stabilization.md\n[breaking-change]\n\nCloses #20068"
   }
 ]
