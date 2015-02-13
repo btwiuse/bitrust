@@ -43,7 +43,7 @@ fn fetch_commits(repo: &Repository, start: &Option<Oid>, query: &str, amount: us
             date: commit.time().seconds(),
             message: commit.message().unwrap_or("").trim().to_string()
         };
-				c
+        c
     })
     .take(amount)
     .collect();
