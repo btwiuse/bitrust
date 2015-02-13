@@ -3,13 +3,13 @@
 extern crate git2;
 extern crate "rustc-serialize" as rustc_serialize;
 
-use std::io::File;
+use std::old_io::File;
 use std::os;
 use git2::{Repository, Oid};
 use git2::Error as GitError;
 use rustc_serialize::json;
 
-#[derive(RustcDecodable, RustcEncodable)]
+#[derive(Clone, RustcDecodable, RustcEncodable)]
 struct Commit {
     hash: String,
     author: String,
@@ -35,14 +35,15 @@ fn fetch_commits(repo: &Repository, start: &Option<Oid>, query: &str, amount: us
         }
     })
     .map(|commit| {
-        Commit {
+        let c = Commit {
             hash: commit.id().to_string(),
             author: commit.author().name()
                 .or(commit.author().email())
                 .unwrap_or("Some dude").trim().to_string(),
             date: commit.time().seconds(),
             message: commit.message().unwrap_or("").trim().to_string()
-        }
+        };
+				c
     })
     .take(amount)
     .collect();
