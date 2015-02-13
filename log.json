@@ -1,5 +1,17 @@
 [
   {
+    "hash": "cf636c233dfeef5abf0de8fb35e23c0a161810d2",
+    "author": "bors",
+    "date": 1423813481,
+    "message": "Auto merge of #22093 - petrochenkov:builtin, r=pnkfelix\n\nNames of structs, enums, traits, type aliases and type parameters (i.e. all identifiers that can be used as full paths in type position) are not allowed to match the names of primitive types.\r\nSee #20427 for more information.\r\n\r\nThis is a minor [breaking-change]"
+  },
+  {
+    "hash": "32d0dbd49a372b9d2e000587497de6ffca9e1cca",
+    "author": "Kevin Butler",
+    "date": 1423745708,
+    "message": "librustc: Forbid partial reinitialization of uninitialized structures or\nenumerations that implement the `Drop` trait.\n\nThis breaks code like:\n\n    struct Struct {\n        f: String,\n        g: String,\n    }\n\n    impl Drop for Struct { ... }\n\n    fn main() {\n        let x = Struct { ... };\n        drop(x);\n        x.f = ...;\n    }\n\nChange this code to not create partially-initialized structures. For\nexample:\n\n    struct Struct {\n        f: String,\n        g: String,\n    }\n\n    impl Drop for Struct { ... }\n\n    fn main() {\n        let x = Struct { ... };\n        drop(x);\n        x = Struct {\n            f: ...,\n            g: ...,\n        }\n    }\n\nCloses #18571.\n\n[breaking-change]\n\n----\n\n(Joint authorship by pcwalton and Ryman; thanks all!)"
+  },
+  {
     "hash": "f9a1087f2730ab021d5356a5df703baeccffc020",
     "author": "Felix S. Klock II",
     "date": 1423659460,
@@ -586,17 +598,5 @@
     "author": "Corey Farwell",
     "date": 1420082881,
     "message": "Remove core::iter::MinMaxResult::* public reexport\n\nPart of #19253\n\n[breaking-change]"
-  },
-  {
-    "hash": "f3a7ec7028c76b3a1c6051131328f372b068e33a",
-    "author": "Alex Crichton",
-    "date": 1420178579,
-    "message": "std: Second pass stabilization of sync\n\nThis pass performs a second pass of stabilization through the `std::sync`\nmodule, avoiding modules/types that are being handled in other PRs (e.g.\nmutexes, rwlocks, condvars, and channels).\n\nThe following items are now stable\n\n* `sync::atomic`\n* `sync::atomic::ATOMIC_BOOL_INIT` (was `INIT_ATOMIC_BOOL`)\n* `sync::atomic::ATOMIC_INT_INIT` (was `INIT_ATOMIC_INT`)\n* `sync::atomic::ATOMIC_UINT_INIT` (was `INIT_ATOMIC_UINT`)\n* `sync::Once`\n* `sync::ONCE_INIT`\n* `sync::Once::call_once` (was `doit`)\n  * C == `pthread_once(..)`\n  * Boost == `call_once(..)`\n  * Windows == `InitOnceExecuteOnce`\n* `sync::Barrier`\n* `sync::Barrier::new`\n* `sync::Barrier::wait` (now returns a `bool`)\n* `sync::Semaphore::new`\n* `sync::Semaphore::acquire`\n* `sync::Semaphore::release`\n\nThe following items remain unstable\n\n* `sync::SemaphoreGuard`\n* `sync::Semaphore::access` - it's unclear how this relates to the poisoning\n                              story of mutexes.\n* `sync::TaskPool` - the semantics of a failing task and whether a thread is\n                     re-attached to a thread pool are somewhat unclear, and the\n                     utility of this type in `sync` is question with respect to\n                     the jobs of other primitives. This type will likely become\n                     stable or move out of the standard library over time.\n* `sync::Future` - futures as-is have yet to be deeply re-evaluated with the\n                   recent core changes to Rust's synchronization story, and will\n                   likely become stable in the future but are unstable until\n                   that time comes.\n\n[breaking-change]"
-  },
-  {
-    "hash": "f2ccdfd8914b7b8f8f8f2053f9ecd98d54ef95a6",
-    "author": "Alex Crichton",
-    "date": 1420180313,
-    "message": "std: Second pass stabilization for `boxed`\n\nThis commit performs a second pass over the `std::boxed` module, taking the\nfollowing actions:\n\n* `boxed` is now stable\n* `Box` is now stable\n* `BoxAny` is removed in favor of a direct `impl Box<Any>`\n* `Box::downcast` remains unstable while the name of the `downcast` family of\n  methods is determined.\n\nThis is a breaking change due to the removal of the `BoxAny` trait (note that\nthe `downcast` method still exists), and existing consumers of `BoxAny` simply\nneed to remove the import in their modules.\n\n[breaking-change]"
   }
 ]
