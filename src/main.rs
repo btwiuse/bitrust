@@ -1,10 +1,10 @@
-#![allow(unstable)]
+#![feature(path, io, env)]
 
 extern crate git2;
 extern crate "rustc-serialize" as rustc_serialize;
 
 use std::old_io::File;
-use std::os;
+use std::env;
 use git2::{Repository, Oid};
 use git2::Error as GitError;
 use rustc_serialize::json;
@@ -52,10 +52,10 @@ fn fetch_commits(repo: &Repository, start: &Option<Oid>, query: &str, amount: us
 }
 
 fn main() {
-    let args = os::args();
+    let args = env::args().collect::<Vec<_>>();
     let start = if args.len() >= 2 { Some(Oid::from_str(&args[1][]).unwrap()) } else { None };
 
-    let cwd = os::getcwd().unwrap();
+    let cwd = env::current_dir().unwrap();
     let repo = Repository::open(&cwd.join("rust")).unwrap();
 
     let mut output = File::create(&cwd.join("log.json")).unwrap();
