@@ -1,5 +1,17 @@
 [
   {
+    "hash": "b63cee4a11fcfecf20ed8419bc3bd6859e6496bc",
+    "author": "bors",
+    "date": 1423933271,
+    "message": "Auto merge of #22158 - Kimundi:the_lonely_uppercase_keyword, r=pnkfelix\n\nIt is only allowed in paths now, where it will either work inside a `trait`\r\nor `impl` item, or not resolve outside of it.\r\n\r\n[breaking-change]\r\n\r\nCloses #22137"
+  },
+  {
+    "hash": "07d00deab22dc07ffc58b8e74d45596242ca8b15",
+    "author": "Marvin Löbel",
+    "date": 1423775071,
+    "message": "Made `Self` a keyword.\n\nIt is only allowed in paths now, where it will either work inside a `trait`\nor `impl` item, or not resolve outside of it.\n\n[breaking-change]\n\nCloses #22137"
+  },
+  {
     "hash": "cf636c233dfeef5abf0de8fb35e23c0a161810d2",
     "author": "bors",
     "date": 1423813481,
@@ -586,17 +598,5 @@
     "author": "Niko Matsakis",
     "date": 1420189569,
     "message": "Fix orphan checking (cc #19470). (This is not a complete fix of #19470 because of the backwards compatibility feature gate.)\n\nThis is a [breaking-change]. The new rules require that, for an impl of a trait defined\nin some other crate, two conditions must hold:\n\n1. Some type must be local.\n2. Every type parameter must appear \"under\" some local type.\n\nHere are some examples that are legal:\n\n```rust\nstruct MyStruct<T> { ... }\n\n// Here `T` appears \"under' `MyStruct`.\nimpl<T> Clone for MyStruct<T> { }\n\n// Here `T` appears \"under' `MyStruct` as well. Note that it also appears\n// elsewhere.\nimpl<T> Iterator<T> for MyStruct<T> { }\n```\n\nHere is an illegal example:\n\n```rust\n// Here `U` does not appear \"under\" `MyStruct` or any other local type.\n// We call `U` \"uncovered\".\nimpl<T,U> Iterator<U> for MyStruct<T> { }\n```\n\nThere are a couple of ways to rewrite this last example so that it is\nlegal:\n\n1. In some cases, the uncovered type parameter (here, `U`) should be converted\n   into an associated type. This is however a non-local change that requires access\n   to the original trait. Also, associated types are not fully baked.\n2. Add `U` as a type parameter of `MyStruct`:\n   ```rust\n   struct MyStruct<T,U> { ... }\n   impl<T,U> Iterator<U> for MyStruct<T,U> { }\n   ```\n3. Create a newtype wrapper for `U`\n   ```rust\n   impl<T,U> Iterator<Wrapper<U>> for MyStruct<T,U> { }\n   ```\n\nBecause associated types are not fully baked, which in the case of the\n`Hash` trait makes adhering to this rule impossible, you can\ntemporarily disable this rule in your crate by using\n`#![feature(old_orphan_check)]`. Note that the `old_orphan_check`\nfeature will be removed before 1.0 is released."
-  },
-  {
-    "hash": "9ca8076cb77a7d7738162c80e1d240ef2ad0b73a",
-    "author": "Alex Crichton",
-    "date": 1420219357,
-    "message": "rollup merge of #20386: frewsxcv/rm-reexports\n\nPart of #19253\n\n[breaking-change]"
-  },
-  {
-    "hash": "f9ce6f5ba458d6a3d4e63b282bac43a18e90aeb0",
-    "author": "Corey Farwell",
-    "date": 1420082881,
-    "message": "Remove core::iter::MinMaxResult::* public reexport\n\nPart of #19253\n\n[breaking-change]"
   }
 ]
