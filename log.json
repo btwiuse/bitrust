@@ -1,5 +1,65 @@
 [
   {
+    "hash": "16b24f15bd042c4f97e1d4826d82c992c0228684",
+    "author": "Manish Goregaokar",
+    "date": 1424005968,
+    "message": "Rollup merge of #22285 - kmcallister:pub-macro, r=nick29581\n\n It's not clear what this means, because a macro in item position can expand to zero or more items.  For now we disallow it, which is technically a\n\n    [breaking-change]\n\nbut is landing without an RFC.  The `pub` keyword previously had no effect, which seems quite unintended.\n\nFixes #18317.\nFixes #14660."
+  },
+  {
+    "hash": "dcd4cef119dc2fdac43b86cfb3694756d8c23f9f",
+    "author": "Keegan McAllister",
+    "date": 1423864089,
+    "message": "Forbid `pub mymacro!();`\n\nIt's not clear what this means, because a macro in item position can expand to\nzero or more items.  For now we disallow it, which is technically a\n\n    [breaking-change]\n\nbut is landing without an RFC.  The `pub` keyword previously had no effect,\nwhich seems quite unintended.\n\nFixes #18317.\nFixes #14660."
+  },
+  {
+    "hash": "f7870b6faa43a9e63b5575d5d9663457003a8ac5",
+    "author": "Manish Goregaokar",
+    "date": 1424005967,
+    "message": "Rollup merge of #22339 - petrochenkov:int, r=huonw\n\n Some function signatures have changed, so this is a [breaking-change].\nIn particular, radixes and numerical values of digits are represented by `u32` now.\n\nPart of #22240"
+  },
+  {
+    "hash": "1b86ebe25751268aa39ef2ad5e2b0e650a6f0291",
+    "author": "Manish Goregaokar",
+    "date": 1424005964,
+    "message": "Rollup merge of #22299 - bluss:range-64-is-not-exact-size, r=alexcrichton\n\n Fixes #22047\n\n`Range<u64>` and `Range<i64>` may be longer than usize::MAX on 32-bit\nplatforms, and thus they cannot fulfill the protocol for\nExactSizeIterator. We don't want a nonobvious platform dependency in\nbasic iterator traits, so the trait impl is removed.\n\nThe logic of this change assumes that usize is at least 32-bit.\n\nThis is technically a breaking change; note that `Range<usize>` and\n`Range<isize>` are always ExactSizeIterators.\n\n[breaking-change]"
+  },
+  {
+    "hash": "b19fda0ceb820af57f00976951dba95a3c0419aa",
+    "author": "Ulrik Sverdrup",
+    "date": 1423859210,
+    "message": "Remove ExactSizeIterator from 64-bit ranges.\n\nFixes #22047\n\nRange<u64> and Range<i64> may be longer than usize::MAX on 32-bit\nplatforms, and thus they cannot fulfill the protocol for\nExactSizeIterator. We don't want a nonobvious platform dependency in\nbasic iterator traits, so the trait impl is removed.\n\nThe logic of this change assumes that usize is at least 32-bit.\n\nThis is technically a breaking change; note that Range<usize> and\nRange<isize> are always ExactSizeIterators.\n\n[breaking-change]"
+  },
+  {
+    "hash": "da1a1f515fbedb32cfd954e2dc9cbf93a02453c8",
+    "author": "Manish Goregaokar",
+    "date": 1424004940,
+    "message": "Rollup merge of #22254 - huonw:float-value--, r=aturon\n\n In `std::f32` and `std::f64`:\n\n- `MIN_VALUE` → `MIN`\n- `MAX_VALUE` → `MAX`\n- `MIN_POS_VALUE` → `MIN_POSITIVE`\n\nThis matches the corresponding integer constants.\n\n[breaking-change]"
+  },
+  {
+    "hash": "e4a9eb95ce4a457e800571d86942561ada28304a",
+    "author": "Huon Wilson",
+    "date": 1423798857,
+    "message": "Remove `_VALUE` from the float extremes constants.\n\nIn `std::f32` and `std::f64`:\n\n- `MIN_VALUE` → `MIN`\n- `MAX_VALUE` → `MAX`\n- `MIN_POS_VALUE` → `MIN_POSITIVE`\n\nThis matches the corresponding integer constants.\n\n[breaking-change]"
+  },
+  {
+    "hash": "8cc3fbd41dddbb11f442a17902cd0d276aa22566",
+    "author": "Manish Goregaokar",
+    "date": 1424004751,
+    "message": "Rollup merge of #22218 - huonw:raw-docs, r=steveklabnik,huonw\n\nThis overhauls the very meager docs that currently exist to clarify\r\nvarious understandable confusions that I've noticed, e.g. people look in\r\n`std::raw` for the \"real\" types of slices like `&[T]`, or think that\r\n`Slice<T>` refers to `[T]` (fixes #22214).\r\n\r\nThis patch takes the liberty of offering some \"style\" guidance around\r\n`raw::Slice`, since there's more restricted ways to duplicate all\r\nfunctionality connected to it: `std::slice::from_raw_parts{,_mut}` for\r\nconstruction and `.as_{,mut_}ptr` & `.len` for deconstruction.\r\n\r\nIt also deprecates the `std::raw::Closure` type which is now useless for\r\nnon-type-erased closures, and replaced by `TraitObject` for `&Fn`, `&mut\r\nFnMut` etc, so I guess it should be called a:\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "7a52932f4cd65f57bcc8d77f12e32066b2a9c432",
+    "author": "Ulrik Sverdrup",
+    "date": 1423873962,
+    "message": "Make std::raw::Repr an unsafe trait\n\nThe default implementation of .repr() will call conveniently call\ntransmute_copy which should be appropriate for all implementors, but is\nmemory unsafe if used wrong.\n\nFixes #22260\n\nYou need to use `unsafe impl` to implement the Repr trait now.\n\n[breaking-change]"
+  },
+  {
+    "hash": "5e3ae102dbeeb646e8c7d2d423cea263337a76af",
+    "author": "Huon Wilson",
+    "date": 1423873928,
+    "message": "Dramatically expand the docs of std::raw.\n\nThis overhauls the very meager docs that currently exist to clarify\nvarious understandable confusions that I've noticed, e.g. people look in\n`std::raw` for the \"real\" types of slices like `&[T]`, or think that\n`Slice<T>` refers to `[T]` (fixes #22214).\n\nThis patch takes the liberty of offering some \"style\" guidance around\n`raw::Slice`, since there's more restricted ways to duplicate all\nfunctionality connected to it: `std::slice::from_raw_parts{,_mut}` for\nconstruction and `.as_{,mut_}ptr` & `.len` for deconstruction.\n\nIt also deprecates the `std::raw::Closure` type which is now useless for\nnon-type-erased closures, and replaced by `TraitObject` for `&Fn`, `&mut\nFnMut` etc, so I guess it should be called a:\n\n[breaking-change]"
+  },
+  {
     "hash": "b63cee4a11fcfecf20ed8419bc3bd6859e6496bc",
     "author": "bors",
     "date": 1423933271,
@@ -538,65 +598,5 @@
     "author": "bors",
     "date": 1420469463,
     "message": "auto merge of #20514 : alexcrichton/rust/serialize-associated-type, r=aturon\n\nThis commit moves the libserialize crate (and will force the hand of the\r\nrustc-serialize crate) to not require the `old_orphan_check` feature gate as\r\nwell as using associated types wherever possible. Concretely, the following\r\nchanges were made:\r\n\r\n* The error type of `Encoder` and `Decoder` is now an associated type, meaning\r\n  that these traits have no type parameters.\r\n\r\n* The `Encoder` and `Decoder` type parameters on the `Encodable` and `Decodable`\r\n  traits have moved to the corresponding method of the trait. This movement\r\n  alleviates the dependency on `old_orphan_check` but implies that\r\n  implementations can no longer be specialized for the type of encoder/decoder\r\n  being implemented.\r\n\r\nDue to the trait definitions changing, this is a:\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "0cb7a4062a3c69bb0c54f0c9136889a1006e4f62",
-    "author": "Alex Crichton",
-    "date": 1420441166,
-    "message": "serialize: Use assoc types + less old_orphan_check\n\nThis commit moves the libserialize crate (and will force the hand of the\nrustc-serialize crate) to not require the `old_orphan_check` feature gate as\nwell as using associated types wherever possible. Concretely, the following\nchanges were made:\n\n* The error type of `Encoder` and `Decoder` is now an associated type, meaning\n  that these traits have no type parameters.\n\n* The `Encoder` and `Decoder` type parameters on the `Encodable` and `Decodable`\n  traits have moved to the corresponding method of the trait. This movement\n  alleviates the dependency on `old_orphan_check` but implies that\n  implementations can no longer be specialized for the type of encoder/decoder\n  being implemented.\n\nDue to the trait definitions changing, this is a:\n\n[breaking-change]"
-  },
-  {
-    "hash": "0302d379776fca82d3eb693046239dc66998f691",
-    "author": "Huon Wilson",
-    "date": 1420421451,
-    "message": "Merge `UnicodeChar` and `CharExt`.\n\nThis \"reexports\" all the functionality of `core::char::CharExt` as\nmethods on `unicode::u_char::UnicodeChar` (renamed to `CharExt`).\n\nImports may need to be updated (one now just imports\n`unicode::CharExt`, or `std::char::CharExt` rather than two traits from\neither), so this is a\n\n[breaking-change]"
-  },
-  {
-    "hash": "19120209d8e532514203d16a2cff0ad3b44de3bb",
-    "author": "Huon Wilson",
-    "date": 1420421430,
-    "message": "Rename `core::char::Char` to `CharExt` to match prelude guidelines.\n\nImports may need to be updated so this is a\n\n[breaking-change]"
-  },
-  {
-    "hash": "f031285c3a76b86525695bbb5b46daa9e77df200",
-    "author": "Corey Farwell",
-    "date": 1420256156,
-    "message": "Remove graphviz::LabelText::* public reexport\n\nPart of #19253\n\n[breaking-change]"
-  },
-  {
-    "hash": "c6c786671d692d7b13c2e5c68a53001327b4b125",
-    "author": "bors",
-    "date": 1420332659,
-    "message": "auto merge of #20490 : japaric/rust/assoc-types, r=aturon\n\ncloses #20486 \r\ncloses #20474 \r\ncloses #20441\r\n\r\n[breaking-change]\r\n\r\nThe `Index[Mut]` traits now have one less input parameter, as the return type of the indexing operation is an associated type. This breaks all existing implementations.\r\n\r\n---\r\n\r\nbinop traits (`Add`, `Sub`, etc) now have an associated type for their return type. Also, the RHS input parameter now defaults to `Self` (except for the `Shl` and `Shr` traits). For example, the `Add` trait now looks like this:\r\n\r\n``` rust\r\ntrait Add<Rhs=Self> {\r\n    type Output;\r\n\r\n    fn add(self, Rhs) -> Self::Output;\r\n}\r\n```\r\n\r\nThe `Neg` and `Not` traits now also have an associated type for their return type.\r\n\r\nThis breaks all existing implementations of these traits.\r\n\r\n---\r\nAffected traits:\r\n\r\n- `Iterator { type Item }`\r\n- `IteratorExt` no input/output types, uses `<Self as Iterator>::Item` in its methods\r\n- `DoubleEndedIterator` no input/output types, uses `<Self as Iterator>::Item` in its methods\r\n- `DoubleEndedIteratorExt` no input/output types, uses `<Self as Iterator>::Item` in its methods\r\n- `RandomAccessIterator` no input/output types\r\n- `ExactSizeIterator` no input/output types, uses `<Self as Iterator>::Item` in its methods\r\n\r\nThis breaks all the implementations of these traits."
-  },
-  {
-    "hash": "9c3e6082e71618c088afd93f7a4a9a7708c9dcbd",
-    "author": "bors",
-    "date": 1420255521,
-    "message": "auto merge of #20154 : P1start/rust/qualified-assoc-type-generics, r=nikomatsakis\n\nThis modifies `Parser::eat_lt` to always split up `<<`s, instead of doing so only when a lifetime name followed or the `force` parameter (now removed) was `true`. This is because `Foo<<TYPE` is now a valid start to a type, whereas previously only `Foo<<LIFETIME` was valid.\r\n\r\nThis is a [breaking-change]. Change code that looks like this:\r\n\r\n```rust\r\nlet x = foo as bar << 13;\r\n```\r\n\r\nto use parentheses, like this:\r\n\r\n```rust\r\nlet x = (foo as bar) << 13;\r\n```\r\n\r\nCloses #17362."
-  },
-  {
-    "hash": "d9769ec3834b62318da892925dc24c8883bb1635",
-    "author": "P1start",
-    "date": 1419487127,
-    "message": "Parse fully-qualified associated types in generics without whitespace\n\nThis breaks code that looks like this:\n\n    let x = foo as bar << 13;\n\nChange such code to look like this:\n\n    let x = (foo as bar) << 13;\n\nCloses #17362.\n\n[breaking-change]"
-  },
-  {
-    "hash": "7506fe52696c5b3b628f173d74dc4a13b5ccc1f3",
-    "author": "Nick Cameron",
-    "date": 1420193122,
-    "message": "Accept `derive` instead of `deriving`\n\n[breaking-change]\n\n`deriving is still accepted, but gives a deprecation warning"
-  },
-  {
-    "hash": "74d11d26f4042ce04c56edfd6caafa003383147d",
-    "author": "Nick Cameron",
-    "date": 1420193122,
-    "message": "Accept `self` in place of `mod` in use items\n\n[breaking-change]\n\n`mod` is still accepted, but gives a deprecated warning"
-  },
-  {
-    "hash": "c61a0092bc236c4be4cb691fcd50ff50e91ab0d6",
-    "author": "Niko Matsakis",
-    "date": 1420189569,
-    "message": "Fix orphan checking (cc #19470). (This is not a complete fix of #19470 because of the backwards compatibility feature gate.)\n\nThis is a [breaking-change]. The new rules require that, for an impl of a trait defined\nin some other crate, two conditions must hold:\n\n1. Some type must be local.\n2. Every type parameter must appear \"under\" some local type.\n\nHere are some examples that are legal:\n\n```rust\nstruct MyStruct<T> { ... }\n\n// Here `T` appears \"under' `MyStruct`.\nimpl<T> Clone for MyStruct<T> { }\n\n// Here `T` appears \"under' `MyStruct` as well. Note that it also appears\n// elsewhere.\nimpl<T> Iterator<T> for MyStruct<T> { }\n```\n\nHere is an illegal example:\n\n```rust\n// Here `U` does not appear \"under\" `MyStruct` or any other local type.\n// We call `U` \"uncovered\".\nimpl<T,U> Iterator<U> for MyStruct<T> { }\n```\n\nThere are a couple of ways to rewrite this last example so that it is\nlegal:\n\n1. In some cases, the uncovered type parameter (here, `U`) should be converted\n   into an associated type. This is however a non-local change that requires access\n   to the original trait. Also, associated types are not fully baked.\n2. Add `U` as a type parameter of `MyStruct`:\n   ```rust\n   struct MyStruct<T,U> { ... }\n   impl<T,U> Iterator<U> for MyStruct<T,U> { }\n   ```\n3. Create a newtype wrapper for `U`\n   ```rust\n   impl<T,U> Iterator<Wrapper<U>> for MyStruct<T,U> { }\n   ```\n\nBecause associated types are not fully baked, which in the case of the\n`Hash` trait makes adhering to this rule impossible, you can\ntemporarily disable this rule in your crate by using\n`#![feature(old_orphan_check)]`. Note that the `old_orphan_check`\nfeature will be removed before 1.0 is released."
   }
 ]
