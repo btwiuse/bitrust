@@ -1,5 +1,17 @@
 [
   {
+    "hash": "f9aeea7cb7865a2b82e7102837daabbe549177ea",
+    "author": "bors",
+    "date": 1424188555,
+    "message": "Auto merge of #22311 - lfairy:consistent-fmt, r=alexcrichton\n\nThis brings it in line with its namesake in `std::io`.\r\n\r\n[breaking-change]\r\n\r\nr? @aturon"
+  },
+  {
+    "hash": "bc9084b9b7f21140ffbc051ecb2a0cd08e88f3bb",
+    "author": "Chris Wong",
+    "date": 1423871792,
+    "message": "Rename `fmt::Writer` to `fmt::Write`\n\nThis brings it in line with its namesake in `std::io`.\n\n[breaking-change]"
+  },
+  {
     "hash": "d264ef2b11683337c24cfb16e0335ab386df02ab",
     "author": "Manish Goregaokar",
     "date": 1424134420,
@@ -586,17 +598,5 @@
     "author": "Alex Crichton",
     "date": 1420473613,
     "message": "std: Redesign c_str and c_vec\n\nThis commit is an implementation of [RFC 494][rfc] which removes the entire\n`std::c_vec` module and redesigns the `std::c_str` module as `std::ffi`.\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0494-c_str-and-c_vec-stability.md\n\nThe interface of the new `CString` is outlined in the linked RFC, the primary\nchanges being:\n\n* The `ToCStr` trait is gone, meaning the `with_c_str` and `to_c_str` methods\n  are now gone. These two methods are replaced with a `CString::from_slice`\n  method.\n* The `CString` type is now just a wrapper around `Vec<u8>` with a static\n  guarantee that there is a trailing nul byte with no internal nul bytes. This\n  means that `CString` now implements `Deref<Target = [c_char]>`, which is where\n  it gains most of its methods from. A few helper methods are added to acquire a\n  slice of `u8` instead of `c_char`, as well as including a slice with the\n  trailing nul byte if necessary.\n* All usage of non-owned `CString` values is now done via two functions inside\n  of `std::ffi`, called `c_str_to_bytes` and `c_str_to_bytes_with_nul`. These\n  functions are now the one method used to convert a `*const c_char` to a Rust\n  slice of `u8`.\n\nMany more details, including newly deprecated methods, can be found linked in\nthe RFC. This is a:\n\n[breaking-change]\nCloses #20444"
-  },
-  {
-    "hash": "88b4c8e0d347921673e61bf1770ba0acd4c7d824",
-    "author": "Alex Crichton",
-    "date": 1420511794,
-    "message": "rollup merge of #20465: nikomatsakis/assoc-types-regions-20303\n\nTreat associated types the same as type parameters when it comes to region bounding. Fixes #20303.\n\nStrictly speaking, this is a [breaking-change] (if you are using\nassociated types). You are no longer free to wantonly violate the type\nsystem rules by closing associated types into objects without any form\nof region bound. Instead you should add region bounds like `T::X :\n'a`, just as you would with a normal type parameter.\n\nr? @aturon"
-  },
-  {
-    "hash": "c8868942e845254abfd3623a709847d65e015a2f",
-    "author": "Niko Matsakis",
-    "date": 1420470875,
-    "message": "Treat associated types the same as type parameters when it comes to region bounding. Fixes #20303.\n\nStrictly speaking, this is a [breaking-change] (if you are using\nassociated types). You are no longer free to wantonly violate the type\nsystem rules by closing associated types into objects without any form\nof region bound. Instead you should add region bounds like `T::X :\n'a`, just as you would with a normal type parameter."
   }
 ]
