@@ -1,5 +1,71 @@
 [
   {
+    "hash": "d8f8f7a58c7c8b3352c1c577347865f5a823fee3",
+    "author": "Aaron Turon",
+    "date": 1424212409,
+    "message": "Revise std::thread semantics\n\nThis commit makes several changes to `std::thread` in preparation for\nfinal stabilization:\n\n* It removes the ability to handle panics from `scoped` children; see\n  #20807 for discussion\n\n* It adds a `JoinHandle` structure, now returned from `spawn`, which\n  makes it possible to join on children that do not share data from\n  their parent's stack. The child is automatically detached when the\n  handle is dropped, and the handle cannot be copied due to Posix\n  semantics.\n\n* It moves all static methods from `std::thread::Thread` to free\n  functions in `std::thread`. This was done in part because, due to the\n  above changes, there are effectively no direct `Thread` constructors,\n  and the static methods have tended to feel a bit awkward.\n\n* Adds an `io::Result` around the `Builder` methods `scoped` and\n  `spawn`, making it possible to handle OS errors when creating\n  threads. The convenience free functions entail an unwrap.\n\n* Stabilizes the entire module. Despite the fact that the API is\n  changing somewhat here, this is part of a long period of baking and\n  the changes are addressing all known issues prior to alpha2. If\n  absolutely necessary, further breaking changes can be made prior to beta.\n\nCloses #20807\n\n[breaking-change]"
+  },
+  {
+    "hash": "a2ebb24ee6cc76791ef834cb2d17ecac95756499",
+    "author": "Alex Crichton",
+    "date": 1424210565,
+    "message": "std: Rename io/path features with old_ prefix\n\nThis commit renames the features for the `std::old_io` and `std::old_path`\nmodules to `old_io` and `old_path` to help facilitate migration to the new APIs.\n\nThis is a breaking change as crates which mention the old feature names now need\nto be renamed to use the new feature names.\n\n[breaking-change]"
+  },
+  {
+    "hash": "eca2453a02548042fcb7082063149367a3343dd7",
+    "author": "Alex Crichton",
+    "date": 1424214833,
+    "message": "rollup merge of #22208: aturon/expose-more-path\n\nThis commit exposes the `is_sep` function and `MAIN_SEP` constant, as\nwell as Windows path prefixes. The path prefix enum is safely exposed on\nall platforms, but it only yielded as a component for Windows.\n\nExposing the prefix enum as part of prefix components involved changing\nthe type from `OsStr` to the `Prefix` enum, which is a:\n\n[breaking-change]"
+  },
+  {
+    "hash": "4a9dd3f8403f84ad518b0119fa2312c379df5dd7",
+    "author": "Aaron Turon",
+    "date": 1424123589,
+    "message": "Expose more of std::path\n\nThis commit exposes the `is_sep` function and `MAIN_SEP` constant, as\nwell as Windows path prefixes. The path prefix enum is safely exposed on\nall platforms, but it only yielded as a component for Windows.\n\nExposing the prefix enum as part of prefix components involved changing\nthe type from `OsStr` to the `Prefix` enum, which is a:\n\n[breaking-change]"
+  },
+  {
+    "hash": "5be2b8964c624ee619d2f8518215d3a3b13514e1",
+    "author": "Alex Crichton",
+    "date": 1424214826,
+    "message": "rollup merge of #22191: nagisa/target-ptr-width-json\n\nThis aligns json target specification to match terminology used elsewhere in the code base.\n\n[breaking-change] for custom target json users. Change all appearances of target-word-size\nto target-pointer-width."
+  },
+  {
+    "hash": "6f5944bfcff96509e3f3de227570382056153392",
+    "author": "Simonas Kazlauskas",
+    "date": 1423686556,
+    "message": "Change target-word-size to target-pointer-width\n\nThis aligns json target specification to match terminology used elsewhere in the code base.\n\n[breaking-change] for custom target json users. Change all appearances of target-word-size\nto target-pointer-width."
+  },
+  {
+    "hash": "f492095eb4ac061f1b4898b92880095d23dc9c86",
+    "author": "Alex Crichton",
+    "date": 1424214800,
+    "message": "rollup merge of #22024: alexcrichton/ascii\n\n* Move the type parameter on the `AsciiExt` trait to an associated type named\n  `Owned`.\n* Move `ascii::escape_default` to using an iterator.\n\nThis is a breaking change due to the removal of the type parameter on the\n`AsciiExt` trait as well as the modifications to the `escape_default` function\nto returning an iterator. Manual implementations of `AsciiExt` (or `AsciiExt`\nbounds) should be adjusted to remove the type parameter and using the new\n`escape_default` should be relatively straightforward.\n\n[breaking-change]"
+  },
+  {
+    "hash": "235f35b0b724a38a5583112825d46f50c5dde980",
+    "author": "Alex Crichton",
+    "date": 1424210314,
+    "message": "std: Stabilize the `ascii` module\n\nThis commit performs a stabilization pass over the `std::ascii` module taking\nthe following actions:\n\n* the module name is now stable\n* `AsciiExt` is now stable after moving its type parameter to an `Owned`\n  associated type\n* `AsciiExt::is_ascii` is now stable\n* `AsciiExt::to_ascii_uppercase` is now stable\n* `AsciiExt::to_ascii_lowercase` is now stable\n* `AsciiExt::eq_ignore_ascii_case` is now stable\n* `AsciiExt::make_ascii_uppercase` is added to possibly replace\n  `OwnedAsciiExt::into_ascii_uppercase` (similarly for lowercase variants).\n* `escape_default` now returns an iterator and is stable\n* `EscapeDefault` is now stable\n\nTrait implementations are now also marked stable.\n\nPrimarily it is still unstable to *implement* the `AsciiExt` trait due to it\ncontaining some unstable methods.\n\n[breaking-change]"
+  },
+  {
+    "hash": "020e4e4ad981ce0518bd8e3464ac592717c41143",
+    "author": "Manish Goregaokar",
+    "date": 1424174600,
+    "message": "Rollup merge of #22383 - pnkfelix:pass-features-along-during-expansion, r=huonw\n\n Pass features along during expansion\n\nUse the set of passed features to detect uses of feature-gated macros without the corresponding feature enabled.\n\nFix #22234.\n\n----\n\nAlso, the framework this add (passing along a reference to the features in the expansion context) is a necessary precursor for landing a properly feature-gated desugaring-based overloaded-`box` and placement-`in` (#22181).\n\n----\n\nThis is fixing a bug, but since there might be code out there that is unknowingly taking advantage of that bug, I feel obligated to mark this as a:\n\n[breaking-change]"
+  },
+  {
+    "hash": "bf52f2eef578e6fff83611a6276a3aa9f284e1c5",
+    "author": "Manish Goregaokar",
+    "date": 1424174600,
+    "message": "Rollup merge of #22311 - lfairy:consistent-fmt, r=alexcrichton\n\n This brings it in line with its namesake in `std::io`.\n\n[breaking-change]\n\nr? @aturon"
+  },
+  {
+    "hash": "4647d89205992383f8122e8fde0e2615497572bc",
+    "author": "Manish Goregaokar",
+    "date": 1424174599,
+    "message": "Rollup merge of #22364 - Manishearth:rfc-572-forbid-attr, r=nikomatsakis\n\n fixes #22203\n\nr? @nikomatsakis\n\nThis breaks code that might be using attributes randomly, so it's technically a\n\n[breaking-change]"
+  },
+  {
     "hash": "f9aeea7cb7865a2b82e7102837daabbe549177ea",
     "author": "bors",
     "date": 1424188555,
@@ -532,71 +598,5 @@
     "author": "Aaron Turon",
     "date": 1420563888,
     "message": "Stabilize std::thread\n\nThis commit takes a first pass at stabilizing `std::thread`:\n\n* It removes the `detach` method in favor of two constructors -- `spawn`\n  for detached threads, `scoped` for \"scoped\" (i.e., must-join)\n  threads. This addresses some of the surprise/frustrating debug\n  sessions with the previous API, in which `spawn` produced a guard that\n  on destruction joined the thread (unless `detach` was called).\n\n  The reason to have the division in part is that `Send` will soon not\n  imply `'static`, which means that `scoped` thread creation can take a\n  closure over *shared stack data* of the parent thread. On the other\n  hand, this means that the parent must not pop the relevant stack\n  frames while the child thread is running. The `JoinGuard` is used to\n  prevent this from happening by joining on drop (if you have not\n  already explicitly `join`ed.) The APIs around `scoped` are\n  future-proofed for the `Send` changes by taking an additional lifetime\n  parameter. With the current definition of `Send`, this is forced to be\n  `'static`, but when `Send` changes these APIs will gain their full\n  flexibility immediately.\n\n  Threads that are `spawn`ed, on the other hand, are detached from the\n  start and do not yield an RAII guard.\n\n  The hope is that, by making `scoped` an explicit opt-in with a very\n  suggestive name, it will be drastically less likely to be caught by a\n  surprising deadlock due to an implicit join at the end of a scope.\n\n* The module itself is marked stable.\n\n* Existing methods other than `spawn` and `scoped` are marked stable.\n\nThe migration path is:\n\n```rust\nThread::spawn(f).detached()\n```\n\nbecomes\n\n```rust\nThread::spawn(f)\n```\n\nwhile\n\n```rust\nlet res = Thread::spawn(f);\nres.join()\n```\n\nbecomes\n\n```rust\nlet res = Thread::scoped(f);\nres.join()\n```\n\n[breaking-change]"
-  },
-  {
-    "hash": "503709708c72401dbe091ed5c7e0494efabe0669",
-    "author": "Nick Cameron",
-    "date": 1420577128,
-    "message": "Change `std::kinds` to `std::markers`; flatten `std::kinds::marker`\n\n[breaking-change]"
-  },
-  {
-    "hash": "2375a79152b8a6554c3e97a3f127fedd75f7495f",
-    "author": "Niko Matsakis",
-    "date": 1420582668,
-    "message": "Implement impl reachability rules. This is a [breaking-change]. Type\nparameters on impls must now also appear in the trait ref, self type,\nor some associated type declared on the impl. This ensures that they\nare constrianed in some way and that the semantics of the trait system\nare well-defined (always a good thing).\n\nThere are three major ways to fix this error:\n\n1. Convert the trait to use associated types; most often the type\n   parameters are not constrained because they are in fact outputs of\n   the impl.\n\n2. Move the type parameters to methods.\n\n3. Add an additional type parameter to the self type or trait so that\n   the unused parameter can appear there.\n\nIn some cases, it is not possible to fix the impl because the trait\ndefinition needs to be changed first (and that may be out of your\ncontrol). In that case, for the time being, you can opt out of these\nrules by using `#[old_impl_check]` on the impl and adding a\n`#![feature(old_impl_check)]` to your crate declaration."
-  },
-  {
-    "hash": "44440e5c18a1dbcc9685866ffffe00c508929079",
-    "author": "Sean McArthur",
-    "date": 1420584582,
-    "message": "core: split into fmt::Show and fmt::String\n\nfmt::Show is for debugging, and can and should be implemented for\nall public types. This trait is used with `{:?}` syntax. There still\nexists #[derive(Show)].\n\nfmt::String is for types that faithfully be represented as a String.\nBecause of this, there is no way to derive fmt::String, all\nimplementations must be purposeful. It is used by the default format\nsyntax, `{}`.\n\nThis will break most instances of `{}`, since that now requires the type\nto impl fmt::String. In most cases, replacing `{}` with `{:?}` is the\ncorrect fix. Types that were being printed specifically for users should\nreceive a fmt::String implementation to fix this.\n\nPart of #20013\n\n[breaking-change]"
-  },
-  {
-    "hash": "ae4762761c995494726e8c9f41b05e99e6c7c81b",
-    "author": "Huon Wilson",
-    "date": 1420546887,
-    "message": "Merge core::num::Float and std::num::FloatMath.\n\n`FloatMath` no longer exists and all functionality from both traits is\navailable under `Float`. Change from\n\n    use std::num::{Float, FloatMath};\n\nto\n\n    use std::num::Float;\n\n[breaking-change]"
-  },
-  {
-    "hash": "cd4ed38404384bdb13500f1d2e782d32ece2b239",
-    "author": "Huon Wilson",
-    "date": 1420546861,
-    "message": "Deprecate the constant-returning functions in Float.\n\nThese are replaced by the equivalent constants in `std::f32` and\n`std::f64` respectively.\n\n[breaking-change]"
-  },
-  {
-    "hash": "48f50e1e98691d74427e23e82694f528b3fb4d56",
-    "author": "Nick Cameron",
-    "date": 1420507247,
-    "message": "Obsolete `Sized? T`\n\n[breaking-change]\n\nUse `T: ?Sized`"
-  },
-  {
-    "hash": "6e68fd09edc7ed37fd76f703247b5410cd338bfe",
-    "author": "Niko Matsakis",
-    "date": 1420496246,
-    "message": "Implement new orphan rule that requires that impls of remote traits meet the following two criteria:\n\n- the self type includes some local type; and,\n- type parameters in the self type must be constrained by a local type.\n\nA type parameter is called *constrained* if it appears in some type-parameter of a local type.\n\nHere are some examples that are accepted. In all of these examples, I\nassume that `Foo` is a trait defined in another crate. If `Foo` were\ndefined in the local crate, then all the examples would be legal.\n\n- `impl Foo for LocalType`\n- `impl<T> Foo<T> for LocalType` -- T does not appear in Self, so it is OK\n- `impl<T> Foo<T> for LocalType<T>` -- T here is constrained by LocalType\n- `impl<T> Foo<T> for (LocalType<T>, T)` -- T here is constrained by LocalType\n\nHere are some illegal examples (again, these examples assume that\n`Foo` is not local to the current crate):\n\n- `impl Foo for int` -- the Self type is not local\n- `impl<T> Foo for T` -- T appears in Self unconstrained by a local type\n- `impl<T> Foo for (LocalType, T)` -- T appears in Self unconstrained by a local type\n\nThis is a [breaking-change]. For the time being, you can opt out of\nthe new rules by placing `#[old_orphan_check]` on the trait (and\nenabling the feature gate where the trait is defined). Longer term,\nyou should restructure your traits to avoid the problem. Usually this\nmeans changing the order of parameters so that the \"central\" type\nparameter is in the `Self` position.\n\nAs an example of that refactoring, consider the `BorrowFrom` trait:\n\n```rust\npub trait BorrowFrom<Sized? Owned> for Sized? {\n    fn borrow_from(owned: &Owned) -> &Self;\n}\n```\n\nAs defined, this trait is commonly implemented for custom pointer\ntypes, such as `Arc`. Those impls follow the pattern:\n\n```rust\nimpl<T> BorrowFrom<Arc<T>> for T {...}\n```\n\nUnfortunately, this impl is illegal because the self type `T` is not\nlocal to the current crate. Therefore, we are going to change the order of the parameters,\nso that `BorrowFrom` becomes `Borrow`:\n\n```rust\npub trait Borrow<Sized? Borrowed> for Sized? {\n    fn borrow_from(owned: &Self) -> &Borrowed;\n}\n```\n\nNow the `Arc` impl is written:\n\n```rust\nimpl<T> Borrow<T> for Arc<T> { ... }\n```\n\nThis impl is legal because the self type (`Arc<T>`) is local."
-  },
-  {
-    "hash": "64ec47c9d2a75c8150d153450e7e7b7db60208dc",
-    "author": "Aaron Turon",
-    "date": 1420495265,
-    "message": "Final alpha stabilization of core::iter\n\nThis commit wraps up the adjustments to the iterator for recent language\nchanges.\n\n* Moves `rposition` from `ExactSizeIterator` to `IteratorExt` using a\n  `where` clause, thereby removing the `ExactSizeIterator:\n  DoubleEndedIterator` constraint.\n\n* Merges `MutableDoubleEndedIterator` into `IteratorExt`, renaming\n  `reverse_` to `reverse_in_place`.\n\n* Merges `IteratorOrdExt`, `IteratorCloneExt` and `CloneIteratorExt`\n  into `IteratorExt` using `where` clauses.\n\nMarks as `#[stable]`:\n\n* the `iter` module itself\n* `FromIterator`, `Extend`\n* `Iterator`, `IteratorExt`\n* `map`\n* `filter`\n* `filter_map`\n* `skip_while`\n* `take_while`\n* `scan`\n* `flat_map`\n* `inspect`\n* `collect`\n* `fold`\n* `all`\n* `any`\n* `find`\n* `rposition`\n* `max`, `min`\n* Various adapter types related to the above methods\n\nBecause of the trait merging, this is a:\n\n[breaking-change]"
-  },
-  {
-    "hash": "bf6c007760169e9c382d3700fd1cdd20037e4343",
-    "author": "Huon Wilson",
-    "date": 1420434857,
-    "message": "Change `&` pat to only work with &T, and `&mut` with &mut T.\n\nThis implements RFC 179 by making the pattern `&<pat>` require matching\nagainst a variable of type `&T`, and introducing the pattern `&mut\n<pat>` which only works with variables of type `&mut T`.\n\nThe pattern `&mut x` currently parses as `&(mut x)` i.e. a pattern match\nthrough a `&T` or a `&mut T` that binds the variable `x` to have type\n`T` and to be mutable. This should be rewritten as follows, for example,\n\n    for &mut x in slice.iter() {\n\nbecomes\n\n    for &x in slice.iter() {\n        let mut x = x;\n\nDue to this, this is a\n\n[breaking-change]\n\nCloses #20496."
-  },
-  {
-    "hash": "25d5a3a19423fee01787de87a56d185dd4e0a4e7",
-    "author": "Alex Crichton",
-    "date": 1420511842,
-    "message": "rollup merge of #20507: alexcrichton/issue-20444\n\nThis commit is an implementation of [RFC 494][rfc] which removes the entire\n`std::c_vec` module and redesigns the `std::c_str` module as `std::ffi`.\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0494-c_str-and-c_vec-stability.md\n\nThe interface of the new `CString` is outlined in the linked RFC, the primary\nchanges being:\n\n* The `ToCStr` trait is gone, meaning the `with_c_str` and `to_c_str` methods\n  are now gone. These two methods are replaced with a `CString::from_slice`\n  method.\n* The `CString` type is now just a wrapper around `Vec<u8>` with a static\n  guarantee that there is a trailing nul byte with no internal nul bytes. This\n  means that `CString` now implements `Deref<Target = [c_char]>`, which is where\n  it gains most of its methods from. A few helper methods are added to acquire a\n  slice of `u8` instead of `c_char`, as well as including a slice with the\n  trailing nul byte if necessary.\n* All usage of non-owned `CString` values is now done via two functions inside\n  of `std::ffi`, called `c_str_to_bytes` and `c_str_to_bytes_with_nul`. These\n  functions are now the one method used to convert a `*const c_char` to a Rust\n  slice of `u8`.\n\nMany more details, including newly deprecated methods, can be found linked in\nthe RFC. This is a:\n\n[breaking-change]\nCloses #20444"
-  },
-  {
-    "hash": "ec7a50d20dff416d9fec837a6492dfe244f5f3ab",
-    "author": "Alex Crichton",
-    "date": 1420473613,
-    "message": "std: Redesign c_str and c_vec\n\nThis commit is an implementation of [RFC 494][rfc] which removes the entire\n`std::c_vec` module and redesigns the `std::c_str` module as `std::ffi`.\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0494-c_str-and-c_vec-stability.md\n\nThe interface of the new `CString` is outlined in the linked RFC, the primary\nchanges being:\n\n* The `ToCStr` trait is gone, meaning the `with_c_str` and `to_c_str` methods\n  are now gone. These two methods are replaced with a `CString::from_slice`\n  method.\n* The `CString` type is now just a wrapper around `Vec<u8>` with a static\n  guarantee that there is a trailing nul byte with no internal nul bytes. This\n  means that `CString` now implements `Deref<Target = [c_char]>`, which is where\n  it gains most of its methods from. A few helper methods are added to acquire a\n  slice of `u8` instead of `c_char`, as well as including a slice with the\n  trailing nul byte if necessary.\n* All usage of non-owned `CString` values is now done via two functions inside\n  of `std::ffi`, called `c_str_to_bytes` and `c_str_to_bytes_with_nul`. These\n  functions are now the one method used to convert a `*const c_char` to a Rust\n  slice of `u8`.\n\nMany more details, including newly deprecated methods, can be found linked in\nthe RFC. This is a:\n\n[breaking-change]\nCloses #20444"
   }
 ]
