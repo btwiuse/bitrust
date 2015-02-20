@@ -1,9 +1,10 @@
-#![feature(path, io, env)]
+#![feature(old_path, io, fs, env)]
 
 extern crate git2;
 extern crate "rustc-serialize" as rustc_serialize;
 
-use std::old_io::File;
+use std::io::Write;
+use std::fs::File;
 use std::env;
 use git2::{Repository, Oid};
 use git2::Error as GitError;
@@ -53,7 +54,7 @@ fn fetch_commits(repo: &Repository, start: &Option<Oid>, query: &str, amount: us
 
 fn main() {
     let args = env::args().collect::<Vec<_>>();
-    let start = if args.len() >= 2 { Some(Oid::from_str(&args[1][]).unwrap()) } else { None };
+    let start = if args.len() >= 2 { Some(Oid::from_str(&args[1][..]).unwrap()) } else { None };
 
     let cwd = env::current_dir().unwrap();
     let repo = Repository::open(&cwd.join("rust")).unwrap();
