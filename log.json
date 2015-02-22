@@ -1,5 +1,17 @@
 [
   {
+    "hash": "98ec45ee0b5f38f06b4ac5adfb9aff198f157bdd",
+    "author": "Manish Goregaokar",
+    "date": 1424550053,
+    "message": "Rollup merge of #22542 - ipetkov:unsafe-lint, r=huonw\n\n This allows warning or forbidding all uses of unsafe code, whereas\npreviously only unsafe blocks were caught by the lint.\n\nThe lint has been renamed from `unsafe-blocks` to `unsafe-code` to\nreflect its new purpose.\n\nThis is a minor [breaking-change]\n\nCloses #22430"
+  },
+  {
+    "hash": "be0dc49675ff38b4bc2e73f68bff298168bc6875",
+    "author": "Ivan Petkov",
+    "date": 1424407389,
+    "message": "Unsafe lint will also check for other unsafe code\n\nChecks include declaration/implementation of unsafe functions, traits,\nand methods.\n\nThis allows warning or forbidding all uses of unsafe code, whereas\npreviously only unsafe blocks were caught by the lint.\n\nThe lint has been renamed from `unsafe-blocks` to `unsafe-code` to\nreflect its new purpose.\n\nThis is a minor [breaking-change]\n\nCloses #22430"
+  },
+  {
     "hash": "a99e698628cbd396c8100ef776d10ac61d911847",
     "author": "Aaron Turon",
     "date": 1424301838,
@@ -586,17 +598,5 @@
     "author": "Nick Cameron",
     "date": 1420669500,
     "message": "Fix precedence for ranges.\n\nTechnically this is a\n\n[breaking-change]\n\nbut it probably shouldn't affect your code.\n\nCloses #20256"
-  },
-  {
-    "hash": "209c701bf9e95542aec69455bc12c7ca295109c4",
-    "author": "Alex Crichton",
-    "date": 1420664176,
-    "message": "std: Stablize the macros module\n\nThis commit performs a pass over the `std::macros` module, applying stability\nattributes where necessary. In particular, this audits macros for patterns such\nas:\n\n* Standard use of forward-to-format-args via `$($arg:tt)*` (or `+`)\n* Prevent macro-defined identifiers from leaking into expression arguments as\n  hygiene is not perfectly implemented.\n* Wherever possible, `$crate` is used now.\n\nSpecifically, the following actions were taken:\n\n* The `std::macros` module itself is no longer public.\n* The `panic!` macro is stable\n* The `assert!` macro is stable\n* The `assert_eq!` macro is stable\n* The `debug_assert!` macro is stable\n* The `debug_assert_eq!` macro is stable\n* The `unreachable!` macro is stable after removing the extra forms to bring the\n  definition in line with the `unimplemented!` macro.\n* The `try!` macro is stable\n* The `vec!` macro is stable\n\n[breaking-change]"
-  },
-  {
-    "hash": "92cd8ea96ad2a1da51863b7f089baec41ed10ce9",
-    "author": "Huon Wilson",
-    "date": 1420680448,
-    "message": "Prohibit type parameter shadowing with a clunky hammer.\n\nThis is a [breaking-change].\n\nChange\n\n    impl<T> Foo<T> {\n        fn bar<T>(...\n\nto (for example)\n\n    impl<T> Foo<T> {\n        fn bar<U>(...\n\nPer RFC 459.\n\nCloses #19390."
   }
 ]
