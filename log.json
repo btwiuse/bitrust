@@ -1,5 +1,11 @@
 [
   {
+    "hash": "67eb38ee4cfd7b28f8498b5b6492da172768dcb9",
+    "author": "bors",
+    "date": 1424645146,
+    "message": "Auto merge of #22466 - Kimundi:str_pattern_ai_safe, r=aturon\n\nThis is not a complete implementation of the RFC:\r\n\r\n- only existing methods got updated, no new ones added\r\n- doc comments are not extensive enough yet\r\n- optimizations got lost and need to be reimplemented\r\n\r\nSee https://github.com/rust-lang/rfcs/pull/528\r\n\r\nTechnically a\r\n\r\n[breaking-change]"
+  },
+  {
     "hash": "98ec45ee0b5f38f06b4ac5adfb9aff198f157bdd",
     "author": "Manish Goregaokar",
     "date": 1424550053,
@@ -592,11 +598,5 @@
     "author": "Felix S. Klock II",
     "date": 1420674103,
     "message": "Added `box_syntax` feature gate; added to std and rustc crates for bootstrap.\n\nTo avoid using the feauture, change uses of `box <expr>` to\n`Box::new(<expr>)` alternative, as noted by the feature gate message.\n\n(Note that box patterns have no analogous trivial replacement, at\nleast not in general; you need to revise the code to do a partial\nmatch, deref, and then the rest of the match.)\n\n[breaking-change]"
-  },
-  {
-    "hash": "63a9bd5e0adc03652e10506055564077aa00eeaa",
-    "author": "Nick Cameron",
-    "date": 1420669500,
-    "message": "Fix precedence for ranges.\n\nTechnically this is a\n\n[breaking-change]\n\nbut it probably shouldn't affect your code.\n\nCloses #20256"
   }
 ]
