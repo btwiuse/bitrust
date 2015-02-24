@@ -1,5 +1,11 @@
 [
   {
+    "hash": "717a91d6651598994834d056c69e6c4bf2b74b9f",
+    "author": "Ivan Petkov",
+    "date": 1424718457,
+    "message": "Update missing-docs lint to check associated type declarations\n\n[breaking-change]\n\nFixes #20648"
+  },
+  {
     "hash": "67eb38ee4cfd7b28f8498b5b6492da172768dcb9",
     "author": "bors",
     "date": 1424645146,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1420737726,
     "message": "rollup merge of #20740: FlaPer87/remove-opt-out-copy\n\n[breaking-change] code using this feature will break."
-  },
-  {
-    "hash": "4a31aaddb364f5ab8280242a1016bdd3d10dcaed",
-    "author": "Felix S. Klock II",
-    "date": 1420674103,
-    "message": "Added `box_syntax` feature gate; added to std and rustc crates for bootstrap.\n\nTo avoid using the feauture, change uses of `box <expr>` to\n`Box::new(<expr>)` alternative, as noted by the feature gate message.\n\n(Note that box patterns have no analogous trivial replacement, at\nleast not in general; you need to revise the code to do a partial\nmatch, deref, and then the rest of the match.)\n\n[breaking-change]"
   }
 ]
