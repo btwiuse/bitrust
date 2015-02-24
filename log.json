@@ -1,5 +1,11 @@
 [
   {
+    "hash": "0bd15657d93c932611f3aee351b6521cdfa77731",
+    "author": "bors",
+    "date": 1424800569,
+    "message": "Auto merge of #22172 - eddyb:almost-there, r=nikomatsakis\n\nAdds `<module::Type>::method` support and makes `module::Type::method` a shorthand for it.\r\nThis is most of #16293, except that chaining multiple associated types is not yet supported.\r\nIt also fixes #22563 as `impl`s are no longer treated as modules in resolve.\r\n\r\nUnfortunately, this is still a *[breaking-change]*:\r\n* If you used a global path to a primitive type, i.e. `::bool`, `::i32` etc. - that was a bug I had to fix.\r\nSolution: remove the leading `::`.\r\n* If you passed explicit `impl`-side type parameters to an inherent method, e.g.:\r\n```rust\r\nstruct Foo<T>(T);\r\nimpl<A, B> Foo<(A, B)> {\r\n    fn pair(a: A, b: B) -> Foo<(A, B)> { Foo((a, b)) }\r\n}\r\nFoo::<A, B>::pair(a, b)\r\n// Now that is sugar for:\r\n<Foo<A, B>>::pair(a, b)\r\n// Which isn't valid because `Foo` has only one type parameter.\r\n// Solution: replace with:\r\nFoo::<(A, B)>::pair(a, b)\r\n// And, if possible, remove the explicit type param entirely:\r\nFoo::pair(a, b)\r\n```\r\n* If you used the `QPath`-related `AstBuilder` methods @hugwijst added in #21943.\r\nThe methods still exist, but `QPath` was replaced by `QSelf`, with the actual path stored separately.\r\nSolution: unpack the pair returned by `cx.qpath` to get the two arguments for `cx.expr_qpath`."
+  },
+  {
     "hash": "717a91d6651598994834d056c69e6c4bf2b74b9f",
     "author": "Ivan Petkov",
     "date": 1424718457,
@@ -592,11 +598,5 @@
     "author": "Steven Fackler",
     "date": 1420939974,
     "message": "Implement Show for types in std::io::{buffered,util}\n\nA derived implementation would not be appropriate for the Buffered types\nsince the buffer is both huge (64k by default) and full of uninitialized\nmemory. Instead of printing the whole thing, we display how full it is.\n\nI also altered MultiWriter to make it generic over Writers instead of\ntaking Box<Writer> trait objects. Box<Writer> implements Writer so\nexisting use cases should continue to work, and this enables a more\nuseful Show implementation in applicable cases.\n\nThe change to MultiWriter may break code that uses it, but any fixes\nshould be easy.\n\n[breaking-change]"
-  },
-  {
-    "hash": "daee409b60cdb17040122343e0a184049c62180b",
-    "author": "Alex Crichton",
-    "date": 1420737726,
-    "message": "rollup merge of #20740: FlaPer87/remove-opt-out-copy\n\n[breaking-change] code using this feature will break."
   }
 ]
