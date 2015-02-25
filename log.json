@@ -1,5 +1,41 @@
 [
   {
+    "hash": "6c6f2317bae63261123cd94ebe214e80fb6ad78e",
+    "author": "Manish Goregaokar",
+    "date": 1424840386,
+    "message": "Rollup merge of #22729 - alexcrichton:ptr-stabilization, r=aturon\n\n Specifically, the following actions were takend:\n\n* The `copy_memory` and `copy_nonoverlapping_memory` functions\n  to drop the `_memory` suffix (as it's implied by the functionality). Both\n  functions are now marked as `#[stable]`.\n* The `set_memory` function was renamed to `write_bytes` and is now stable.\n* The `zero_memory` function is now deprecated in favor of `write_bytes`\n  directly.\n* The `Unique` pointer type is now behind its own feature gate called `unique`\n  to facilitate future stabilization.\n\n[breaking-change]"
+  },
+  {
+    "hash": "ab45694198356ae78972025e0d3beece297431d1",
+    "author": "Alex Crichton",
+    "date": 1424816553,
+    "message": "std: Stabilize some `ptr` functions\n\nSpecifically, the following actions were taken:\n\n* The `copy_memory` and `copy_nonoverlapping_memory` functions\n  to drop the `_memory` suffix (as it's implied by the functionality). Both\n  functions are now marked as `#[stable]`.\n* The `set_memory` function was renamed to `write_bytes` and is now stable.\n* The `zero_memory` function is now deprecated in favor of `write_bytes`\n  directly.\n* The `Unique` pointer type is now behind its own feature gate called `unique`\n  to facilitate future stabilization.\n* All type parameters now are `T: ?Sized` wherever possible and new clauses were\n  added to the `offset` functions to require that the type is sized.\n\n[breaking-change]"
+  },
+  {
+    "hash": "b18584cbd942e2559e718d6318fdbc494e9047bd",
+    "author": "Manish Goregaokar",
+    "date": 1424840379,
+    "message": "Rollup merge of #22727 - alexcrichton:prep-env, r=aturon\n\n This commit moves `std::env` away from the `std::old_io` error type as well as\nthe `std::old_path` module. Methods returning an error now return `io::Error`\nand methods consuming or returning paths use `std::path` instead of\n`std::old_path`. This commit does not yet mark these APIs as `#[stable]`.\n\nThis commit also migrates `std::old_io::TempDir` to `std::fs::TempDir` with\nessentially the exact same API. This type was added to interoperate with the new\npath API and has its own `tempdir` feature.\n\nFinally, this commit reverts the deprecation of `std::os` APIs returning the old\npath API types. This deprecation can come back once the entire `std::old_path`\nmodule is deprecated.\n\n[breaking-change]"
+  },
+  {
+    "hash": "2d200c9c8bd6659720a68ab8dd74218b1e58c1e9",
+    "author": "Alex Crichton",
+    "date": 1424820462,
+    "message": "std: Move std::env to the new I/O APIs\n\nThis commit moves `std::env` away from the `std::old_io` error type as well as\nthe `std::old_path` module. Methods returning an error now return `io::Error`\nand methods consuming or returning paths use `std::path` instead of\n`std::old_path`. This commit does not yet mark these APIs as `#[stable]`.\n\nThis commit also migrates `std::old_io::TempDir` to `std::fs::TempDir` with\nessentially the exact same API. This type was added to interoperate with the new\npath API and has its own `tempdir` feature.\n\nFinally, this commit reverts the deprecation of `std::os` APIs returning the old\npath API types. This deprecation can come back once the entire `std::old_path`\nmodule is deprecated.\n\n[breaking-change]"
+  },
+  {
+    "hash": "24fc50d29545e7ea89320d3c9544cd9043894d7d",
+    "author": "Manish Goregaokar",
+    "date": 1424840231,
+    "message": "Rollup merge of #22783 - alexcrichton:deprecate-taskpool, r=alexcrichton\n\n Rather than stabilize on the current API, we're going to punt this\nconcern to crates.io, to allow for faster iteration.\n\n[breaking-change]"
+  },
+  {
+    "hash": "efd2a1780b2ee1909e84df0c3b398adb024ee375",
+    "author": "Aaron Turon",
+    "date": 1424133726,
+    "message": "Deprecate std::sync::TaskPool\n\nRather than stabilize on the current API, we're going to punt this\nconcern to crates.io, to allow for faster iteration.\n\nIf you need this functionality, you might look at https://github.com/carllerche/syncbox\n\n[breaking-change]"
+  },
+  {
     "hash": "0bd15657d93c932611f3aee351b6521cdfa77731",
     "author": "bors",
     "date": 1424800569,
@@ -562,41 +598,5 @@
     "author": "Alex Crichton",
     "date": 1421426896,
     "message": "rustc: Fix a leak in dependency= paths\n\nWith the addition of separate search paths to the compiler, it was intended that\napplications such as Cargo could require a `--extern` flag per `extern crate`\ndirective in the source. The system can currently be subverted, however, due to\nthe `existing_match()` logic in the crate loader.\n\nWhen loading crates we first attempt to match an `extern crate` directive\nagainst all previously loaded crates to avoid reading metadata twice. This \"hit\nthe cache if possible\" step was erroneously leaking crates across the search\npath boundaries, however. For example:\n\n    extern crate b;\n    extern crate a;\n\nIf `b` depends on `a`, then it will load crate `a` when the `extern crate b`\ndirective is being processed. When the compiler reaches `extern crate a` it will\nuse the previously loaded version no matter what. If the compiler was not\ninvoked with `-L crate=path/to/a`, it will still succeed.\n\nThis behavior is allowing `extern crate` declarations in Cargo without a\ncorresponding declaration in the manifest of a dependency, which is considered\na bug.\n\nThis commit fixes this problem by keeping track of the origin search path for a\ncrate. Crates loaded from the dependency search path are not candidates for\ncrates which are loaded from the crate search path.\n\nAs a result of this fix, this is a likely a breaking change for a number of\nCargo packages. If the compiler starts informing that a crate can no longer be\nfound, it likely means that the dependency was forgotten in your Cargo.toml.\n\n[breaking-change]"
-  },
-  {
-    "hash": "ee2bfae011e368e224d6d4f4c9fad13606ee99da",
-    "author": "bors",
-    "date": 1421413859,
-    "message": "auto merge of #20972 : FlaPer87/rust/oibit-send-and-friends, r=nikomatsakis\n\nThis PR adds rules for negative implementations. It follows pretty much what the [RFC](https://github.com/rust-lang/rfcs/blob/master/text/0019-opt-in-builtin-traits.md) says with 1 main difference:\r\n\r\nInstead of positive implementations override negative implementations, this have been implemented in a way that a negative implementation of `Trait` for `T` will overlap with a positive implementation, causing a coherence error.\r\n\r\n@nikomatsakis r?\r\n\r\ncc #13231\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "0419b4ab1225595b022d8ed4e425526b4d850995",
-    "author": "Alex Crichton",
-    "date": 1421359920,
-    "message": "rollup merge of #21167: FlaPer87/coherence-impls\n\nFixes #21080\n\nr? @nikomatsakis\n\n[breaking-change]"
-  },
-  {
-    "hash": "3d0d9bb6fbdf6ead9396f0874cf38f3ef7c9be5c",
-    "author": "bors",
-    "date": 1421103380,
-    "message": "auto merge of #20896 : sfackler/rust/atomic-rename, r=alexcrichton\n\nChange any use of AtomicInt to AtomicIsize and AtomicUint to AtomicUsize\r\n\r\nCloses #20893\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "8b6cda3ce681d4d95c3097d12ed754975b4a07f6",
-    "author": "Steven Fackler",
-    "date": 1421005664,
-    "message": "Rename AtomicInt and AtomicUint\n\nChange any use of AtomicInt to AtomicIsize and AtomicUint to AtomicUsize\n\nCloses #20893\n\n[breaking-change]"
-  },
-  {
-    "hash": "2e4cef4e78253beb4c08ed35416fad076d978344",
-    "author": "bors",
-    "date": 1420994748,
-    "message": "auto merge of #20910 : sfackler/rust/show-impls, r=alexcrichton\n\nA derived implementation would not be appropriate for the Buffered types\r\nsince the buffer is both huge (64k by default) and full of uninitialized\r\nmemory. Instead of printing the whole thing, we display how full it is.\r\n\r\nI also altered `MultiWriter` to make it generic over Writers instead of\r\ntaking `Box<Writer>` trait objects. `Box<Writer>` implements `Writer` so\r\nexisting use cases should continue to work, and this enables a more\r\nuseful Show implementation in applicable cases.\r\n\r\nThe change to `MultiWriter` may break code that uses it, but any fixes\r\nshould be easy.\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton"
-  },
-  {
-    "hash": "b4fae2fba99e713a6d6a8a59caaf1cfba847b50e",
-    "author": "Steven Fackler",
-    "date": 1420939974,
-    "message": "Implement Show for types in std::io::{buffered,util}\n\nA derived implementation would not be appropriate for the Buffered types\nsince the buffer is both huge (64k by default) and full of uninitialized\nmemory. Instead of printing the whole thing, we display how full it is.\n\nI also altered MultiWriter to make it generic over Writers instead of\ntaking Box<Writer> trait objects. Box<Writer> implements Writer so\nexisting use cases should continue to work, and this enables a more\nuseful Show implementation in applicable cases.\n\nThe change to MultiWriter may break code that uses it, but any fixes\nshould be easy.\n\n[breaking-change]"
   }
 ]
