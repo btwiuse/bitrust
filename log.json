@@ -1,5 +1,41 @@
 [
   {
+    "hash": "48aeaba9347a25b2e3848e0dcbc1d8f6b0076718",
+    "author": "bors",
+    "date": 1425103578,
+    "message": "Auto merge of #22801 - huonw:crateify-lint, r=kmcallister\n\nThis pulls out the implementations of most built-in lints into a\r\nseparate crate, to reduce edit-compile-test iteration times with\r\nlibrustc_lint and increase parallelism. This should enable lints to be\r\nrefactored, added and deleted much more easily as it slashes the\r\nedit-compile cycle to get a minimal working compiler to test with (`make\r\nrustc-stage1`) from\r\n\r\n    librustc -> librustc_typeck -> ... -> librustc_driver ->\r\n        libcore -> ... -> libstd\r\n\r\nto\r\n\r\n    librustc_lint -> librustc_driver -> libcore -> ... libstd\r\n\r\nwhich is significantly faster, mainly due to avoiding the librustc build\r\nitself.\r\n\r\nThe intention would be to move as much as possible of the infrastructure\r\ninto the crate too, but the plumbing is deeply intertwined with librustc\r\nitself at the moment. Also, there are lints for which diagnostics are\r\nregistered directly in the compiler code, not in their own crate\r\ntraversal, and their definitions have to remain in librustc.\r\n\r\nThis is a [breaking-change] for direct users of the compiler APIs:\r\ncallers of `rustc::session::build_session` or\r\n`rustc::session::build_session_` need to manually call\r\n`rustc_lint::register_builtins` on their return value.\r\n\r\nThis should make #22206 easier."
+  },
+  {
+    "hash": "532cd5f85a93921f74f5991db2e419c6da58b188",
+    "author": "Huon Wilson",
+    "date": 1425098039,
+    "message": "Separate most of rustc::lint::builtin into a separate crate.\n\nThis pulls out the implementations of most built-in lints into a\nseparate crate, to reduce edit-compile-test iteration times with\nlibrustc_lint and increase parallelism. This should enable lints to be\nrefactored, added and deleted much more easily as it slashes the\nedit-compile cycle to get a minimal working compiler to test with (`make\nrustc-stage1`) from\n\n    librustc -> librustc_typeck -> ... -> librustc_driver ->\n        libcore -> ... -> libstd\n\nto\n\n    librustc_lint -> librustc_driver -> libcore -> ... libstd\n\nwhich is significantly faster, mainly due to avoiding the librustc build\nitself.\n\nThe intention would be to move as much as possible of the infrastructure\ninto the crate too, but the plumbing is deeply intertwined with librustc\nitself at the moment. Also, there are lints for which diagnostics are\nregistered directly in the compiler code, not in their own crate\ntraversal, and their definitions have to remain in librustc.\n\nThis is a [breaking-change] for direct users of the compiler APIs:\ncallers of `rustc::session::build_session` or\n`rustc::session::build_session_` need to manually call\n`rustc_lint::register_builtins` on their return value.\n\nThis should make #22206 easier."
+  },
+  {
+    "hash": "ce5f1b3216be790be590ad71eabccc16c9b86c74",
+    "author": "Manish Goregaokar",
+    "date": 1425055023,
+    "message": "Rollup merge of #22817 - jmesmon:result-or-type, r=huonw\n\n Changes .or() so that it can return a Result with a different E type\nthan the one it is called on.\n\nEssentially:\n\n    fn or(self, res: Result<T, E>) -> Result<T, E>\n\nbecomes\n\n    fn or<F>(self, res: Result<T, F>) -> Result<T, F>\n\nThis brings `or` in line with the existing `and` & `or_else`\n\nThis is a\n[breaking-change]\nDue to some code needing additional type annotations."
+  },
+  {
+    "hash": "07dc8d67c92017f950eef3951ec901cb2a3add7e",
+    "author": "Cody P Schafer",
+    "date": 1424903908,
+    "message": "Result::or : avoid over-specializing the type\n\nChanges .or() so that it can return a Result with a different E type\nthan the one it is called on.\n\nEssentially:\n\n    fn or(self, res: Result<T, E>) -> Result<T, E>\n\nbecomes\n\n    fn or<F>(self, res: Result<T, F>) -> Result<T, F>\n\nThis brings `or` in line with the existing `and` and `or_else` member\ntypes.\n\nThis is a\n[breaking-change]\nDue to some code needing additional type annotations."
+  },
+  {
+    "hash": "91569a95f16580f05f9dcb4b6d6eff50203cdde8",
+    "author": "Manish Goregaokar",
+    "date": 1425055022,
+    "message": "Rollup merge of #22795 - alexcrichton:issue-22617, r=huonw\n\n Keeps the method consistent with `Iterator::any`.\n\nCloses #22617\n[breaking-change]"
+  },
+  {
+    "hash": "18878b155ebf3c70445f2a461582475f5ef72c92",
+    "author": "Alex Crichton",
+    "date": 1424844261,
+    "message": "std: Require `&mut self` for Iterator::all\n\nKeeps the method consistent with `Iterator::any`.\n\nCloses #22617\n[breaking-change]"
+  },
+  {
     "hash": "6c6f2317bae63261123cd94ebe214e80fb6ad78e",
     "author": "Manish Goregaokar",
     "date": 1424840386,
@@ -562,41 +598,5 @@
     "author": "bors",
     "date": 1421682281,
     "message": "Auto merge of #21269 - alexcrichton:issue-6936, r=pnkfelix\n\nThis commit modifies resolve to prevent conflicts with typedef names in the same\r\nmethod that conflits are prevented with enum names. This is a breaking change\r\ndue to the differing semantics in resolve, and any errors generated on behalf of\r\nthis change require that a conflicting typedef, module, or structure to be\r\nrenamed so they do not conflict.\r\n\r\n[breaking-change]\r\nCloses #6936"
-  },
-  {
-    "hash": "2549cbec9dfe02cdc93a3cf3bfe9638e5a4c2948",
-    "author": "Alex Crichton",
-    "date": 1421634355,
-    "message": "rustc_resolve: Do not allow mods to shadow types\n\nThis commit modifies resolve to prevent conflicts with typedef names in the same\nmethod that conflits are prevented with enum names. This is a breaking change\ndue to the differing semantics in resolve, and any errors generated on behalf of\nthis change require that a conflicting typedef, module, or structure to be\nrenamed so they do not conflict.\n\n[breaking-change]\nCloses #6936"
-  },
-  {
-    "hash": "7b87900d72cf53037119e3bac1506a9786ca508a",
-    "author": "bors",
-    "date": 1421662763,
-    "message": "Auto merge of #20874 - klutzy:windows-dynamic-lib, r=alexcrichton\n\nThis is a [breaking-change] since `std::dynamic_lib::dl` is now\r\nprivate.\r\n\r\nWhen `LoadLibraryW()` fails, original code called `errno()` to get error\r\ncode.  However, there was local allocation of `Vec` before\r\n`LoadLibraryW()`, and it drops before `errno()`, and the drop\r\n(deallocation) changed `errno`! Therefore `dynamic_lib::open()` thought\r\nit always succeeded.\r\nThis commit fixes the issue.\r\n\r\nThis commit also sets Windows error mode during `LoadLibrary()` to\r\nprevent \"dll load failed\" dialog."
-  },
-  {
-    "hash": "d053ccb45fafc12a52629f209122c1ce9bbfabed",
-    "author": "klutzy",
-    "date": 1421593965,
-    "message": "std::dynamic_lib: Fix Windows error handling\n\nThis is a [breaking-change] since `std::dynamic_lib::dl` is now\nprivate.\n\nWhen `LoadLibraryW()` fails, original code called `errno()` to get error\ncode.  However, there was local allocation of `Vec` before\n`LoadLibraryW()`, and it drops before `errno()`, and the drop\n(deallocation) changed `errno`! Therefore `dynamic_lib::open()` thought\nit always succeeded.\nThis commit fixes the issue.\n\nThis commit also sets Windows error mode during `LoadLibrary()` to\nprevent \"dll load failed\" dialog."
-  },
-  {
-    "hash": "34fa70fba5425cbbb96bce783e9fd5c23dd9b471",
-    "author": "Alex Crichton",
-    "date": 1421509867,
-    "message": "std: Move the bitflags! macro to a gated crate\n\nIn accordance with [collections reform part 2][rfc] this macro has been moved to\nan external [bitflags crate][crate] which is [available though\ncrates.io][cratesio]. Inside the standard distribution the macro has been moved\nto a crate called `rustc_bitflags` for current users to continue using.\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0509-collections-reform-part-2.md\n[crate]: https://github.com/rust-lang/bitflags\n[cratesio]: http://crates.io/crates/bitflags\n\nThe major user of `bitflags!` in terms of a public-facing possibly-stable API\ntoday is the `FilePermissions` structure inside of `std::io`. This user,\nhowever, will likely no longer use `bitflags!` after I/O reform has landed. To\nprevent breaking APIs today, this structure remains as-is.\n\nCurrent users of the `bitflags!` macro should add this to their `Cargo.toml`:\n\n    bitflags = \"0.1\"\n\nand this to their crate root:\n\n    #[macro_use] extern crate bitflags;\n\nDue to the removal of a public macro, this is a:\n\n[breaking-change]"
-  },
-  {
-    "hash": "873ae555e9a42fd12b0a92134112ec000d749ab2",
-    "author": "Simonas Kazlauskas",
-    "date": 1421509789,
-    "message": "Revert stability for Bitv and BitvSet\n\nThe collections were promoted to stable by mistake and do not match RFC 509.\nThis reverts the stability back to unstable.\n\n[breaking-change] since previously stable API became unstable.\n\nFixes #21193"
-  },
-  {
-    "hash": "cbeb77ec7a42b988703fa0b0c857f26d464fdc2f",
-    "author": "Alex Crichton",
-    "date": 1421426896,
-    "message": "rustc: Fix a leak in dependency= paths\n\nWith the addition of separate search paths to the compiler, it was intended that\napplications such as Cargo could require a `--extern` flag per `extern crate`\ndirective in the source. The system can currently be subverted, however, due to\nthe `existing_match()` logic in the crate loader.\n\nWhen loading crates we first attempt to match an `extern crate` directive\nagainst all previously loaded crates to avoid reading metadata twice. This \"hit\nthe cache if possible\" step was erroneously leaking crates across the search\npath boundaries, however. For example:\n\n    extern crate b;\n    extern crate a;\n\nIf `b` depends on `a`, then it will load crate `a` when the `extern crate b`\ndirective is being processed. When the compiler reaches `extern crate a` it will\nuse the previously loaded version no matter what. If the compiler was not\ninvoked with `-L crate=path/to/a`, it will still succeed.\n\nThis behavior is allowing `extern crate` declarations in Cargo without a\ncorresponding declaration in the manifest of a dependency, which is considered\na bug.\n\nThis commit fixes this problem by keeping track of the origin search path for a\ncrate. Crates loaded from the dependency search path are not candidates for\ncrates which are loaded from the crate search path.\n\nAs a result of this fix, this is a likely a breaking change for a number of\nCargo packages. If the compiler starts informing that a crate can no longer be\nfound, it likely means that the dependency was forgotten in your Cargo.toml.\n\n[breaking-change]"
   }
 ]
