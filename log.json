@@ -1,5 +1,23 @@
 [
   {
+    "hash": "040a811b9190d2c2c595e09b5d1db07bedffdde9",
+    "author": "Manish Goregaokar",
+    "date": 1425131340,
+    "message": "Rollup merge of #22884 - japaric:obsolete, r=alexcrichton\n\n This is leftover from #21843\n\nIf you still have `|&:| {}` closures in your code, simply remove the `&:` part.\n\n[breaking-change]"
+  },
+  {
+    "hash": "37760c1f25fc55814a92cce1c98edefdc0740188",
+    "author": "Manish Goregaokar",
+    "date": 1425131339,
+    "message": "Rollup merge of #22875 - kmcallister:maceager, r=sfackler\n\n MacEager is a MacResult implementation for the common case where you've already built each form of AST that you might return.\n\nFixes #17637. Based on #18814.\n\nThis is a [breaking-change] for syntax extensions:\n\n  * MacExpr::new becomes MacEager::expr.\n\n  * MacPat::new becomes MacEager::pat.\n\n  * MacItems::new becomes MacEager::items. It takes a SmallVector directly,\n    not an iterator.\n\nr? @sfackler"
+  },
+  {
+    "hash": "f66a3f7bba378d4a308e02a860a11ab5f9f8e4ad",
+    "author": "Keegan McAllister",
+    "date": 1425064625,
+    "message": "Replace MacExpr / MacPat / MacItems with MacEager\n\nMacEager is a MacResult implementation for the common case where you've already\nbuilt each form of AST that you might return.\n\nFixes #17637. Based on #18814.\n\nThis is a [breaking-change] for syntax extensions:\n\n  * MacExpr::new becomes MacEager::expr.\n\n  * MacPat::new becomes MacEager::pat.\n\n  * MacItems::new becomes MacEager::items. It takes a SmallVector directly,\n    not an iterator."
+  },
+  {
     "hash": "48aeaba9347a25b2e3848e0dcbc1d8f6b0076718",
     "author": "bors",
     "date": 1425103578,
@@ -580,23 +598,5 @@
     "author": "Barosl LEE",
     "date": 1421774211,
     "message": "Rollup merge of #21388 - aochagavia:collections, r=Gankro\n\n**Breaking change**: `VecMap::into_iter` now consumes the `VecMap`. To fix it you should pass the VecMap by value instead of by reference.\r\n\r\n[breaking-change]\r\n\r\nr? @Gankro"
-  },
-  {
-    "hash": "2366dee8e9cb41d963900c8d5128f810a87fc6bb",
-    "author": "Adolfo Ochagavía",
-    "date": 1421660881,
-    "message": "Make VecMap::into_iter consume the VecMap\n\nThis is a breaking change. To fix it you should pass the VecMap by value\ninstead of by reference.\n\n[breaking-change]"
-  },
-  {
-    "hash": "e63443d536a0e6157dce0cfb39dfcd2d614fb357",
-    "author": "Barosl LEE",
-    "date": 1421774207,
-    "message": "Rollup merge of #21312 - michaelsproul:remove-error-send-bound, r=aturon\n\nAs discussed with @aturon, this PR removes the `Send` bound from `std::error::Error`, allowing us to implement `Error` for error types containing non-`Send` types. Current examples include `PoisonError` and `TryLockError` from `std::sync` which contain a Guard that we don't want sent between tasks.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "cda3490f8fb099a1ddd1f253a75c29110042dc01",
-    "author": "bors",
-    "date": 1421682281,
-    "message": "Auto merge of #21269 - alexcrichton:issue-6936, r=pnkfelix\n\nThis commit modifies resolve to prevent conflicts with typedef names in the same\r\nmethod that conflits are prevented with enum names. This is a breaking change\r\ndue to the differing semantics in resolve, and any errors generated on behalf of\r\nthis change require that a conflicting typedef, module, or structure to be\r\nrenamed so they do not conflict.\r\n\r\n[breaking-change]\r\nCloses #6936"
   }
 ]
