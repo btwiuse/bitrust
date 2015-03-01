@@ -1,5 +1,17 @@
 [
   {
+    "hash": "157614249594f187f421cd97f928e64c5ab5c1fa",
+    "author": "bors",
+    "date": 1425219778,
+    "message": "Auto merge of #22880 - alexcrichton:deprecate-io-extensions, r=huonw\n\nThe `u64_from_be_bytes` and `u64_to_be_bytes` functions are being deprecated\r\nwith no replacement for now.\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "d79e91033770fc5a760d34511769f5ba6c872c77",
+    "author": "Alex Crichton",
+    "date": 1425083193,
+    "message": "std: Deprecated the `old_io::extensions` module\n\nThe `u64_from_be_bytes` and `u64_to_be_bytes` functions are being deprecated\nwith no replacement for now.\n\n[breaking-change]"
+  },
+  {
     "hash": "d9fb9765a13d44f051cae9a9a7d010621b8e42cb",
     "author": "Manish Goregaokar",
     "date": 1425183588,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1422076335,
     "message": "Auto merge of #21458 - alexcrichton:remove-some-code, r=brson\n\nThe base64 support can be trivially removed (there are no in-tree users) and the regex support is a whopping 4k lines of code to maintain for a few non-critical uses in-tree. This commit migrates all current users in-tree away from regexes to custom matching code.\r\n\r\nThe most critical application affected by this migration is that the testing framework no longer considers filter arguments as regexes, but rather just a substring matching. It is expected that more featureful testing frameworks can evolve outside of the in-tree libtest version over time which can properly depend on libregex from crates.io.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "092ba6a8563b5c95f5aa53a705eaba6cc94e2da7",
-    "author": "Aaron Turon",
-    "date": 1421855145,
-    "message": "Deprecate slicing methods in favor of notation\n\nThis commit deprecates `slice`, `slice_from`, `slice_to` and their\nmutable variants in favor of slice notation.\n\nThe `as_slice` methods are left intact, for now.\n\n[breaking-change]"
-  },
-  {
-    "hash": "fba0bf63a90379e8825012a817167774e14a627f",
-    "author": "Aaron Turon",
-    "date": 1421855145,
-    "message": "Stabilize Index traits and most range notation\n\nThis commit marks as `#[stable]`:\n\n* The `Index` and `IndexMut` traits. These are stabilized as taking the\n  index itself *by reference*; after extensive discussion it was\n  determined that this is a better match with our choices\n  elsewhere (e.g. making comparison operators auto-reference), and that\n  the use cases for by-value indices are better handled through\n  `IndexSet`.\n\n* The `Range`, `RangeFrom` and `RangeTo` structs, introduced for range\n  notation.\n\n* Various impls of `Index` and `IndexMut`.\n\nThe `FullRange` struct is left unstable as we may wish to rename it to\n`RangeFull` in the future.\n\nThis commit also *removes* the `Step` trait in favor of direct\nimplementation of iterator traits on ranges for integers. The `Step`\ntrait was not a terribly useful factoring internally, and it is likely\nthat external integer types are best off implementing range iterators\ndirectly. It was removed to simplify the API surface. We can always\nreintroduce `Step` later if it turns out to be useful.\n\nDue to this removal, this is a:\n\n[breaking-change]"
   }
 ]
