@@ -1,5 +1,17 @@
 [
   {
+    "hash": "d9fb9765a13d44f051cae9a9a7d010621b8e42cb",
+    "author": "Manish Goregaokar",
+    "date": 1425183588,
+    "message": "Rollup merge of #22907 - dotdash:static_assert_bool, r=eddyb\n\n static_assert is documented as working on static with type `bool`, but\nwe currently accept it on any const static and crash when the const has\nan non-integral type.\n\nThis is a breaking-change for anyone who used static_assert on types\nlikes i32, which happened to work but seems like an unintended\nconsequence of the missing error checking.\n\n[breaking-change]\n\nFixes #22056"
+  },
+  {
+    "hash": "d11b48c85c1cceb559ab8a08815ba3f7b3312c44",
+    "author": "Björn Steinbrink",
+    "date": 1425148129,
+    "message": "Error out when using static_assert on a non-boolean value\n\nstatic_assert is documented as working on static with type `bool`, but\nwe currently accept it on any const static and crash when the const has\nan non-integral type.\n\nThis is a breaking-change for anyone who used static_assert on types\nlikes i32, which happened to work but seems like an unintended\nconsequence of the missing error checking.\n\n[breaking-change]\n\nFixes #22056"
+  },
+  {
     "hash": "040a811b9190d2c2c595e09b5d1db07bedffdde9",
     "author": "Manish Goregaokar",
     "date": 1425131340,
@@ -586,17 +598,5 @@
     "author": "Aaron Turon",
     "date": 1421855145,
     "message": "Stabilize Index traits and most range notation\n\nThis commit marks as `#[stable]`:\n\n* The `Index` and `IndexMut` traits. These are stabilized as taking the\n  index itself *by reference*; after extensive discussion it was\n  determined that this is a better match with our choices\n  elsewhere (e.g. making comparison operators auto-reference), and that\n  the use cases for by-value indices are better handled through\n  `IndexSet`.\n\n* The `Range`, `RangeFrom` and `RangeTo` structs, introduced for range\n  notation.\n\n* Various impls of `Index` and `IndexMut`.\n\nThe `FullRange` struct is left unstable as we may wish to rename it to\n`RangeFull` in the future.\n\nThis commit also *removes* the `Step` trait in favor of direct\nimplementation of iterator traits on ranges for integers. The `Step`\ntrait was not a terribly useful factoring internally, and it is likely\nthat external integer types are best off implementing range iterators\ndirectly. It was removed to simplify the API surface. We can always\nreintroduce `Step` later if it turns out to be useful.\n\nDue to this removal, this is a:\n\n[breaking-change]"
-  },
-  {
-    "hash": "3cb9fa26ef9905c00a29ea577fb55a12a91c8e7b",
-    "author": "Alex Crichton",
-    "date": 1421822173,
-    "message": "std: Rename Show/String to Debug/Display\n\nThis commit is an implementation of [RFC 565][rfc] which is a stabilization of\nthe `std::fmt` module and the implementations of various formatting traits.\nSpecifically, the following changes were performed:\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0565-show-string-guidelines.md\n\n* The `Show` trait is now deprecated, it was renamed to `Debug`\n* The `String` trait is now deprecated, it was renamed to `Display`\n* Many `Debug` and `Display` implementations were audited in accordance with the\n  RFC and audited implementations now have the `#[stable]` attribute\n  * Integers and floats no longer print a suffix\n  * Smart pointers no longer print details that they are a smart pointer\n  * Paths with `Debug` are now quoted and escape characters\n* The `unwrap` methods on `Result` now require `Display` instead of `Debug`\n* The `Error` trait no longer has a `detail` method and now requires that\n  `Display` must be implemented. With the loss of `String`, this has moved into\n  libcore.\n* `impl<E: Error> FromError<E> for Box<Error>` now exists\n* `derive(Show)` has been renamed to `derive(Debug)`. This is not currently\n  warned about due to warnings being emitted on stage1+\n\nWhile backwards compatibility is attempted to be maintained with a blanket\nimplementation of `Display` for the old `String` trait (and the same for\n`Show`/`Debug`) this is still a breaking change due to primitives no longer\nimplementing `String` as well as modifications such as `unwrap` and the `Error`\ntrait. Most code is fairly straightforward to update with a rename or tweaks of\nmethod calls.\n\n[breaking-change]\nCloses #21436"
-  },
-  {
-    "hash": "8d05f6c74c34c1d72fd91be3057fe7d4581aca3a",
-    "author": "Barosl LEE",
-    "date": 1421774211,
-    "message": "Rollup merge of #21388 - aochagavia:collections, r=Gankro\n\n**Breaking change**: `VecMap::into_iter` now consumes the `VecMap`. To fix it you should pass the VecMap by value instead of by reference.\r\n\r\n[breaking-change]\r\n\r\nr? @Gankro"
   }
 ]
