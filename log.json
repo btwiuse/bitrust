@@ -1,5 +1,17 @@
 [
   {
+    "hash": "ef8b20a564bab2050403f2f5c1dab90e0941adf7",
+    "author": "Manish Goregaokar",
+    "date": 1425248634,
+    "message": "Rollup merge of #22821 - ipetkov:lint-method-rename, r=eddyb\n\n Traits can have associated types and not just methods. This\nclarification reflects the the type of the input the method accepts.\n\n[breaking-change]"
+  },
+  {
+    "hash": "2fc62244113d01e9524ed712210ba52e8471e2a9",
+    "author": "Ivan Petkov",
+    "date": 1425160597,
+    "message": "Rename LintPass::check_trait_method to check_trait_item\n\nTraits can have associated types and not just methods. This\nclarification reflects the the type of the input the method accepts.\n\n[breaking-change]"
+  },
+  {
     "hash": "157614249594f187f421cd97f928e64c5ab5c1fa",
     "author": "bors",
     "date": 1425219778,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1422165030,
     "message": "Auto merge of #21558 - alexcrichton:result-debug, r=aturon\n\nThis commit relaxes the bound on `Result::unwrap` and `Result::unwrap_err` from\r\nthe `Display` trait to the `Debug` trait for generating an error message about\r\nthe unwrapping operation.\r\n\r\nThis commit is a breaking change and any breakage should be mitigated by\r\nensuring that `Debug` is implemented on the relevant type.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "08246520c0fef902b169233e26e15cf58ef1cd8b",
-    "author": "Alex Crichton",
-    "date": 1422051094,
-    "message": "std: Relax Result::unwrap() to Debug\n\nThis commit relaxes the bound on `Result::unwrap` and `Result::unwrap_err` from\nthe `Display` trait to the `Debug` trait for generating an error message about\nthe unwrapping operation.\n\nThis commit is a breaking change and any breakage should be mitigated by\nensuring that `Debug` is implemented on the relevant type.\n\n[breaking-change]"
-  },
-  {
-    "hash": "e5c1f166a8282072089de2ad62a5b2427bd2bebf",
-    "author": "bors",
-    "date": 1422076335,
-    "message": "Auto merge of #21458 - alexcrichton:remove-some-code, r=brson\n\nThe base64 support can be trivially removed (there are no in-tree users) and the regex support is a whopping 4k lines of code to maintain for a few non-critical uses in-tree. This commit migrates all current users in-tree away from regexes to custom matching code.\r\n\r\nThe most critical application affected by this migration is that the testing framework no longer considers filter arguments as regexes, but rather just a substring matching. It is expected that more featureful testing frameworks can evolve outside of the in-tree libtest version over time which can properly depend on libregex from crates.io.\r\n\r\n[breaking-change]"
   }
 ]
