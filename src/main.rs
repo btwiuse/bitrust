@@ -1,24 +1,31 @@
-#![feature(path, io, fs)]
+#![feature(path, io)]
 
 extern crate git2;
 extern crate "rustc-serialize" as rustc_serialize;
 
-use std::io::Write;
-use std::fs::File;
+use std::io::{stdout, Write};
 use std::env;
 use git2::{Repository, Oid};
 use git2::Error as GitError;
 use rustc_serialize::json;
 
+/// Simple commit, struct determines JSON output
 #[derive(Clone, RustcDecodable, RustcEncodable)]
 struct Commit {
+    /// SHA1 hash
     hash: String,
+    /// Author name
     author: String,
+    /// UNIX timestamp
     date: i64,
+    /// Commit message
     message: String
 }
 
-fn fetch_commits(repo: &Repository, start: &Option<Oid>, query: &str, amount: usize) -> Result<Vec<Commit>, GitError> {
+/// Retrieve commits matching query from repsitory.
+fn fetch_commits(repo: &Repository, start: &Option<Oid>, query: &str, amount: usize)
+    -> Result<Vec<Commit>, GitError> {
+
     let mut revs = try!(repo.revwalk());
     match *start {
         Some(commit_id) => try!(revs.push(commit_id)),
@@ -59,12 +66,7 @@ fn main() {
     let cwd = env::current_dir().unwrap();
     let repo = Repository::open(&cwd.join("rust")).unwrap();
 
-    let mut output = File::create(&cwd.join("log.json")).unwrap();
-
     let commits = fetch_commits(&repo, &start, "[breaking-change]", 100).unwrap();
 
-    match write!(&mut output, "{}", json::as_pretty_json(&commits)) {
-        Ok(_) => println!("wrote commits to `log.json`."),
-        Err(e) => panic!("failed to write commits to file: {}", e),
-    };
+    write!(&mut stdout(), "{}", json::as_pretty_json(&commits)).unwrap();
 }
