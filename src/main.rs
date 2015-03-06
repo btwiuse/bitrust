@@ -1,4 +1,4 @@
-#![feature(old_path, io, fs, env)]
+#![feature(path, io, fs)]
 
 extern crate git2;
 extern crate "rustc-serialize" as rustc_serialize;
