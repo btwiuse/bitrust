@@ -1,5 +1,17 @@
 [
   {
+    "hash": "1fe8f221450bad3ffb1351c6549f67c18ce0b94e",
+    "author": "bors",
+    "date": 1425619211,
+    "message": "Auto merge of #22899 - huonw:macro-stability, r=alexcrichton\n\nUnstable items used in a macro expansion will now always trigger\r\nstability warnings, *unless* the unstable items are directly inside a\r\nmacro marked with `#[allow_internal_unstable]`. IOW, the compiler warns\r\nunless the span of the unstable item is a subspan of the definition of a\r\nmacro marked with that attribute.\r\n\r\nE.g.\r\n\r\n    #[allow_internal_unstable]\r\n    macro_rules! foo {\r\n        ($e: expr) => {{\r\n            $e;\r\n            unstable(); // no warning\r\n            only_called_by_foo!();\r\n        }}\r\n    }\r\n\r\n    macro_rules! only_called_by_foo {\r\n        () => { unstable() } // warning\r\n    }\r\n\r\n    foo!(unstable()) // warning\r\n\r\nThe unstable inside `foo` is fine, due to the attribute. But the\r\n`unstable` inside `only_called_by_foo` is not, since that macro doesn't\r\nhave the attribute, and the `unstable` passed into `foo` is also not\r\nfine since it isn't contained in the macro itself (that is, even though\r\nit is only used directly in the macro).\r\n\r\nIn the process this makes the stability tracking much more precise,\r\ne.g. previously `println!(\"{}\", unstable())` got no warning, but now it\r\ndoes. As such, this is a bug fix that may cause [breaking-change]s.\r\n\r\nThe attribute is definitely feature gated, since it explicitly allows\r\nside-stepping the feature gating system.\r\n\r\n---\r\n\r\nThis updates `thread_local!` macro to use the attribute, since it uses\r\nunstable features internally (initialising a struct with unstable\r\nfields)."
+  },
+  {
+    "hash": "84b060ce29bf7dd65fc23e855ad7c5a8748d806c",
+    "author": "Huon Wilson",
+    "date": 1425561508,
+    "message": "Add #[allow_internal_unstable] to track stability for macros better.\n\nUnstable items used in a macro expansion will now always trigger\nstability warnings, *unless* the unstable items are directly inside a\nmacro marked with `#[allow_internal_unstable]`. IOW, the compiler warns\nunless the span of the unstable item is a subspan of the definition of a\nmacro marked with that attribute.\n\nE.g.\n\n    #[allow_internal_unstable]\n    macro_rules! foo {\n        ($e: expr) => {{\n            $e;\n            unstable(); // no warning\n            only_called_by_foo!();\n        }}\n    }\n\n    macro_rules! only_called_by_foo {\n        () => { unstable() } // warning\n    }\n\n    foo!(unstable()) // warning\n\nThe unstable inside `foo` is fine, due to the attribute. But the\n`unstable` inside `only_called_by_foo` is not, since that macro doesn't\nhave the attribute, and the `unstable` passed into `foo` is also not\nfine since it isn't contained in the macro itself (that is, even though\nit is only used directly in the macro).\n\nIn the process this makes the stability tracking much more precise,\ne.g. previously `println!(\"{}\", unstable())` got no warning, but now it\ndoes. As such, this is a bug fix that may cause [breaking-change]s.\n\nThe attribute is definitely feature gated, since it explicitly allows\nside-stepping the feature gating system."
+  },
+  {
     "hash": "f0c74f85f363a8081b31f9ab696463717ce312d5",
     "author": "bors",
     "date": 1425577941,
@@ -586,17 +598,5 @@
     "author": "Alex Crichton",
     "date": 1422903676,
     "message": "rollup merge of #21842: alexcrichton/issue-21839\n\nNow that associated types are fully implemented the iterator adaptors only need\ntype parameters which are associated with actual storage. All other type\nparameters can either be derived from these (e.g. they are an associated type)\nor can be bare on the `impl` block itself.\n\nThis is a breaking change due to the removal of type parameters on these\niterator adaptors, but code can fairly easily migrate by just deleting the\nrelevant type parameters for each adaptor. Other behavior should not be\naffected.\n\nCloses #21839\n[breaking-change]"
-  },
-  {
-    "hash": "0e4448409ef61c703b98e4c5b2fd99447308942d",
-    "author": "Alex Crichton",
-    "date": 1422824723,
-    "message": "std: Remove extra type params on iter adaptors\n\nNow that associated types are fully implemented the iterator adaptors only need\ntype parameters which are associated with actual storage. All other type\nparameters can either be derived from these (e.g. they are an associated type)\nor can be bare on the `impl` block itself.\n\nThis is a breaking change due to the removal of type parameters on these\niterator adaptors, but code can fairly easily migrate by just deleting the\nrelevant type parameters for each adaptor. Other behavior should not be\naffected.\n\nCloses #21839\n[breaking-change]"
-  },
-  {
-    "hash": "70ed3a48dfa301c5bb56de3e0a7c25214539b83c",
-    "author": "Alex Crichton",
-    "date": 1422817695,
-    "message": "std: Add a new `env` module\n\nThis is an implementation of [RFC 578][rfc] which adds a new `std::env` module\nto replace most of the functionality in the current `std::os` module. More\ndetails can be found in the RFC itself, but as a summary the following methods\nhave all been deprecated:\n\n[rfc]: https://github.com/rust-lang/rfcs/pull/578\n\n* `os::args_as_bytes`   => `env::args`\n* `os::args`            => `env::args`\n* `os::consts`          => `env::consts`\n* `os::dll_filename`    => no replacement, use `env::consts` directly\n* `os::page_size`       => `env::page_size`\n* `os::make_absolute`   => use `env::current_dir` + `join` instead\n* `os::getcwd`          => `env::current_dir`\n* `os::change_dir`      => `env::set_current_dir`\n* `os::homedir`         => `env::home_dir`\n* `os::tmpdir`          => `env::temp_dir`\n* `os::join_paths`      => `env::join_paths`\n* `os::split_paths`     => `env::split_paths`\n* `os::self_exe_name`   => `env::current_exe`\n* `os::self_exe_path`   => use `env::current_exe` + `pop`\n* `os::set_exit_status` => `env::set_exit_status`\n* `os::get_exit_status` => `env::get_exit_status`\n* `os::env`             => `env::vars`\n* `os::env_as_bytes`    => `env::vars`\n* `os::getenv`          => `env::var` or `env::var_string`\n* `os::getenv_as_bytes` => `env::var`\n* `os::setenv`          => `env::set_var`\n* `os::unsetenv`        => `env::remove_var`\n\nMany function signatures have also been tweaked for various purposes, but the\nmain changes were:\n\n* `Vec`-returning APIs now all return iterators instead\n* All APIs are now centered around `OsString` instead of `Vec<u8>` or `String`.\n  There is currently on convenience API, `env::var_string`, which can be used to\n  get the value of an environment variable as a unicode `String`.\n\nAll old APIs are `#[deprecated]` in-place and will remain for some time to allow\nfor migrations. The semantics of the APIs have been tweaked slightly with regard\nto dealing with invalid unicode (panic instead of replacement).\n\nThe new `std::env` module is all contained within the `env` feature, so crates\nmust add the following to access the new APIs:\n\n    #![feature(env)]\n\n[breaking-change]"
   }
 ]
