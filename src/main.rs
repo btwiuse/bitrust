@@ -68,5 +68,5 @@ fn main() {
 
     let commits = fetch_commits(&repo, &start, "[breaking-change]", 100).unwrap();
 
-    write!(&mut stdout(), "{}", json::as_pretty_json(&commits)).unwrap();
+    write!(&mut stdout(), "{}\n", json::as_pretty_json(&commits)).unwrap();
 }

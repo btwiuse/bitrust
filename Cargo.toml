@@ -8,6 +8,11 @@ license = "MIT"
 readme = "README.md"
 description = "List commits with breaking changes from the rust repository."
 
+[profile.release]
+opt-level = 3
+debug = false
+lto = true
+
 [dependencies]
 rustc-serialize = "0.3.0"
 git2 = "0.2.1"
