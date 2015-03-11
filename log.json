@@ -1,5 +1,17 @@
 [
   {
+    "hash": "cfea8ec41699e25c8fb524d625190f0cb860dc71",
+    "author": "bors",
+    "date": 1426027510,
+    "message": "Auto merge of #23126 - alexcrichton:char-third-pass, r=aturon\n\nThis commit performs another pass over the `std::char` module for stabilization.\r\nSome minor cleanup is performed such as migrating documentation from libcore to\r\nlibunicode (where the `std`-facing trait resides) as well as a slight\r\nreorganiation in libunicode itself. Otherwise, the stability modifications made\r\nare:\r\n\r\n* `char::from_digit` is now stable\r\n* `CharExt::is_digit` is now stable\r\n* `CharExt::to_digit` is now stable\r\n* `CharExt::to_{lower,upper}case` are now stable after being modified to return\r\n  an iterator over characters. While the implementation today has not changed\r\n  this should allow us to implement the full set of case conversions in unicode\r\n  where some characters can map to multiple when doing an upper or lower case\r\n  mapping.\r\n* `StrExt::to_{lower,upper}case` was added as unstable for a convenience of not\r\n  having to worry about characters expanding to more characters when you just\r\n  want the whole string to get into upper or lower case.\r\n\r\nThis is a breaking change due to the change in the signatures of the\r\n`CharExt::to_{upper,lower}case` methods. Code can be updated to use functions\r\nlike `flat_map` or `collect` to handle the difference.\r\n\r\n[breaking-change]\r\n\r\nCloses #20333"
+  },
+  {
+    "hash": "0f6a0b58f9dbc3a741abd898f2d06a8ba78a938d",
+    "author": "Alex Crichton",
+    "date": 1426025311,
+    "message": "std: Stabilize more of the `char` module\n\nThis commit performs another pass over the `std::char` module for stabilization.\nSome minor cleanup is performed such as migrating documentation from libcore to\nlibunicode (where the `std`-facing trait resides) as well as a slight\nreorganiation in libunicode itself. Otherwise, the stability modifications made\nare:\n\n* `char::from_digit` is now stable\n* `CharExt::is_digit` is now stable\n* `CharExt::to_digit` is now stable\n* `CharExt::to_{lower,upper}case` are now stable after being modified to return\n  an iterator over characters. While the implementation today has not changed\n  this should allow us to implement the full set of case conversions in unicode\n  where some characters can map to multiple when doing an upper or lower case\n  mapping.\n* `StrExt::to_{lower,upper}case` was added as unstable for a convenience of not\n  having to worry about characters expanding to more characters when you just\n  want the whole string to get into upper or lower case.\n\nThis is a breaking change due to the change in the signatures of the\n`CharExt::to_{upper,lower}case` methods. Code can be updated to use functions\nlike `flat_map` or `collect` to handle the difference.\n\n[breaking-change]"
+  },
+  {
     "hash": "668c6474081a10768ef143b9984efcab5376bf68",
     "author": "bors",
     "date": 1425753557,
@@ -586,17 +598,5 @@
     "author": "Keegan McAllister",
     "date": 1423517247,
     "message": "Use a crate attribute to load plugins\n\n    #[plugin] #[no_link] extern crate bleh;\n\nbecomes a crate attribute\n\n    #![plugin(bleh)]\n\nThe feature gate is still required.\n\nIt's almost never correct to link a plugin into the resulting library /\nexecutable, because it will bring all of libsyntax and librustc with it.\nHowever if you really want this behavior, you can get it with a separate\n`extern crate` item in addition to the `plugin` attribute.\n\nFixes #21043.\nFixes #20769.\n\n[breaking-change]"
-  },
-  {
-    "hash": "74b8740719c1b427f79b67d6bc51e9d448dd9c49",
-    "author": "bors",
-    "date": 1423355043,
-    "message": "Auto merge of #21988 - kmcallister:no-std, r=sfackler\n\nFixes #21833.\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton \r\n\r\nThe tests in #21912 will also need `#[feature(no_std)]`. If you're okay with both PRs, I can merge and test them."
-  },
-  {
-    "hash": "d788588dce5525b2bf5674b0c90c791a70582330",
-    "author": "Keegan McAllister",
-    "date": 1423334998,
-    "message": "Feature-gate #![no_std]\n\nFixes #21833.\n\n[breaking-change]"
   }
 ]
