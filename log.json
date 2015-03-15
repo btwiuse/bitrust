@@ -1,5 +1,17 @@
 [
   {
+    "hash": "542e2bb3910f8860d49b4b40bcd78d9c74e733ff",
+    "author": "bors",
+    "date": 1426444974,
+    "message": "Auto merge of #23353 - alexcrichton:stabilize-os, r=aturon\n\nThis commit starts to organize the `std::os::$platform` modules and in the\r\nprocess stabilizes some of the functionality contained within. The organization\r\nof these modules will reflect the organization of the standard library itself\r\nwith extension traits for primitives in the same corresponding module.\r\n\r\nThe OS-specific modules will grow more functionality over time including\r\nconcrete types that are not extending functionality of other structures, and\r\nthese will either go into the closest module in `std::os::$platform` or they\r\nwill grow a new module in the hierarchy.\r\n\r\nThe following items are now stable:\r\n\r\n* `os::{unix, windows}`\r\n* `unix::ffi`\r\n* `unix::ffi::OsStrExt`\r\n* `unix::ffi::OsStrExt::{from_bytes, as_bytes, to_cstring}`\r\n* `unix::ffi::OsString`\r\n* `unix::ffi::OsStringExt::{from_vec, into_vec}`\r\n* `unix::process`\r\n* `unix::process::CommandExt`\r\n* `unix::process::CommandExt::{uid, gid}`\r\n* `unix::process::ExitStatusExt`\r\n* `unix::process::ExitStatusExt::signal`\r\n* `unix::prelude`\r\n* `windows::ffi`\r\n* `windows::ffi::OsStringExt`\r\n* `windows::ffi::OsStringExt::from_wide`\r\n* `windows::ffi::OsStrExt`\r\n* `windows::ffi::OsStrExt::encode_wide`\r\n* `windows::prelude`\r\n\r\nThe following items remain unstable:\r\n\r\n* `unix::io`\r\n* `unix::io::{Fd, AsRawFd}`\r\n* `unix::fs::{PermissionsExt, OpenOptionsExt}`\r\n* `windows::io`\r\n* `windows::io::{Handle, AsRawHandle}`\r\n* `windows::io::{Socket, AsRawSocket}`\r\n* `windows::fs`\r\n* `windows::fs::OpenOptionsExt`\r\n\r\nDue to the reorgnization of the platform extension modules, this commit is a\r\nbreaking change. Most imports can be fixed by adding the relevant libstd module\r\nin the `use` path (such as `ffi` or `fs`).\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "1f5f76adc36082ec514a6cfa4ad2d7e6655a5253",
+    "author": "Alex Crichton",
+    "date": 1426440514,
+    "message": "std: Stabilize portions of `std::os::$platform`\n\nThis commit starts to organize the `std::os::$platform` modules and in the\nprocess stabilizes some of the functionality contained within. The organization\nof these modules will reflect the organization of the standard library itself\nwith extension traits for primitives in the same corresponding module.\n\nThe OS-specific modules will grow more functionality over time including\nconcrete types that are not extending functionality of other structures, and\nthese will either go into the closest module in `std::os::$platform` or they\nwill grow a new module in the hierarchy.\n\nThe following items are now stable:\n\n* `os::{unix, windows}`\n* `unix::ffi`\n* `unix::ffi::OsStrExt`\n* `unix::ffi::OsStrExt::{from_bytes, as_bytes, to_cstring}`\n* `unix::ffi::OsString`\n* `unix::ffi::OsStringExt::{from_vec, into_vec}`\n* `unix::process`\n* `unix::process::CommandExt`\n* `unix::process::CommandExt::{uid, gid}`\n* `unix::process::ExitStatusExt`\n* `unix::process::ExitStatusExt::signal`\n* `unix::prelude`\n* `windows::ffi`\n* `windows::ffi::OsStringExt`\n* `windows::ffi::OsStringExt::from_wide`\n* `windows::ffi::OsStrExt`\n* `windows::ffi::OsStrExt::encode_wide`\n* `windows::prelude`\n\nThe following items remain unstable:\n\n* `unix::io`\n* `unix::io::{Fd, AsRawFd}`\n* `unix::fs::{PermissionsExt, OpenOptionsExt}`\n* `windows::io`\n* `windows::io::{Handle, AsRawHandle}`\n* `windows::io::{Socket, AsRawSocket}`\n* `windows::fs`\n* `windows::fs::OpenOptionsExt`\n\nDue to the reorgnization of the platform extension modules, this commit is a\nbreaking change. Most imports can be fixed by adding the relevant libstd module\nin the `use` path (such as `ffi` or `fs`).\n\n[breaking-change]"
+  },
+  {
     "hash": "54660fc392343e4ddee8a0ea1ca196ffc533585b",
     "author": "bors",
     "date": 1426411122,
@@ -586,17 +598,5 @@
     "author": "Felix S. Klock II",
     "date": 1423659460,
     "message": "Feature-gate the `#[unsafe_no_drop_flag]` attribute.\n\nSee RFC 320, \"Non-zeroing dynamic drops.\"\n\nFix #22173\n\n[breaking-change]"
-  },
-  {
-    "hash": "9492275106dd4d564a036517ff4726feacaf0720",
-    "author": "Alex Crichton",
-    "date": 1423692144,
-    "message": "rollup merge of #22188: alexcrichton/envv2\n\nThis commit tweaks the interface of the `std::env` module to make it more\nergonomic for common usage:\n\n* `env::var` was renamed to `env::var_os`\n* `env::var_string` was renamed to `env::var`\n* `env::args` was renamed to `env::args_os`\n* `env::args` was re-added as a panicking iterator over string values\n* `env::vars` was renamed to `env::vars_os`\n* `env::vars` was re-added as a panicking iterator over string values.\n\nThis should make common usage (e.g. unicode values everywhere) more ergonomic\nas well as \"the default\". This is also a breaking change due to the differences\nof what's yielded from each of these functions, but migration should be fairly\neasy as the defaults operate over `String` which is a common type to use.\n\n[breaking-change]"
-  },
-  {
-    "hash": "a828e7948069f310dc5b33be8edb65e5e8e0cf9a",
-    "author": "Alex Crichton",
-    "date": 1423691195,
-    "message": "std: Tweak the std::env OsString/String interface\n\nThis commit tweaks the interface of the `std::env` module to make it more\nergonomic for common usage:\n\n* `env::var` was renamed to `env::var_os`\n* `env::var_string` was renamed to `env::var`\n* `env::args` was renamed to `env::args_os`\n* `env::args` was re-added as a panicking iterator over string values\n* `env::vars` was renamed to `env::vars_os`\n* `env::vars` was re-added as a panicking iterator over string values.\n\nThis should make common usage (e.g. unicode values everywhere) more ergonomic\nas well as \"the default\". This is also a breaking change due to the differences\nof what's yielded from each of these functions, but migration should be fairly\neasy as the defaults operate over `String` which is a common type to use.\n\n[breaking-change]"
   }
 ]
