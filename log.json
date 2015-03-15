@@ -1,5 +1,17 @@
 [
   {
+    "hash": "54660fc392343e4ddee8a0ea1ca196ffc533585b",
+    "author": "bors",
+    "date": 1426411122,
+    "message": "Auto merge of #23316 - alexcrichton:less-question-sized, r=aturon\n\nIt is a frequent pattern among I/O functions to take `P: AsPath + ?Sized` or\r\n`AsOsStr` instead of `AsPath`. Most of these functions do not need to take\r\nownership of their argument, but for libraries in general it's much more\r\nergonomic to not deal with `?Sized` at all and simply require an argument `P`\r\ninstead of `&P`.\r\n\r\nThis change is aimed at removing unsightly `?Sized` bounds while retaining the\r\nsame level of usability as before. All affected functions now take ownership of\r\ntheir arguments instead of taking them by reference, but due to the forwarding\r\nimplementations of `AsOsStr` and `AsPath` all code should continue to work as it\r\ndid before.\r\n\r\nThis is strictly speaking a breaking change due to the signatures of these\r\nfunctions changing, but normal idiomatic usage of these APIs should not break in\r\npractice.\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "60a4a2db8837be91bdae051bd51ab181077e5dc6",
+    "author": "Alex Crichton",
+    "date": 1426400634,
+    "message": "std: Remove ?Sized bounds from many I/O functions\n\nIt is a frequent pattern among I/O functions to take `P: AsPath + ?Sized` or\n`AsOsStr` instead of `AsPath`. Most of these functions do not need to take\nownership of their argument, but for libraries in general it's much more\nergonomic to not deal with `?Sized` at all and simply require an argument `P`\ninstead of `&P`.\n\nThis change is aimed at removing unsightly `?Sized` bounds while retaining the\nsame level of usability as before. All affected functions now take ownership of\ntheir arguments instead of taking them by reference, but due to the forwarding\nimplementations of `AsOsStr` and `AsPath` all code should continue to work as it\ndid before.\n\nThis is strictly speaking a breaking change due to the signatures of these\nfunctions changing, but normal idiomatic usage of these APIs should not break in\npractice.\n\n[breaking-change]"
+  },
+  {
     "hash": "3e4be02b80a3dd27bce20870958fe0aef7e7336d",
     "author": "bors",
     "date": 1426278136,
@@ -586,17 +598,5 @@
     "author": "Alex Crichton",
     "date": 1423691195,
     "message": "std: Tweak the std::env OsString/String interface\n\nThis commit tweaks the interface of the `std::env` module to make it more\nergonomic for common usage:\n\n* `env::var` was renamed to `env::var_os`\n* `env::var_string` was renamed to `env::var`\n* `env::args` was renamed to `env::args_os`\n* `env::args` was re-added as a panicking iterator over string values\n* `env::vars` was renamed to `env::vars_os`\n* `env::vars` was re-added as a panicking iterator over string values.\n\nThis should make common usage (e.g. unicode values everywhere) more ergonomic\nas well as \"the default\". This is also a breaking change due to the differences\nof what's yielded from each of these functions, but migration should be fairly\neasy as the defaults operate over `String` which is a common type to use.\n\n[breaking-change]"
-  },
-  {
-    "hash": "bbbb571fee01532f63b105150654db8db0b01bf7",
-    "author": "Alex Crichton",
-    "date": 1423685699,
-    "message": "rustc: Fix a number of stability lint holes\n\nThere are a number of holes that the stability lint did not previously cover,\nincluding:\n\n* Types\n* Bounds on type parameters on functions and impls\n* Where clauses\n* Imports\n* Patterns (structs and enums)\n\nThese holes have all been fixed by overriding the `visit_path` function on the\nAST visitor instead of a few specialized cases. This change also necessitated a\nfew stability changes:\n\n* The `collections::fmt` module is now stable (it was already supposed to be).\n* The `thread_local::imp::Key` type is now stable (it was already supposed to\n  be).\n* The `std::rt::{begin_unwind, begin_unwind_fmt}` functions are now stable.\n  These are required via the `panic!` macro.\n* The `std::old_io::stdio::{println, println_args}` functions are now stable.\n  These are required by the `print!` and `println!` macros.\n* The `ops::{FnOnce, FnMut, Fn}` traits are now `#[stable]`. This is required to\n  make bounds with these traits stable. Note that manual implementations of\n  these traits are still gated by default, this stability only allows bounds\n  such as `F: FnOnce()`.\n\nAdditionally, the compiler now has special logic to ignore its own generated\n`__test` module for the `--test` harness in terms of stability.\n\nCloses #8962\nCloses #16360\nCloses #20327\n\n[breaking-change]"
-  },
-  {
-    "hash": "e02b6d17486ecef8541d03bb6a38c52d1a35b339",
-    "author": "Felix S. Klock II",
-    "date": 1423641027,
-    "message": "destructor checker (dropck).\n\nLargely adapted from pcwalton's original branch, with following\nnotable modifications:\n\nUse `regionck::type_must_outlive` to generate `SafeDestructor`\nconstraints.  (this plugged some soundness holes in the analysis).\n\nAvoid exponential time blowup on compile-fail/huge-struct.rs by\nkeeping the breadcrumbs until end of traversal.\n\nAvoid premature return from regionck::visit_expr.\n\nFactored drop-checking code out into dropck module.\n\nAdded `SafeDestructor` to enum `SubregionOrigin` (for error reporting).\n\n----\n\nSince this imposes restrictions on the lifetimes used in types with\ndestructors, this is a (wait for it)\n\n[breaking-change]"
   }
 ]
