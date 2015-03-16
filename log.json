@@ -1,5 +1,17 @@
 [
   {
+    "hash": "bde09eea35113f25d4e0bcc4a8344de971f3069a",
+    "author": "bors",
+    "date": 1426525331,
+    "message": "Auto merge of #23347 - aturon:stab-misc, r=alexcrichton\n\nThis commit deprecates the `count`, `range` and `range_step` functions\r\nin `iter`, in favor of range notation. To recover all existing\r\nfunctionality, a new `step_by` adapter is provided directly on `ops::Range`\r\nand `ops::RangeFrom`.\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton"
+  },
+  {
+    "hash": "1d5983aded687149239e8943debd51abdce5d27b",
+    "author": "Aaron Turon",
+    "date": 1426283113,
+    "message": "Deprecate range, range_step, count, distributions\n\nThis commit deprecates the `count`, `range` and `range_step` functions\nin `iter`, in favor of range notation. To recover all existing\nfunctionality, a new `step_by` adapter is provided directly on `ops::Range`\nand `ops::RangeFrom`.\n\n[breaking-change]"
+  },
+  {
     "hash": "542e2bb3910f8860d49b4b40bcd78d9c74e733ff",
     "author": "bors",
     "date": 1426444974,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1423813481,
     "message": "Auto merge of #22093 - petrochenkov:builtin, r=pnkfelix\n\nNames of structs, enums, traits, type aliases and type parameters (i.e. all identifiers that can be used as full paths in type position) are not allowed to match the names of primitive types.\r\nSee #20427 for more information.\r\n\r\nThis is a minor [breaking-change]"
-  },
-  {
-    "hash": "32d0dbd49a372b9d2e000587497de6ffca9e1cca",
-    "author": "Kevin Butler",
-    "date": 1423745708,
-    "message": "librustc: Forbid partial reinitialization of uninitialized structures or\nenumerations that implement the `Drop` trait.\n\nThis breaks code like:\n\n    struct Struct {\n        f: String,\n        g: String,\n    }\n\n    impl Drop for Struct { ... }\n\n    fn main() {\n        let x = Struct { ... };\n        drop(x);\n        x.f = ...;\n    }\n\nChange this code to not create partially-initialized structures. For\nexample:\n\n    struct Struct {\n        f: String,\n        g: String,\n    }\n\n    impl Drop for Struct { ... }\n\n    fn main() {\n        let x = Struct { ... };\n        drop(x);\n        x = Struct {\n            f: ...,\n            g: ...,\n        }\n    }\n\nCloses #18571.\n\n[breaking-change]\n\n----\n\n(Joint authorship by pcwalton and Ryman; thanks all!)"
-  },
-  {
-    "hash": "f9a1087f2730ab021d5356a5df703baeccffc020",
-    "author": "Felix S. Klock II",
-    "date": 1423659460,
-    "message": "Feature-gate the `#[unsafe_no_drop_flag]` attribute.\n\nSee RFC 320, \"Non-zeroing dynamic drops.\"\n\nFix #22173\n\n[breaking-change]"
   }
 ]
