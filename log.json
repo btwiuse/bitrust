@@ -1,5 +1,17 @@
 [
   {
+    "hash": "c2671b59ccbc899b8defbabf453e88f89900c3a0",
+    "author": "Manish Goregaokar",
+    "date": 1426585797,
+    "message": "Rollup merge of #23409 - GBGamer:patch-2, r=alexcrichton\n\n To the correct MAP_NORESERVE. Every other instance is known as MAP_NORESERVE, so this is just a basic typo.\n\nI really doubt this will break anybody's but my own code.\n\n[breaking-change]"
+  },
+  {
+    "hash": "170ccd615f976fc9e90a8f14ce6c373bfdf01533",
+    "author": "Nick Cameron",
+    "date": 1426457034,
+    "message": "Error if `pub use` references a private item.\n\n[breaking-change]\n\nCloses #23266"
+  },
+  {
     "hash": "e46610966f798a083350724461648c6ffdd151f4",
     "author": "bors",
     "date": 1426562630,
@@ -586,17 +598,5 @@
     "author": "Huon Wilson",
     "date": 1423798857,
     "message": "Remove `_VALUE` from the float extremes constants.\n\nIn `std::f32` and `std::f64`:\n\n- `MIN_VALUE` → `MIN`\n- `MAX_VALUE` → `MAX`\n- `MIN_POS_VALUE` → `MIN_POSITIVE`\n\nThis matches the corresponding integer constants.\n\n[breaking-change]"
-  },
-  {
-    "hash": "8cc3fbd41dddbb11f442a17902cd0d276aa22566",
-    "author": "Manish Goregaokar",
-    "date": 1424004751,
-    "message": "Rollup merge of #22218 - huonw:raw-docs, r=steveklabnik,huonw\n\nThis overhauls the very meager docs that currently exist to clarify\r\nvarious understandable confusions that I've noticed, e.g. people look in\r\n`std::raw` for the \"real\" types of slices like `&[T]`, or think that\r\n`Slice<T>` refers to `[T]` (fixes #22214).\r\n\r\nThis patch takes the liberty of offering some \"style\" guidance around\r\n`raw::Slice`, since there's more restricted ways to duplicate all\r\nfunctionality connected to it: `std::slice::from_raw_parts{,_mut}` for\r\nconstruction and `.as_{,mut_}ptr` & `.len` for deconstruction.\r\n\r\nIt also deprecates the `std::raw::Closure` type which is now useless for\r\nnon-type-erased closures, and replaced by `TraitObject` for `&Fn`, `&mut\r\nFnMut` etc, so I guess it should be called a:\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "7a52932f4cd65f57bcc8d77f12e32066b2a9c432",
-    "author": "Ulrik Sverdrup",
-    "date": 1423873962,
-    "message": "Make std::raw::Repr an unsafe trait\n\nThe default implementation of .repr() will call conveniently call\ntransmute_copy which should be appropriate for all implementors, but is\nmemory unsafe if used wrong.\n\nFixes #22260\n\nYou need to use `unsafe impl` to implement the Repr trait now.\n\n[breaking-change]"
   }
 ]
