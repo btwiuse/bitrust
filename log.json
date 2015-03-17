@@ -1,5 +1,11 @@
 [
   {
+    "hash": "c64d671671aea2e44ee7fc6eb00ee75fc30ed7b9",
+    "author": "bors",
+    "date": 1426598988,
+    "message": "Auto merge of #23423 - nikomatsakis:issue-18737-trait-subtyping, r=nrc\n\nThis upcast coercion currently never requires vtable changes. It should be generalized. \r\n\r\nThis is a [breaking-change] -- if you have an impl on an object type like `impl SomeTrait`, then this will no longer be applicable to object types like `SomeTrait+Send`. In the standard library, this primarily affected `Any`, and this PR adds impls for `Any+Send` as to keep the API the same in practice. An alternate workaround is to use UFCS form or standalone fns. For more details, see <https://github.com/rust-lang/rust/issues/18737#issuecomment-78450798>.\r\n\r\nr? @nrc"
+  },
+  {
     "hash": "c2671b59ccbc899b8defbabf453e88f89900c3a0",
     "author": "Manish Goregaokar",
     "date": 1426585797,
@@ -592,11 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1424004940,
     "message": "Rollup merge of #22254 - huonw:float-value--, r=aturon\n\n In `std::f32` and `std::f64`:\n\n- `MIN_VALUE` → `MIN`\n- `MAX_VALUE` → `MAX`\n- `MIN_POS_VALUE` → `MIN_POSITIVE`\n\nThis matches the corresponding integer constants.\n\n[breaking-change]"
-  },
-  {
-    "hash": "e4a9eb95ce4a457e800571d86942561ada28304a",
-    "author": "Huon Wilson",
-    "date": 1423798857,
-    "message": "Remove `_VALUE` from the float extremes constants.\n\nIn `std::f32` and `std::f64`:\n\n- `MIN_VALUE` → `MIN`\n- `MAX_VALUE` → `MAX`\n- `MIN_POS_VALUE` → `MIN_POSITIVE`\n\nThis matches the corresponding integer constants.\n\n[breaking-change]"
   }
 ]
