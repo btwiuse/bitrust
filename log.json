@@ -1,5 +1,29 @@
 [
   {
+    "hash": "e46610966f798a083350724461648c6ffdd151f4",
+    "author": "bors",
+    "date": 1426562630,
+    "message": "Auto merge of #23104 - japaric:inherent, r=nikomatsakis\n\n- Allow inherent implementations on `char`, `str`, `[T]`, `*const T`, `*mut T` and all the numeric primitives.\r\n- copy `unicode::char::CharExt` methods into `impl char`\r\n- remove `unicode::char::CharExt`, its re-export `std::char::CharExt` and `CharExt` from the prelude\r\n- copy `collections::str::StrExt` methods into `impl str`\r\n- remove `collections::str::StrExt` its re-export `std::str::StrExt`, and `StrExt` from the prelude\r\n- copy `collections::slice::SliceExt` methods into `impl<T> [T]`\r\n- remove `collections::slice::SliceExt` its re-export `std::slice::SliceExt`, and `SliceExt` from the prelude\r\n- copy `core::ptr::PtrExt` methods into `impl<T> *const T`\r\n- remove `core::ptr::PtrExt` its re-export `std::ptr::PtrExt`, and `PtrExt` from the prelude\r\n- copy `core::ptr::PtrExt` and `core::ptr::MutPtrExt` methods into `impl<T> *mut T`\r\n- remove `core::ptr::MutPtrExt` its re-export `std::ptr::MutPtrExt`, and `MutPtrExt` from the prelude\r\n- copy `core::num::Int` and `core::num::SignedInt` methods into `impl i{8,16,32,64,size}`\r\n- copy `core::num::Int` and `core::num::UnsignedInt` methods into `impl u{8,16,32,64,size}`\r\n- remove `core::num::UnsignedInt` and its re-export `std::num::UnsignedInt`\r\n- move `collections` tests into its own crate: `collectionstest`\r\n- copy `core::num::Float` methods into `impl f{32,64}`\r\n\r\nBecause this PR removes several traits, this is a [breaking-change], however functionality remains unchanged and breakage due to unresolved imports should be minimal. If you encounter an error due to an unresolved import, simply remove the import:\r\n\r\n``` diff\r\n  fn main() {\r\n-     use std::num::UnsignedInt;  //~ error: unresolved import `std::num::UnsignedInt`.\r\n-\r\n      println!(\"{}\", 8_usize.is_power_of_two());\r\n  }\r\n```\r\n\r\n---\r\n\r\ncc  #16862\r\n[preview docs](http://japaric.github.io/inherent/std/index.html)\r\n[unicode::char](http://japaric.github.io/inherent/unicode/primitive.char.html)\r\n[collections::str](http://japaric.github.io/inherent/collections/primitive.str.html)\r\n[std::f32](http://japaric.github.io/inherent/std/primitive.f32.html)"
+  },
+  {
+    "hash": "a2572885ab62512a2508868a27c22d615382174a",
+    "author": "bors",
+    "date": 1426553426,
+    "message": "Auto merge of #23352 - alexcrichton:stabilize-net, r=aturon\n\nThis commit performs a stabilization pass over the std::net module,\r\nincorporating the changes from RFC 923. Specifically, the following actions were\r\ntaken:\r\n\r\nStable functionality:\r\n\r\n* `net` (the name)\r\n* `Shutdown`\r\n* `Shutdown::{Read, Write, Both}`\r\n* `lookup_host`\r\n* `LookupHost`\r\n* `SocketAddr`\r\n* `SocketAddr::{V4, V6}`\r\n* `SocketAddr::port`\r\n* `SocketAddrV4`\r\n* `SocketAddrV4::{new, ip, port}`\r\n* `SocketAddrV6`\r\n* `SocketAddrV4::{new, ip, port, flowinfo, scope_id}`\r\n* Common trait impls for socket addr structures\r\n* `ToSocketAddrs`\r\n* `ToSocketAddrs::Iter`\r\n* `ToSocketAddrs::to_socket_addrs`\r\n* `ToSocketAddrs for {SocketAddr*, (Ipv*Addr, u16), str, (str, u16)}`\r\n* `Ipv4Addr`\r\n* `Ipv4Addr::{new, octets, to_ipv6_compatible, to_ipv6_mapped}`\r\n* `Ipv6Addr`\r\n* `Ipv6Addr::{new, segments, to_ipv4}`\r\n* `TcpStream`\r\n* `TcpStream::connect`\r\n* `TcpStream::{peer_addr, local_addr, shutdown, try_clone}`\r\n* `{Read,Write} for {TcpStream, &TcpStream}`\r\n* `TcpListener`\r\n* `TcpListener::bind`\r\n* `TcpListener::{local_addr, try_clone, accept, incoming}`\r\n* `Incoming`\r\n* `UdpSocket`\r\n* `UdpSocket::bind`\r\n* `UdpSocket::{recv_from, send_to, local_addr, try_clone}`\r\n\r\nUnstable functionality:\r\n\r\n* Extra methods on `Ipv{4,6}Addr` for various methods of inspecting the address\r\n  and determining qualities of it.\r\n* Extra methods on `TcpStream` to configure various protocol options.\r\n* Extra methods on `UdpSocket` to configure various protocol options.\r\n\r\nDeprecated functionality:\r\n\r\n* The `socket_addr` method has been renamed to `local_addr`\r\n\r\nThis commit is a breaking change due to the restructuring of the `SocketAddr`\r\ntype as well as the renaming of the `socket_addr` method. Migration should be\r\nfairly straightforward, however, after accounting for the new level of\r\nabstraction in `SocketAddr` (protocol distinction at the socket address level,\r\nnot the IP address).\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "f798674b86382929ca17c88de422a6e2fdb27f2a",
+    "author": "Alex Crichton",
+    "date": 1426290462,
+    "message": "std: Stabilize the `net` module\n\nThis commit performs a stabilization pass over the std::net module,\nincorporating the changes from RFC 923. Specifically, the following actions were\ntaken:\n\nStable functionality:\n\n* `net` (the name)\n* `Shutdown`\n* `Shutdown::{Read, Write, Both}`\n* `lookup_host`\n* `LookupHost`\n* `SocketAddr`\n* `SocketAddr::{V4, V6}`\n* `SocketAddr::port`\n* `SocketAddrV4`\n* `SocketAddrV4::{new, ip, port}`\n* `SocketAddrV6`\n* `SocketAddrV4::{new, ip, port, flowinfo, scope_id}`\n* Common trait impls for socket addr structures\n* `ToSocketAddrs`\n* `ToSocketAddrs::Iter`\n* `ToSocketAddrs::to_socket_addrs`\n* `ToSocketAddrs for {SocketAddr*, (Ipv*Addr, u16), str, (str, u16)}`\n* `Ipv4Addr`\n* `Ipv4Addr::{new, octets, to_ipv6_compatible, to_ipv6_mapped}`\n* `Ipv6Addr`\n* `Ipv6Addr::{new, segments, to_ipv4}`\n* `TcpStream`\n* `TcpStream::connect`\n* `TcpStream::{peer_addr, local_addr, shutdown, try_clone}`\n* `{Read,Write} for {TcpStream, &TcpStream}`\n* `TcpListener`\n* `TcpListener::bind`\n* `TcpListener::{local_addr, try_clone, accept, incoming}`\n* `Incoming`\n* `UdpSocket`\n* `UdpSocket::bind`\n* `UdpSocket::{recv_from, send_to, local_addr, try_clone}`\n\nUnstable functionality:\n\n* Extra methods on `Ipv{4,6}Addr` for various methods of inspecting the address\n  and determining qualities of it.\n* Extra methods on `TcpStream` to configure various protocol options.\n* Extra methods on `UdpSocket` to configure various protocol options.\n\nDeprecated functionality:\n\n* The `socket_addr` method has been renamed to `local_addr`\n\nThis commit is a breaking change due to the restructuring of the `SocketAddr`\ntype as well as the renaming of the `socket_addr` method. Migration should be\nfairly straightforward, however, after accounting for the new level of\nabstraction in `SocketAddr` (protocol distinction at the socket address level,\nnot the IP address).\n\n[breaking-change]"
+  },
+  {
+    "hash": "92dd995e1705a8c398a5266c8483e2519e494f47",
+    "author": "bors",
+    "date": 1426544032,
+    "message": "Auto merge of #23331 - eddyb:attr-lookahead, r=nikomatsakis\n\nMost of the changes are cleanup facilitated by straight-forward attribute handling.\r\nThis is a minor [breaking-change] for users of `quote_stmt!` (returns `Option<P<Stmt>>` now) and some of the public methods in `Parser` (a few `Vec<Attribute>` arguments/returns were removed).\r\n\r\nr? @nikomatsakis"
+  },
+  {
     "hash": "bde09eea35113f25d4e0bcc4a8344de971f3069a",
     "author": "bors",
     "date": 1426525331,
@@ -574,29 +598,5 @@
     "author": "Ulrik Sverdrup",
     "date": 1423873962,
     "message": "Make std::raw::Repr an unsafe trait\n\nThe default implementation of .repr() will call conveniently call\ntransmute_copy which should be appropriate for all implementors, but is\nmemory unsafe if used wrong.\n\nFixes #22260\n\nYou need to use `unsafe impl` to implement the Repr trait now.\n\n[breaking-change]"
-  },
-  {
-    "hash": "5e3ae102dbeeb646e8c7d2d423cea263337a76af",
-    "author": "Huon Wilson",
-    "date": 1423873928,
-    "message": "Dramatically expand the docs of std::raw.\n\nThis overhauls the very meager docs that currently exist to clarify\nvarious understandable confusions that I've noticed, e.g. people look in\n`std::raw` for the \"real\" types of slices like `&[T]`, or think that\n`Slice<T>` refers to `[T]` (fixes #22214).\n\nThis patch takes the liberty of offering some \"style\" guidance around\n`raw::Slice`, since there's more restricted ways to duplicate all\nfunctionality connected to it: `std::slice::from_raw_parts{,_mut}` for\nconstruction and `.as_{,mut_}ptr` & `.len` for deconstruction.\n\nIt also deprecates the `std::raw::Closure` type which is now useless for\nnon-type-erased closures, and replaced by `TraitObject` for `&Fn`, `&mut\nFnMut` etc, so I guess it should be called a:\n\n[breaking-change]"
-  },
-  {
-    "hash": "b63cee4a11fcfecf20ed8419bc3bd6859e6496bc",
-    "author": "bors",
-    "date": 1423933271,
-    "message": "Auto merge of #22158 - Kimundi:the_lonely_uppercase_keyword, r=pnkfelix\n\nIt is only allowed in paths now, where it will either work inside a `trait`\r\nor `impl` item, or not resolve outside of it.\r\n\r\n[breaking-change]\r\n\r\nCloses #22137"
-  },
-  {
-    "hash": "07d00deab22dc07ffc58b8e74d45596242ca8b15",
-    "author": "Marvin Löbel",
-    "date": 1423775071,
-    "message": "Made `Self` a keyword.\n\nIt is only allowed in paths now, where it will either work inside a `trait`\nor `impl` item, or not resolve outside of it.\n\n[breaking-change]\n\nCloses #22137"
-  },
-  {
-    "hash": "cf636c233dfeef5abf0de8fb35e23c0a161810d2",
-    "author": "bors",
-    "date": 1423813481,
-    "message": "Auto merge of #22093 - petrochenkov:builtin, r=pnkfelix\n\nNames of structs, enums, traits, type aliases and type parameters (i.e. all identifiers that can be used as full paths in type position) are not allowed to match the names of primitive types.\r\nSee #20427 for more information.\r\n\r\nThis is a minor [breaking-change]"
   }
 ]
