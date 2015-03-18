@@ -1,5 +1,11 @@
 [
   {
+    "hash": "46f649c479ce40f3b4590590dda6c2895e8d60f6",
+    "author": "bors",
+    "date": 1426667242,
+    "message": "Auto merge of #22838 - petrochenkov:bytelit, r=alexcrichton\n\nThis patch changes the type of byte string literals from `&[u8]` to `&[u8; N]`.\r\nIt also implements some necessary traits (`IntoBytes`, `Seek`, `Read`, `BufRead`) for fixed-size arrays (also related to #21725) and adds test for #17233, which seems to be resolved.\r\n\r\nFixes #18465\r\n[breaking-change]"
+  },
+  {
     "hash": "c10918905fda1344e78bc16e6e73294d096ee97d",
     "author": "bors",
     "date": 1426648932,
@@ -592,11 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1424005967,
     "message": "Rollup merge of #22339 - petrochenkov:int, r=huonw\n\n Some function signatures have changed, so this is a [breaking-change].\nIn particular, radixes and numerical values of digits are represented by `u32` now.\n\nPart of #22240"
-  },
-  {
-    "hash": "1b86ebe25751268aa39ef2ad5e2b0e650a6f0291",
-    "author": "Manish Goregaokar",
-    "date": 1424005964,
-    "message": "Rollup merge of #22299 - bluss:range-64-is-not-exact-size, r=alexcrichton\n\n Fixes #22047\n\n`Range<u64>` and `Range<i64>` may be longer than usize::MAX on 32-bit\nplatforms, and thus they cannot fulfill the protocol for\nExactSizeIterator. We don't want a nonobvious platform dependency in\nbasic iterator traits, so the trait impl is removed.\n\nThe logic of this change assumes that usize is at least 32-bit.\n\nThis is technically a breaking change; note that `Range<usize>` and\n`Range<isize>` are always ExactSizeIterators.\n\n[breaking-change]"
   }
 ]
