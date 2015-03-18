@@ -1,5 +1,17 @@
 [
   {
+    "hash": "c10918905fda1344e78bc16e6e73294d096ee97d",
+    "author": "bors",
+    "date": 1426648932,
+    "message": "Auto merge of #23452 - nikomatsakis:unsafety-subtyping, r=nrc\n\nSafe fns are no longer subtypes of unsafe fns, but you can coerce from one to the other.\r\n\r\nThis is a [breaking-change] in that impl fns must now be declared `unsafe` if the trait is declared `unsafe`. In some rare cases, the subtyping change may also direct affect you, but no such cases were encountered in practice.\r\n\r\nFixes #23449.\r\n\r\nr? @nrc"
+  },
+  {
+    "hash": "ea8b82e90c450febb1f26a07862a1ec89c22addd",
+    "author": "bors",
+    "date": 1426627382,
+    "message": "Auto merge of #23376 - eddyb:die-tydesc-die, r=nikomatsakis\n\nFinal remnant of reflection is gone. Also, virtual `Trait` destructors are no longer tied to `Box`.\r\nThat means they can be used to drop any instance of the type (used in libarena to replace TyDesc).\r\n\r\nThis is [breaking-change] for direct users of intrinsics:\r\n* use `intrinsics::type_name::<T>()` instead of `(*intrinsics::get_tydesc::<T>()).name`\r\n* the only way to get the destructor is from a trait object's vtable (see libarena changes)\r\n\r\nr? @pcwalton f? @dotdash"
+  },
+  {
     "hash": "c64d671671aea2e44ee7fc6eb00ee75fc30ed7b9",
     "author": "bors",
     "date": 1426598988,
@@ -586,17 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1424005964,
     "message": "Rollup merge of #22299 - bluss:range-64-is-not-exact-size, r=alexcrichton\n\n Fixes #22047\n\n`Range<u64>` and `Range<i64>` may be longer than usize::MAX on 32-bit\nplatforms, and thus they cannot fulfill the protocol for\nExactSizeIterator. We don't want a nonobvious platform dependency in\nbasic iterator traits, so the trait impl is removed.\n\nThe logic of this change assumes that usize is at least 32-bit.\n\nThis is technically a breaking change; note that `Range<usize>` and\n`Range<isize>` are always ExactSizeIterators.\n\n[breaking-change]"
-  },
-  {
-    "hash": "b19fda0ceb820af57f00976951dba95a3c0419aa",
-    "author": "Ulrik Sverdrup",
-    "date": 1423859210,
-    "message": "Remove ExactSizeIterator from 64-bit ranges.\n\nFixes #22047\n\nRange<u64> and Range<i64> may be longer than usize::MAX on 32-bit\nplatforms, and thus they cannot fulfill the protocol for\nExactSizeIterator. We don't want a nonobvious platform dependency in\nbasic iterator traits, so the trait impl is removed.\n\nThe logic of this change assumes that usize is at least 32-bit.\n\nThis is technically a breaking change; note that Range<usize> and\nRange<isize> are always ExactSizeIterators.\n\n[breaking-change]"
-  },
-  {
-    "hash": "da1a1f515fbedb32cfd954e2dc9cbf93a02453c8",
-    "author": "Manish Goregaokar",
-    "date": 1424004940,
-    "message": "Rollup merge of #22254 - huonw:float-value--, r=aturon\n\n In `std::f32` and `std::f64`:\n\n- `MIN_VALUE` → `MIN`\n- `MAX_VALUE` → `MAX`\n- `MIN_POS_VALUE` → `MIN_POSITIVE`\n\nThis matches the corresponding integer constants.\n\n[breaking-change]"
   }
 ]
