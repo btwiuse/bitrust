@@ -1,5 +1,17 @@
 [
   {
+    "hash": "a32bb1bcc4c6b8806b1058c2f654415341240233",
+    "author": "Manish Goregaokar",
+    "date": 1426735174,
+    "message": "Rollup merge of #23475 - nikomatsakis:closure-ret-syntax, r=acrichto\n\n Require braces when a closure has an explicit return type. This is a [breaking-change]: instead of a closure like `|| -> i32 22`, prefer `|| -> i32 { 22 }`.\n\nFixes #23420."
+  },
+  {
+    "hash": "c225824bded695c8bced713f5a4c62fe327277bc",
+    "author": "Niko Matsakis",
+    "date": 1426723647,
+    "message": "Require braces when a closure has an explicit return type. This is a\n[breaking-change]: instead of a closure like `|| -> i32 22`, prefer `||\n-> i32 { 22 }`.\n\nFixes #23420."
+  },
+  {
     "hash": "46f649c479ce40f3b4590590dda6c2895e8d60f6",
     "author": "bors",
     "date": 1426667242,
@@ -586,17 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1424005968,
     "message": "Rollup merge of #22285 - kmcallister:pub-macro, r=nick29581\n\n It's not clear what this means, because a macro in item position can expand to zero or more items.  For now we disallow it, which is technically a\n\n    [breaking-change]\n\nbut is landing without an RFC.  The `pub` keyword previously had no effect, which seems quite unintended.\n\nFixes #18317.\nFixes #14660."
-  },
-  {
-    "hash": "dcd4cef119dc2fdac43b86cfb3694756d8c23f9f",
-    "author": "Keegan McAllister",
-    "date": 1423864089,
-    "message": "Forbid `pub mymacro!();`\n\nIt's not clear what this means, because a macro in item position can expand to\nzero or more items.  For now we disallow it, which is technically a\n\n    [breaking-change]\n\nbut is landing without an RFC.  The `pub` keyword previously had no effect,\nwhich seems quite unintended.\n\nFixes #18317.\nFixes #14660."
-  },
-  {
-    "hash": "f7870b6faa43a9e63b5575d5d9663457003a8ac5",
-    "author": "Manish Goregaokar",
-    "date": 1424005967,
-    "message": "Rollup merge of #22339 - petrochenkov:int, r=huonw\n\n Some function signatures have changed, so this is a [breaking-change].\nIn particular, radixes and numerical values of digits are represented by `u32` now.\n\nPart of #22240"
   }
 ]
