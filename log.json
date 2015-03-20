@@ -1,5 +1,35 @@
 [
   {
+    "hash": "6107e4c0b88d9e22482ed88c52b98c2ec2034bb1",
+    "author": "Manish Goregaokar",
+    "date": 1426835595,
+    "message": "Rollup merge of  #23534 - steveklabnik:remove_sched_threads, r=alexcrichton\n\nAs @alexcrichton says, this was really a libgreen thing, and isn't\nrelevant now.\n\nAs this removes a technically-public function, this is a\n\n[breaking-change]"
+  },
+  {
+    "hash": "71321ff33fa3fe71cc1df541b3d0547b4e208923",
+    "author": "Steve Klabnik",
+    "date": 1426809967,
+    "message": "Remove rt::default_sched_threads and RUST_THREADS.\n\nAs @alexcrichton says, this was really a libgreen thing, and isn't\nrelevant now.\n\nAs this removes a technically-public function, this is a\n\n[breaking-change]\n\nConflicts:\n\tsrc/libtest/lib.rs"
+  },
+  {
+    "hash": "e2d32b74ecedc3f603def4d5130c0c300edce7d1",
+    "author": "Manish Goregaokar",
+    "date": 1426835591,
+    "message": "Rollup merge of #23525 - steveklabnik:test_tasks, r=alexcrichton\n\n We don't use 'task' anymore, these are now threads.\n\nBecause this changes the name of a compiler option, this is\n\n[breaking-change]\n\nI think this is small enough to not need an RFC, nor a period of accepting both. If we want to take both for a while, I can change the patch."
+  },
+  {
+    "hash": "7cbc42849f7586d3c567d7ac8f202839f9b968e8",
+    "author": "Steve Klabnik",
+    "date": 1426794176,
+    "message": "RUST_TEST_TASKS -> RUST_TEST_THREADS\n\nWe don't use 'task' anymore, these are now threads.\n\nBecause this changes the name of a compiler option, this is\n\n[breaking-change]"
+  },
+  {
+    "hash": "3e433738fb1ab9f353c943d60061d72024c6af07",
+    "author": "Manish Goregaokar",
+    "date": 1426835591,
+    "message": "Rollup merge of #23504 - alexcrichton:parse-error-not-unit, r=aturon\n\n The IP and socket address types all had `FromStr` implemented but the\nimplementations were not marked stable, nor was the error type returned ready to\nbe properly stabilized.\n\nThis commit marks the implementations of `FromStr` as stable and also renamed\nthe `ParseError` structure to `AddrParseError`. The error is now also an opaque\nstructure that cannot be constructed outside the standard library.\n\ncc #22949\n[breaking-change]"
+  },
+  {
     "hash": "fda8673531c2ecea13c86216f964feb6091b4ade",
     "author": "bors",
     "date": 1426825804,
@@ -568,35 +598,5 @@
     "author": "Alex Crichton",
     "date": 1424210314,
     "message": "std: Stabilize the `ascii` module\n\nThis commit performs a stabilization pass over the `std::ascii` module taking\nthe following actions:\n\n* the module name is now stable\n* `AsciiExt` is now stable after moving its type parameter to an `Owned`\n  associated type\n* `AsciiExt::is_ascii` is now stable\n* `AsciiExt::to_ascii_uppercase` is now stable\n* `AsciiExt::to_ascii_lowercase` is now stable\n* `AsciiExt::eq_ignore_ascii_case` is now stable\n* `AsciiExt::make_ascii_uppercase` is added to possibly replace\n  `OwnedAsciiExt::into_ascii_uppercase` (similarly for lowercase variants).\n* `escape_default` now returns an iterator and is stable\n* `EscapeDefault` is now stable\n\nTrait implementations are now also marked stable.\n\nPrimarily it is still unstable to *implement* the `AsciiExt` trait due to it\ncontaining some unstable methods.\n\n[breaking-change]"
-  },
-  {
-    "hash": "020e4e4ad981ce0518bd8e3464ac592717c41143",
-    "author": "Manish Goregaokar",
-    "date": 1424174600,
-    "message": "Rollup merge of #22383 - pnkfelix:pass-features-along-during-expansion, r=huonw\n\n Pass features along during expansion\n\nUse the set of passed features to detect uses of feature-gated macros without the corresponding feature enabled.\n\nFix #22234.\n\n----\n\nAlso, the framework this add (passing along a reference to the features in the expansion context) is a necessary precursor for landing a properly feature-gated desugaring-based overloaded-`box` and placement-`in` (#22181).\n\n----\n\nThis is fixing a bug, but since there might be code out there that is unknowingly taking advantage of that bug, I feel obligated to mark this as a:\n\n[breaking-change]"
-  },
-  {
-    "hash": "bf52f2eef578e6fff83611a6276a3aa9f284e1c5",
-    "author": "Manish Goregaokar",
-    "date": 1424174600,
-    "message": "Rollup merge of #22311 - lfairy:consistent-fmt, r=alexcrichton\n\n This brings it in line with its namesake in `std::io`.\n\n[breaking-change]\n\nr? @aturon"
-  },
-  {
-    "hash": "4647d89205992383f8122e8fde0e2615497572bc",
-    "author": "Manish Goregaokar",
-    "date": 1424174599,
-    "message": "Rollup merge of #22364 - Manishearth:rfc-572-forbid-attr, r=nikomatsakis\n\n fixes #22203\n\nr? @nikomatsakis\n\nThis breaks code that might be using attributes randomly, so it's technically a\n\n[breaking-change]"
-  },
-  {
-    "hash": "f9aeea7cb7865a2b82e7102837daabbe549177ea",
-    "author": "bors",
-    "date": 1424188555,
-    "message": "Auto merge of #22311 - lfairy:consistent-fmt, r=alexcrichton\n\nThis brings it in line with its namesake in `std::io`.\r\n\r\n[breaking-change]\r\n\r\nr? @aturon"
-  },
-  {
-    "hash": "bc9084b9b7f21140ffbc051ecb2a0cd08e88f3bb",
-    "author": "Chris Wong",
-    "date": 1423871792,
-    "message": "Rename `fmt::Writer` to `fmt::Write`\n\nThis brings it in line with its namesake in `std::io`.\n\n[breaking-change]"
   }
 ]
