@@ -1,5 +1,17 @@
 [
   {
+    "hash": "a91eece96b1c945bebb01a7e906dabc2d736a131",
+    "author": "Manish Goregaokar",
+    "date": 1427066666,
+    "message": "Rollup merge of #23559 - aturon:future-proof-map-index, r=Gankro\n\n This commit removes the `IndexMut` impls on `HashMap` and `BTreeMap`, in\norder to future-proof the API against the eventual inclusion of an\n`IndexSet` trait.\n\nIdeally, we would eventually be able to support:\n\n```rust\nmap[owned_key] = val;\nmap[borrowed_key].mutating_method(arguments);\n&mut map[borrowed_key];\n```\n\nbut to keep the design space as unconstrained as possible, we do not\ncurrently want to support `IndexMut`, in case some other strategy will\neventually be needed.\n\nCode currently using mutating index notation can use `get_mut` instead.\n\n[breaking-change]\n\nCloses #23448\n\nr? @Gankro"
+  },
+  {
+    "hash": "5fe0bb743a0af0413f8989a70a4f926fa5c63074",
+    "author": "Aaron Turon",
+    "date": 1426873591,
+    "message": "Future-proof indexing on maps: remove IndexMut\n\nThis commit removes the `IndexMut` impls on `HashMap` and `BTreeMap`, in\norder to future-proof the API against the eventual inclusion of an\n`IndexSet` trait.\n\nIdeally, we would eventually be able to support:\n\n```rust\nmap[owned_key] = val;\nmap[borrowed_key].mutating_method(arguments);\n&mut map[borrowed_key];\n```\n\nbut to keep the design space as unconstrained as possible, we do not\ncurrently want to support `IndexMut`, in case some other strategy will\neventually be needed.\n\nCode currently using mutating index notation can use `get_mut` instead.\n\n[breaking-change]\n\nCloses #23448"
+  },
+  {
     "hash": "6107e4c0b88d9e22482ed88c52b98c2ec2034bb1",
     "author": "Manish Goregaokar",
     "date": 1426835595,
@@ -586,17 +598,5 @@
     "author": "Simonas Kazlauskas",
     "date": 1423686556,
     "message": "Change target-word-size to target-pointer-width\n\nThis aligns json target specification to match terminology used elsewhere in the code base.\n\n[breaking-change] for custom target json users. Change all appearances of target-word-size\nto target-pointer-width."
-  },
-  {
-    "hash": "f492095eb4ac061f1b4898b92880095d23dc9c86",
-    "author": "Alex Crichton",
-    "date": 1424214800,
-    "message": "rollup merge of #22024: alexcrichton/ascii\n\n* Move the type parameter on the `AsciiExt` trait to an associated type named\n  `Owned`.\n* Move `ascii::escape_default` to using an iterator.\n\nThis is a breaking change due to the removal of the type parameter on the\n`AsciiExt` trait as well as the modifications to the `escape_default` function\nto returning an iterator. Manual implementations of `AsciiExt` (or `AsciiExt`\nbounds) should be adjusted to remove the type parameter and using the new\n`escape_default` should be relatively straightforward.\n\n[breaking-change]"
-  },
-  {
-    "hash": "235f35b0b724a38a5583112825d46f50c5dde980",
-    "author": "Alex Crichton",
-    "date": 1424210314,
-    "message": "std: Stabilize the `ascii` module\n\nThis commit performs a stabilization pass over the `std::ascii` module taking\nthe following actions:\n\n* the module name is now stable\n* `AsciiExt` is now stable after moving its type parameter to an `Owned`\n  associated type\n* `AsciiExt::is_ascii` is now stable\n* `AsciiExt::to_ascii_uppercase` is now stable\n* `AsciiExt::to_ascii_lowercase` is now stable\n* `AsciiExt::eq_ignore_ascii_case` is now stable\n* `AsciiExt::make_ascii_uppercase` is added to possibly replace\n  `OwnedAsciiExt::into_ascii_uppercase` (similarly for lowercase variants).\n* `escape_default` now returns an iterator and is stable\n* `EscapeDefault` is now stable\n\nTrait implementations are now also marked stable.\n\nPrimarily it is still unstable to *implement* the `AsciiExt` trait due to it\ncontaining some unstable methods.\n\n[breaking-change]"
   }
 ]
