@@ -1,5 +1,11 @@
 [
   {
+    "hash": "19fef72a8c14100029e5ce39cbc5472ab091dad8",
+    "author": "Felix S. Klock II",
+    "date": 1426847120,
+    "message": "Added panic-on-overflow for rhs of left and right shift expressions.\n\nThis includes a slight refactoring of the `cast_shift_rhs` and related\nfunctions in `trans::base`, so that I can call them from much later in\nthe compiler's control flow (so that we can clearly dilineate where\nautomatic conversions of the RHS occur, versus where we check it).\n\nThe rhs-checking and fallback-masking is generalized to 8- and 16-bit\nvalues, and the fallback-masking is turned on unconditionally.\n\nFix #10183.\n\nIs this a [breaking-change]?  I would argue it is not; it only adds a\nstrict definition to what was previously undefined behavior; however,\nthere might be code that was e.g. assuming that `1_i8 << 17` yields 0.\n(This happens in certain contexts and at certain optimization levels.)"
+  },
+  {
     "hash": "a91eece96b1c945bebb01a7e906dabc2d736a131",
     "author": "Manish Goregaokar",
     "date": 1427066666,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1424214826,
     "message": "rollup merge of #22191: nagisa/target-ptr-width-json\n\nThis aligns json target specification to match terminology used elsewhere in the code base.\n\n[breaking-change] for custom target json users. Change all appearances of target-word-size\nto target-pointer-width."
-  },
-  {
-    "hash": "6f5944bfcff96509e3f3de227570382056153392",
-    "author": "Simonas Kazlauskas",
-    "date": 1423686556,
-    "message": "Change target-word-size to target-pointer-width\n\nThis aligns json target specification to match terminology used elsewhere in the code base.\n\n[breaking-change] for custom target json users. Change all appearances of target-word-size\nto target-pointer-width."
   }
 ]
