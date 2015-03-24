@@ -1,9 +1,63 @@
 [
   {
+    "hash": "f78815979706bca435bff80155b28acc80a19781",
+    "author": "Steve Klabnik",
+    "date": 1427144743,
+    "message": "Rollup merge of #23119 - nikomatsakis:issue-23116-ref-mut, r=pnkfelix\n\nDon't allow upcasting to a supertype in the type of the match discriminant. Fixes #23116.\r\n\r\nThis is a [breaking-change] in that it closes a type hole that previously existed.\r\n\r\nr? @pnkfelix"
+  },
+  {
+    "hash": "753efb5042563dd34a4a524197fa14a129ddf449",
+    "author": "Alex Crichton",
+    "date": 1427148650,
+    "message": "rollup merge of #23601: nikomatsakis/by-value-index\n\nThis is a [breaking-change]. When indexing a generic map (hashmap, etc) using the `[]` operator, it is now necessary to borrow explicitly, so change `map[key]` to `map[&key]` (consistent with the `get` routine). However, indexing of string-valued maps with constant strings can now be written `map[\"abc\"]`.\n\nr? @japaric\ncc @aturon @Gankro"
+  },
+  {
+    "hash": "2153c581ef66de1537286b58b1b323d24c25d07f",
+    "author": "Alex Crichton",
+    "date": 1427148549,
+    "message": "rollup merge of #23557: aturon/rfc-909\n\nThis commit implements [RFC 909](https://github.com/rust-lang/rfcs/pull/909):\n\nThe `std::thread_local` module is now deprecated, and its contents are\navailable directly in `std::thread` as `LocalKey`, `LocalKeyState`, and\n`ScopedKey`.\n\nThe macros remain exactly as they were, which means little if any code\nshould break. Nevertheless, this is technically a:\n\n[breaking-change]\n\nCloses #23547"
+  },
+  {
+    "hash": "6bd3ab0d8140053475a901ad4e2e80e98955bcb0",
+    "author": "Aaron Turon",
+    "date": 1427135334,
+    "message": "Implement RFC 909: move thread_local into thread\n\nThis commit implements [RFC\n909](https://github.com/rust-lang/rfcs/pull/909):\n\nThe `std::thread_local` module is now deprecated, and its contents are\navailable directly in `std::thread` as `LocalKey`, `LocalKeyState`, and\n`ScopedKey`.\n\nThe macros remain exactly as they were, which means little if any code\nshould break. Nevertheless, this is technically a:\n\n[breaking-change]\n\nCloses #23547"
+  },
+  {
+    "hash": "b97e1cc28e0d3fe6a745a02a7c1750564a090f34",
+    "author": "Alex Crichton",
+    "date": 1427148548,
+    "message": "rollup merge of #23541: aturon/stab-error\n\nThis small commit stabilizes the `Error` trait as-is, except that `Send`\nand `Debug` are added as constraints. The `Send` constraint is because\nmost uses of `Error` will be for trait objects, and by default we would\nlike these objects to be transferrable between threads. The `Debug`\nconstraint is to ensure that e.g. `Box<Error>` is `Debug`, and because\ntypes that implement `Display` should certainly implement `Debug` in any case.\n\nIn the near future we expect to add `Any`-like downcasting features to\n`Error`, but this is waiting on some additional\nmechanisms (`Reflect`). It will be added before 1.0 via default methods.\n\n[breaking-change]\n\nr? @alexcrichton\n\nCloses #21790"
+  },
+  {
+    "hash": "9231ceb6dd273d8101e1b3906e6060f802e6423d",
+    "author": "Aaron Turon",
+    "date": 1427135239,
+    "message": "Stabilize the Error trait\n\nThis small commit stabilizes the `Error` trait as-is, except that `Send`\nand `Debug` are added as constraints. The `Send` constraint is because\nmost uses of `Error` will be for trait objects, and by default we would\nlike these objects to be transferrable between threads. The `Debug`\nconstraint is to ensure that e.g. `Box<Error>` is `Debug`, and because\ntypes that implement `Display` should certainly implement `Debug` in any case.\n\nIn the near future we expect to add `Any`-like downcasting features to\n`Error`, but this is waiting on some additional\nmechanisms (`Reflect`). It will be added before 1.0 via default methods.\n\n[breaking-change]"
+  },
+  {
+    "hash": "8389253df0431e58bfe0a8e0e3949d58ebe7400f",
+    "author": "Aaron Turon",
+    "date": 1427148105,
+    "message": "Add generic conversion traits\n\nThis commit:\n\n* Introduces `std::convert`, providing an implementation of\nRFC 529.\n\n* Deprecates the `AsPath`, `AsOsStr`, and `IntoBytes` traits, all\nin favor of the corresponding generic conversion traits.\n\n  Consequently, various IO APIs now take `AsRef<Path>` rather than\n`AsPath`, and so on. Since the types provided by `std` implement both\ntraits, this should cause relatively little breakage.\n\n* Deprecates many `from_foo` constructors in favor of `from`.\n\n* Changes `PathBuf::new` to take no argument (creating an empty buffer,\n  as per convention). The previous behavior is now available as\n  `PathBuf::from`.\n\n* De-stabilizes `IntoCow`. It's not clear whether we need this separate trait.\n\nCloses #22751\nCloses #14433\n\n[breaking-change]"
+  },
+  {
     "hash": "19fef72a8c14100029e5ce39cbc5472ab091dad8",
     "author": "Felix S. Klock II",
     "date": 1426847120,
     "message": "Added panic-on-overflow for rhs of left and right shift expressions.\n\nThis includes a slight refactoring of the `cast_shift_rhs` and related\nfunctions in `trans::base`, so that I can call them from much later in\nthe compiler's control flow (so that we can clearly dilineate where\nautomatic conversions of the RHS occur, versus where we check it).\n\nThe rhs-checking and fallback-masking is generalized to 8- and 16-bit\nvalues, and the fallback-masking is turned on unconditionally.\n\nFix #10183.\n\nIs this a [breaking-change]?  I would argue it is not; it only adds a\nstrict definition to what was previously undefined behavior; however,\nthere might be code that was e.g. assuming that `1_i8 << 17` yields 0.\n(This happens in certain contexts and at certain optimization levels.)"
+  },
+  {
+    "hash": "ad41e7cd7a3d1969e666508d7e4a3ba305cee2ec",
+    "author": "Alex Crichton",
+    "date": 1427148439,
+    "message": "rollup merge of #23119: nikomatsakis/issue-23116-ref-mut\n\nDon't allow upcasting to a supertype in the type of the match discriminant. Fixes #23116.\n\nThis is a [breaking-change] in that it closes a type hole that previously existed.\n\nr? @pnkfelix"
+  },
+  {
+    "hash": "45fae882568d9bf36ade39f210a2721d05e556dd",
+    "author": "Niko Matsakis",
+    "date": 1427103043,
+    "message": "When matching against a pattern (either via `match` or `let`) that\ncontains ref-bindings, do not permit any upcasting from the type of\nthe value being matched. Similarly, do not permit coercion in a `let`.\n\nThis is a [breaking-change] in that it closes a type hole that\npreviously existed, and in that coercion is not performed. You should\nbe able to work around the latter by converting:\n\n```rust\nlet ref mut x: T = expr;\n```\n\ninto\n\n```rust\nlet x: T = expr;\nlet ref mut x = x;\n```\n\nRestricting coercion not to apply in the case of `let ref` or `let ref mut` is sort\nof unexciting to me, but seems the best solution:\n\n1. Mixing coercion and `let ref` or `let ref mut` is a bit odd, because you are taking\n   the address of a (coerced) temporary, but only sometimes. It's not syntactically evident,\n   in other words, what's going on. When you're doing a coercion, you're kind of\n\n2. Put another way, I would like to preserve the relationship that\n   `equality <= subtyping <= coercion <= as-coercion`, where this is\n   an indication of the number of `(T1,T2)` pairs that are accepted by\n   the various relations. Trying to mix `let ref mut` and coercion\n   would create another kind of relation that is like coercion, but\n   acts differently in the case where a precise match is needed.\n\n3. In any case, this is strictly more conservative than what we had\n   before and we can undo it in the future if we find a way to make\n   coercion mix with type equality.\n\nThe change to match I feel ok about but similarly unthrilled. There is\nsome subtle text already concerning whether to use eqtype or subtype\nfor identifier bindings. The best fix I think would be to always have\nmatch use strict equality but use subtyping on identifier bindings,\nbut the comment `(*)` explains why that's not working at the moment.\nAs above, I think we can change this as we clean up the code there."
   },
   {
     "hash": "a91eece96b1c945bebb01a7e906dabc2d736a131",
@@ -544,59 +598,5 @@
     "author": "Aaron Turon",
     "date": 1424286106,
     "message": "Implement RFC 580\n\nThis commit implements RFC 580 by renaming:\n\n* DList -> LinkedList\n* Bitv -> BitVec\n* BitvSet -> BitSet\n* RingBuf -> VecDeque\n\nMore details are in [the\nRFC](https://github.com/rust-lang/rfcs/pull/580)\n\n[breaking-change]"
-  },
-  {
-    "hash": "f3657170b1cbe80393d9ccde8608872f7bdc68f2",
-    "author": "Alex Crichton",
-    "date": 1424298730,
-    "message": "rollup merge of #22482: alexcrichton/cstr-changes\n\nThis commit is an implementation of [RFC 592][r592] and [RFC 840][r840]. These\ntwo RFCs tweak the behavior of `CString` and add a new `CStr` unsized slice type\nto the module.\n\n[r592]: https://github.com/rust-lang/rfcs/blob/master/text/0592-c-str-deref.md\n[r840]: https://github.com/rust-lang/rfcs/blob/master/text/0840-no-panic-in-c-string.md\n\nThe new `CStr` type is only constructable via two methods:\n\n1. By `deref`'ing from a `CString`\n2. Unsafely via `CStr::from_ptr`\n\nThe purpose of `CStr` is to be an unsized type which is a thin pointer to a\n`libc::c_char` (currently it is a fat pointer slice due to implementation\nlimitations). Strings from C can be safely represented with a `CStr` and an\nappropriate lifetime as well. Consumers of `&CString` should now consume `&CStr`\ninstead to allow producers to pass in C-originating strings instead of just\nRust-allocated strings.\n\nA new constructor was added to `CString`, `new`, which takes `T: IntoBytes`\ninstead of separate `from_slice` and `from_vec` methods (both have been\ndeprecated in favor of `new`). The `new` method returns a `Result` instead of\npanicking.  The error variant contains the relevant information about where the\nerror happened and bytes (if present). Conversions are provided to the\n`io::Error` and `old_io::IoError` types via the `FromError` trait which\ntranslate to `InvalidInput`.\n\nThis is a breaking change due to the modification of existing `#[unstable]` APIs\nand new deprecation, and more detailed information can be found in the two RFCs.\nNotable breakage includes:\n\n* All construction of `CString` now needs to use `new` and handle the outgoing\n  `Result`.\n* Usage of `CString` as a byte slice now explicitly needs a `.as_bytes()` call.\n* The `as_slice*` methods have been removed in favor of just having the\n  `as_bytes*` methods.\n\nCloses #22469\nCloses #22470\n[breaking-change]"
-  },
-  {
-    "hash": "1860ee521aa6096eb7f5410a64b53311fb0d2d0e",
-    "author": "Alex Crichton",
-    "date": 1424297743,
-    "message": "std: Implement CString-related RFCs\n\nThis commit is an implementation of [RFC 592][r592] and [RFC 840][r840]. These\ntwo RFCs tweak the behavior of `CString` and add a new `CStr` unsized slice type\nto the module.\n\n[r592]: https://github.com/rust-lang/rfcs/blob/master/text/0592-c-str-deref.md\n[r840]: https://github.com/rust-lang/rfcs/blob/master/text/0840-no-panic-in-c-string.md\n\nThe new `CStr` type is only constructable via two methods:\n\n1. By `deref`'ing from a `CString`\n2. Unsafely via `CStr::from_ptr`\n\nThe purpose of `CStr` is to be an unsized type which is a thin pointer to a\n`libc::c_char` (currently it is a fat pointer slice due to implementation\nlimitations). Strings from C can be safely represented with a `CStr` and an\nappropriate lifetime as well. Consumers of `&CString` should now consume `&CStr`\ninstead to allow producers to pass in C-originating strings instead of just\nRust-allocated strings.\n\nA new constructor was added to `CString`, `new`, which takes `T: IntoBytes`\ninstead of separate `from_slice` and `from_vec` methods (both have been\ndeprecated in favor of `new`). The `new` method returns a `Result` instead of\npanicking.  The error variant contains the relevant information about where the\nerror happened and bytes (if present). Conversions are provided to the\n`io::Error` and `old_io::IoError` types via the `FromError` trait which\ntranslate to `InvalidInput`.\n\nThis is a breaking change due to the modification of existing `#[unstable]` APIs\nand new deprecation, and more detailed information can be found in the two RFCs.\nNotable breakage includes:\n\n* All construction of `CString` now needs to use `new` and handle the outgoing\n  `Result`.\n* Usage of `CString` as a byte slice now explicitly needs a `.as_bytes()` call.\n* The `as_slice*` methods have been removed in favor of just having the\n  `as_bytes*` methods.\n\nCloses #22469\nCloses #22470\n[breaking-change]"
-  },
-  {
-    "hash": "9774b7e64b7ff8323b4f8160cc38eb793f447217",
-    "author": "Alex Crichton",
-    "date": 1424298723,
-    "message": "rollup merge of #22480: alexcrichton/hashv3\n\nThis commit is an implementation of [RFC 823][rfc] which is another pass over\nthe `std::hash` module for stabilization. The contents of the module were not\nentirely marked stable, but some portions which remained quite similar to the\nprevious incarnation are now marked `#[stable]`. Specifically:\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0823-hash-simplification.md\n\n* `std::hash` is now stable (the name)\n* `Hash` is now stable\n* `Hash::hash` is now stable\n* `Hasher` is now stable\n* `SipHasher` is now stable\n* `SipHasher::new` and `new_with_keys` are now stable\n* `Hasher for SipHasher` is now stable\n* Many `Hash` implementations are now stable\n\nAll other portions of the `hash` module remain `#[unstable]` as they are less\ncommonly used and were recently redesigned.\n\nThis commit is a breaking change due to the modifications to the `std::hash` API\nand more details can be found on the [RFC][rfc].\n\nCloses #22467\n[breaking-change]"
-  },
-  {
-    "hash": "f83e23ad7c464c242c2d7ace7212d323980b2bca",
-    "author": "Alex Crichton",
-    "date": 1424276780,
-    "message": "std: Stabilize the `hash` module\n\nThis commit is an implementation of [RFC 823][rfc] which is another pass over\nthe `std::hash` module for stabilization. The contents of the module were not\nentirely marked stable, but some portions which remained quite similar to the\nprevious incarnation are now marked `#[stable]`. Specifically:\n\n[rfc]: https://github.com/rust-lang/rfcs/blob/master/text/0823-hash-simplification.md\n\n* `std::hash` is now stable (the name)\n* `Hash` is now stable\n* `Hash::hash` is now stable\n* `Hasher` is now stable\n* `SipHasher` is now stable\n* `SipHasher::new` and `new_with_keys` are now stable\n* `Hasher for SipHasher` is now stable\n* Many `Hash` implementations are now stable\n\nAll other portions of the `hash` module remain `#[unstable]` as they are less\ncommonly used and were recently redesigned.\n\nThis commit is a breaking change due to the modifications to the `std::hash` API\nand more details can be found on the [RFC][rfc].\n\nCloses #22467\n[breaking-change]"
-  },
-  {
-    "hash": "d8f8f7a58c7c8b3352c1c577347865f5a823fee3",
-    "author": "Aaron Turon",
-    "date": 1424212409,
-    "message": "Revise std::thread semantics\n\nThis commit makes several changes to `std::thread` in preparation for\nfinal stabilization:\n\n* It removes the ability to handle panics from `scoped` children; see\n  #20807 for discussion\n\n* It adds a `JoinHandle` structure, now returned from `spawn`, which\n  makes it possible to join on children that do not share data from\n  their parent's stack. The child is automatically detached when the\n  handle is dropped, and the handle cannot be copied due to Posix\n  semantics.\n\n* It moves all static methods from `std::thread::Thread` to free\n  functions in `std::thread`. This was done in part because, due to the\n  above changes, there are effectively no direct `Thread` constructors,\n  and the static methods have tended to feel a bit awkward.\n\n* Adds an `io::Result` around the `Builder` methods `scoped` and\n  `spawn`, making it possible to handle OS errors when creating\n  threads. The convenience free functions entail an unwrap.\n\n* Stabilizes the entire module. Despite the fact that the API is\n  changing somewhat here, this is part of a long period of baking and\n  the changes are addressing all known issues prior to alpha2. If\n  absolutely necessary, further breaking changes can be made prior to beta.\n\nCloses #20807\n\n[breaking-change]"
-  },
-  {
-    "hash": "a2ebb24ee6cc76791ef834cb2d17ecac95756499",
-    "author": "Alex Crichton",
-    "date": 1424210565,
-    "message": "std: Rename io/path features with old_ prefix\n\nThis commit renames the features for the `std::old_io` and `std::old_path`\nmodules to `old_io` and `old_path` to help facilitate migration to the new APIs.\n\nThis is a breaking change as crates which mention the old feature names now need\nto be renamed to use the new feature names.\n\n[breaking-change]"
-  },
-  {
-    "hash": "eca2453a02548042fcb7082063149367a3343dd7",
-    "author": "Alex Crichton",
-    "date": 1424214833,
-    "message": "rollup merge of #22208: aturon/expose-more-path\n\nThis commit exposes the `is_sep` function and `MAIN_SEP` constant, as\nwell as Windows path prefixes. The path prefix enum is safely exposed on\nall platforms, but it only yielded as a component for Windows.\n\nExposing the prefix enum as part of prefix components involved changing\nthe type from `OsStr` to the `Prefix` enum, which is a:\n\n[breaking-change]"
-  },
-  {
-    "hash": "4a9dd3f8403f84ad518b0119fa2312c379df5dd7",
-    "author": "Aaron Turon",
-    "date": 1424123589,
-    "message": "Expose more of std::path\n\nThis commit exposes the `is_sep` function and `MAIN_SEP` constant, as\nwell as Windows path prefixes. The path prefix enum is safely exposed on\nall platforms, but it only yielded as a component for Windows.\n\nExposing the prefix enum as part of prefix components involved changing\nthe type from `OsStr` to the `Prefix` enum, which is a:\n\n[breaking-change]"
-  },
-  {
-    "hash": "5be2b8964c624ee619d2f8518215d3a3b13514e1",
-    "author": "Alex Crichton",
-    "date": 1424214826,
-    "message": "rollup merge of #22191: nagisa/target-ptr-width-json\n\nThis aligns json target specification to match terminology used elsewhere in the code base.\n\n[breaking-change] for custom target json users. Change all appearances of target-word-size\nto target-pointer-width."
   }
 ]
