@@ -1,5 +1,23 @@
 [
   {
+    "hash": "3b13b9c2b4e72d08cb1c68024ccc4f50001f4878",
+    "author": "Alex Crichton",
+    "date": 1427236034,
+    "message": "rollup merge of #23638: pnkfelix/fsk-reject-specialized-drops\n\nReject specialized Drop impls.\n\nSee Issue #8142 for discussion.\n\nThis makes it illegal for a Drop impl to be more specialized than the original item.\n\nSo for example, all of the following are now rejected (when they would have been blindly accepted before):\n\n```rust\nstruct S<A> { ... };\nimpl Drop for S<i8> { ... } // error: specialized to concrete type\n\nstruct T<'a> { ... };\nimpl Drop for T<'static> { ... } // error: specialized to concrete region\n\nstruct U<A> { ... };\nimpl<A:Clone> Drop for U<A> { ... } // error: added extra type requirement\n\nstruct V<'a,'b>;\nimpl<'a,'b:a> Drop for V<'a,'b> { ... } // error: added extra region requirement\n```\n\nDue to examples like the above, this is a [breaking-change].\n\n(The fix is to either remove the specialization from the `Drop` impl, or to transcribe the requirements into the struct/enum definition; examples of both are shown in the PR's fixed to `libstd`.)\n\n----\n\nThis is likely to be the last thing blocking the removal of the `#[unsafe_destructor]` attribute.\n\nFix #8142\nFix #23584"
+  },
+  {
+    "hash": "5b2e8693e42dee545d336c0364773b3fbded93a5",
+    "author": "Felix S. Klock II",
+    "date": 1427232443,
+    "message": "Reject specialized Drop impls.\n\nSee Issue 8142 for discussion.\n\nThis makes it illegal for a Drop impl to be more specialized than the\noriginal item.\n\nSo for example, all of the following are now rejected (when they would\nhave been blindly accepted before):\n\n```rust\nstruct S<A> { ... };\nimpl Drop for S<i8> { ... } // error: specialized to concrete type\n\nstruct T<'a> { ... };\nimpl Drop for T<'static> { ... } // error: specialized to concrete region\n\nstruct U<A> { ... };\nimpl<A:Clone> Drop for U<A> { ... } // error: added extra type requirement\n\nstruct V<'a,'b>;\nimpl<'a,'b:a> Drop for V<'a,'b> { ... } // error: added extra region requirement\n```\n\nDue to examples like the above, this is a [breaking-change].\n\n(The fix is to either remove the specialization from the `Drop` impl,\nor to transcribe the requirements into the struct/enum definition;\nexamples of both are shown in the PR's fixed to `libstd`.)\n\n----\n\nThis is likely to be the last thing blocking the removal of the\n`#[unsafe_destructor]` attribute.\n\nIncludes two new error codes for the new dropck check.\n\nUpdate run-pass tests to accommodate new dropck pass.\n\nUpdate tests and docs to reflect new destructor restriction.\n\n----\n\nImplementation notes:\n\nWe identify Drop impl specialization by not being as parametric as the\nstruct/enum definition via unification.\n\nMore specifically:\n\n 1. Attempt unification of a skolemized instance of the struct/enum\n    with an instance of the Drop impl's type expression where all of\n    the impl's generics (i.e. the free variables of the type\n    expression) have been replaced with unification variables.\n\n 2. If unification fails, then reject Drop impl as specialized.\n\n 3. If unification succeeds, check if any of the skolemized\n    variables \"leaked\" into the constraint set for the inference\n    context; if so, then reject Drop impl as specialized.\n\n 4. Otherwise, unification succeeded without leaking skolemized\n    variables: accept the Drop impl.\n\nWe identify whether a Drop impl is injecting new predicates by simply\nlooking whether the predicate, after an appropriate substitution,\nappears on the struct/enum definition."
+  },
+  {
+    "hash": "9330bae4bde720dbdf8d379bd5529a1bb7a6f1e9",
+    "author": "Niko Matsakis",
+    "date": 1427155050,
+    "message": "Fallout from changing fn traits to use inheritance rather than bridge\nimpls. This is a [breaking-change] (for gated code) in that when you\nimplement `Fn` (`FnMut`) you must also implement `FnOnce`. This commit\ndemonstrates how to fix it."
+  },
+  {
     "hash": "f78815979706bca435bff80155b28acc80a19781",
     "author": "Steve Klabnik",
     "date": 1427144743,
@@ -580,23 +598,5 @@
     "author": "Aaron Turon",
     "date": 1424301838,
     "message": "Stabilize std::borrow\n\nThis commit stabilizes `std::borrow`, making the following modifications\nto catch up the API with language changes:\n\n* It renames `BorrowFrom` to `Borrow`, as was originally intended (but\n  blocked for technical reasons), and reorders the parameters\n  accordingly.\n\n* It moves the type parameter of `ToOwned` to an associated type. This\n  is somewhat less flexible, in that each borrowed type must have a\n  unique owned type, but leads to a significant simplification for\n  `Cow`. Flexibility can be regained by using newtyped slices, which is\n  advisable for other reasons anyway.\n\n* It removes the owned type parameter from `Cow`, making the type much\n  less verbose.\n\n* Deprecates the `is_owned` and `is_borrowed` predicates in favor of\n  direct matching.\n\nThe above API changes are relatively minor; the basic functionality\nremains the same, and essentially the whole module is now marked\n`#[stable]`.\n\n[breaking-change]"
-  },
-  {
-    "hash": "66613e26b95438c02e2f5c273c557515454121f7",
-    "author": "Alexis",
-    "date": 1424286107,
-    "message": "make FromIterator use IntoIterator\n\nThis breaks all implementors of FromIterator, as they must now accept IntoIterator instead of Iterator. The fix for this is generally trivial (change the bound, and maybe call into_iter() on the argument to get the old argument).\n\nUsers of FromIterator should be unaffected because Iterators are IntoIterator.\n\n[breaking-change]"
-  },
-  {
-    "hash": "4a9d190423f67a00053f4b5c9869f0ccbdfcc689",
-    "author": "Alexis",
-    "date": 1424286107,
-    "message": "make Extend use IntoIterator\n\nThis breaks all implementors of Extend, as they must now accept IntoIterator instead of Iterator. The fix for this is generally trivial (change the bound, and maybe call into_iter() on the argument to get the old argument).\n\nUsers of Extend should be unaffected because Iterators are IntoIterator.\n\n[breaking-change]"
-  },
-  {
-    "hash": "5fa9de16df87ab844452821acff1b6c74e948327",
-    "author": "Aaron Turon",
-    "date": 1424286106,
-    "message": "Implement RFC 580\n\nThis commit implements RFC 580 by renaming:\n\n* DList -> LinkedList\n* Bitv -> BitVec\n* BitvSet -> BitSet\n* RingBuf -> VecDeque\n\nMore details are in [the\nRFC](https://github.com/rust-lang/rfcs/pull/580)\n\n[breaking-change]"
   }
 ]
