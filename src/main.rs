@@ -1,5 +1,5 @@
 extern crate git2;
-extern crate "rustc-serialize" as rustc_serialize;
+extern crate rustc_serialize;
 
 use std::io::{stdout, Write};
 use std::env;
