@@ -1,7 +1,7 @@
 [package]
 
 name = "bitrust"
-version = "0.0.1"
+version = "1.0.0"
 authors = ["Pascal Hertleif <killercup@gmail.com>"]
 repository = "https://github.com/killercup/bitrust"
 license = "MIT"
@@ -14,5 +14,5 @@ debug = false
 lto = true
 
 [dependencies]
-rustc-serialize = "0.3.0"
-git2 = "0.2.1"
+rustc-serialize = "0.3.7"
+git2 = "0.2.6"
