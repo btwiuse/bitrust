@@ -1,5 +1,23 @@
 [
   {
+    "hash": "c92bdcb232da3973a8a548e6b2044b610e286210",
+    "author": "Niko Matsakis",
+    "date": 1427706140,
+    "message": "Fallout where types must be specified.\n\nThis is due to a [breaking-change] to operators. The primary affected\ncode is uses of the `Rng` trait where we used to (incorrectly) infer the\nright-hand-side type from the left-hand-side, in the case that the LHS\ntype was a scalar like `i32`. The fix is to add a type annotation like\n`x + rng.gen::<i32>()`."
+  },
+  {
+    "hash": "14192d6df5cc714e5c9a3ca70b08f2514d977be2",
+    "author": "bors",
+    "date": 1427715352,
+    "message": "Auto merge of #23848 - cmr:no-compiler-docs, r=huonw\n\nThis saves a bunch of a time and will make distributions smaller, as well as\navoiding filling the implementors page with internal garbage. Turn it back on\nwith `--enable-compiler-docs` if you want them.\n\n(Crates behind the facade are not documented at all)\n\n[breaking-change]"
+  },
+  {
+    "hash": "e64b677ca66d742e7c06738bacf3a160cba827a7",
+    "author": "Corey Richardson",
+    "date": 1427624151,
+    "message": "mk: don't build docs for internal or behind-the-facade crates in beta/stable\n\nThis saves a bunch of a time and will make distributions smaller, as well as\navoiding filling the implementors page with internal garbage. Turn it back on\nwith `--enable-compiler-docs` if you want compiler docs during development.\n\nCrates behind the facade are only documented on nightly/dev builds (where they\ncan be used).\n\n[breaking-change]\n\nCloses #23772\nCloses #21297"
+  },
+  {
     "hash": "227b46bdede794d5c8476b810bb1c30926bd9c04",
     "author": "bors",
     "date": 1427606489,
@@ -580,23 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1425055023,
     "message": "Rollup merge of #22817 - jmesmon:result-or-type, r=huonw\n\n Changes .or() so that it can return a Result with a different E type\nthan the one it is called on.\n\nEssentially:\n\n    fn or(self, res: Result<T, E>) -> Result<T, E>\n\nbecomes\n\n    fn or<F>(self, res: Result<T, F>) -> Result<T, F>\n\nThis brings `or` in line with the existing `and` & `or_else`\n\nThis is a\n[breaking-change]\nDue to some code needing additional type annotations."
-  },
-  {
-    "hash": "07dc8d67c92017f950eef3951ec901cb2a3add7e",
-    "author": "Cody P Schafer",
-    "date": 1424903908,
-    "message": "Result::or : avoid over-specializing the type\n\nChanges .or() so that it can return a Result with a different E type\nthan the one it is called on.\n\nEssentially:\n\n    fn or(self, res: Result<T, E>) -> Result<T, E>\n\nbecomes\n\n    fn or<F>(self, res: Result<T, F>) -> Result<T, F>\n\nThis brings `or` in line with the existing `and` and `or_else` member\ntypes.\n\nThis is a\n[breaking-change]\nDue to some code needing additional type annotations."
-  },
-  {
-    "hash": "91569a95f16580f05f9dcb4b6d6eff50203cdde8",
-    "author": "Manish Goregaokar",
-    "date": 1425055022,
-    "message": "Rollup merge of #22795 - alexcrichton:issue-22617, r=huonw\n\n Keeps the method consistent with `Iterator::any`.\n\nCloses #22617\n[breaking-change]"
-  },
-  {
-    "hash": "18878b155ebf3c70445f2a461582475f5ef72c92",
-    "author": "Alex Crichton",
-    "date": 1424844261,
-    "message": "std: Require `&mut self` for Iterator::all\n\nKeeps the method consistent with `Iterator::any`.\n\nCloses #22617\n[breaking-change]"
   }
 ]
