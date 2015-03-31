@@ -1,5 +1,17 @@
 [
   {
+    "hash": "57938041c18ee1c1bef362e60f24f5b2d3a46213",
+    "author": "Manish Goregaokar",
+    "date": 1427772878,
+    "message": "Rollup merge of #23866 - alexcrichton:switch-some-orders, r=aturon\n\nThis functions swaps the order of arguments to a few functions that previously\r\ntook (output, input) parameters, but now take (input, output) parameters (in\r\nthat order).\r\n\r\nThe affected functions are:\r\n\r\n* ptr::copy\r\n* ptr::copy_nonoverlapping\r\n* slice::bytes::copy_memory\r\n* intrinsics::copy\r\n* intrinsics::copy_nonoverlapping\r\n\r\nCloses #22890\r\n[breaking-change]"
+  },
+  {
+    "hash": "acd48a2b3e7fcc0372f7718a2fac1cf80e03db95",
+    "author": "Alex Crichton",
+    "date": 1427749720,
+    "message": "std: Standardize (input, output) param orderings\n\nThis functions swaps the order of arguments to a few functions that previously\ntook (output, input) parameters, but now take (input, output) parameters (in\nthat order).\n\nThe affected functions are:\n\n* ptr::copy\n* ptr::copy_nonoverlapping\n* slice::bytes::copy_memory\n* intrinsics::copy\n* intrinsics::copy_nonoverlapping\n\nCloses #22890\n[breaking-change]"
+  },
+  {
     "hash": "c92bdcb232da3973a8a548e6b2044b610e286210",
     "author": "Niko Matsakis",
     "date": 1427706140,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1425103578,
     "message": "Auto merge of #22801 - huonw:crateify-lint, r=kmcallister\n\nThis pulls out the implementations of most built-in lints into a\r\nseparate crate, to reduce edit-compile-test iteration times with\r\nlibrustc_lint and increase parallelism. This should enable lints to be\r\nrefactored, added and deleted much more easily as it slashes the\r\nedit-compile cycle to get a minimal working compiler to test with (`make\r\nrustc-stage1`) from\r\n\r\n    librustc -> librustc_typeck -> ... -> librustc_driver ->\r\n        libcore -> ... -> libstd\r\n\r\nto\r\n\r\n    librustc_lint -> librustc_driver -> libcore -> ... libstd\r\n\r\nwhich is significantly faster, mainly due to avoiding the librustc build\r\nitself.\r\n\r\nThe intention would be to move as much as possible of the infrastructure\r\ninto the crate too, but the plumbing is deeply intertwined with librustc\r\nitself at the moment. Also, there are lints for which diagnostics are\r\nregistered directly in the compiler code, not in their own crate\r\ntraversal, and their definitions have to remain in librustc.\r\n\r\nThis is a [breaking-change] for direct users of the compiler APIs:\r\ncallers of `rustc::session::build_session` or\r\n`rustc::session::build_session_` need to manually call\r\n`rustc_lint::register_builtins` on their return value.\r\n\r\nThis should make #22206 easier."
-  },
-  {
-    "hash": "532cd5f85a93921f74f5991db2e419c6da58b188",
-    "author": "Huon Wilson",
-    "date": 1425098039,
-    "message": "Separate most of rustc::lint::builtin into a separate crate.\n\nThis pulls out the implementations of most built-in lints into a\nseparate crate, to reduce edit-compile-test iteration times with\nlibrustc_lint and increase parallelism. This should enable lints to be\nrefactored, added and deleted much more easily as it slashes the\nedit-compile cycle to get a minimal working compiler to test with (`make\nrustc-stage1`) from\n\n    librustc -> librustc_typeck -> ... -> librustc_driver ->\n        libcore -> ... -> libstd\n\nto\n\n    librustc_lint -> librustc_driver -> libcore -> ... libstd\n\nwhich is significantly faster, mainly due to avoiding the librustc build\nitself.\n\nThe intention would be to move as much as possible of the infrastructure\ninto the crate too, but the plumbing is deeply intertwined with librustc\nitself at the moment. Also, there are lints for which diagnostics are\nregistered directly in the compiler code, not in their own crate\ntraversal, and their definitions have to remain in librustc.\n\nThis is a [breaking-change] for direct users of the compiler APIs:\ncallers of `rustc::session::build_session` or\n`rustc::session::build_session_` need to manually call\n`rustc_lint::register_builtins` on their return value.\n\nThis should make #22206 easier."
-  },
-  {
-    "hash": "ce5f1b3216be790be590ad71eabccc16c9b86c74",
-    "author": "Manish Goregaokar",
-    "date": 1425055023,
-    "message": "Rollup merge of #22817 - jmesmon:result-or-type, r=huonw\n\n Changes .or() so that it can return a Result with a different E type\nthan the one it is called on.\n\nEssentially:\n\n    fn or(self, res: Result<T, E>) -> Result<T, E>\n\nbecomes\n\n    fn or<F>(self, res: Result<T, F>) -> Result<T, F>\n\nThis brings `or` in line with the existing `and` & `or_else`\n\nThis is a\n[breaking-change]\nDue to some code needing additional type annotations."
   }
 ]
