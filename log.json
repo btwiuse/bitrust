@@ -1,9 +1,81 @@
 [
   {
+    "hash": "ac77392f8ab1c201b0c927f6a2d30b632b95acda",
+    "author": "Alex Crichton",
+    "date": 1427843568,
+    "message": "std: Stabilize last bits of io::Error\n\nThis commit stabilizes a few remaining bits of the `io::Error` type:\n\n* The `Error::new` method is now stable. The last `detail` parameter was removed\n  and the second `desc` parameter was generalized to `E: Into<Box<Error>>` to\n  allow creating an I/O error from any form of error. Currently there is no form\n  of downcasting, but this will be added in time.\n\n* An implementation of `From<&str> for Box<Error>` was added to liballoc to\n  allow construction of errors from raw strings.\n\n* The `Error::raw_os_error` method was stabilized as-is.\n\n* Trait impls for `Clone`, `Eq`, and `PartialEq` were removed from `Error` as it\n  is not possible to use them with trait objects.\n\nThis is a breaking change due to the modification of the `new` method as well as\nthe removal of the trait implementations for the `Error` type.\n\n[breaking-change]"
+  },
+  {
+    "hash": "3422be3666cba57f1a6fb6ab3deb1a6df66b7695",
+    "author": "Alex Crichton",
+    "date": 1427842775,
+    "message": "rollup merge of #23288: alexcrichton/issue-19470\n\nThis is a deprecated attribute that is slated for removal, and it also affects\nall implementors of the trait. This commit removes the attribute and fixes up\nimplementors accordingly. The primary implementation which was lost was the\nability to compare `&[T]` and `Vec<T>` (in that order).\n\nThis change also modifies the `assert_eq!` macro to not consider both directions\nof equality, only the one given in the left/right forms to the macro. This\nmodification is motivated due to the fact that `&[T] == Vec<T>` no longer\ncompiles, causing hundreds of errors in unit tests in the standard library (and\nlikely throughout the community as well).\n\nCloses #19470\n[breaking-change]"
+  },
+  {
+    "hash": "5cf126ae2f6af1cdac901f6995e3c2bab35e587f",
+    "author": "Alex Crichton",
+    "date": 1427834354,
+    "message": "std: Remove #[old_orphan_check] from PartialEq\n\nThis is a deprecated attribute that is slated for removal, and it also affects\nall implementors of the trait. This commit removes the attribute and fixes up\nimplementors accordingly. The primary implementation which was lost was the\nability to compare `&[T]` and `Vec<T>` (in that order).\n\nThis change also modifies the `assert_eq!` macro to not consider both directions\nof equality, only the one given in the left/right forms to the macro. This\nmodification is motivated due to the fact that `&[T] == Vec<T>` no longer\ncompiles, causing hundreds of errors in unit tests in the standard library (and\nlikely throughout the community as well).\n\ncc #19470\n[breaking-change]"
+  },
+  {
     "hash": "80bf31dd514055177b22c3dc66836d39eb5b1648",
     "author": "bors",
     "date": 1427813446,
     "message": "Auto merge of #23549 - aturon:stab-num, r=alexcrichton\n\nThis commit stabilizes the `std::num` module:\r\n\r\n* The `Int` and `Float` traits are deprecated in favor of (1) the\r\n  newly-added inherent methods and (2) the generic traits available in\r\n  rust-lang/num.\r\n\r\n* The `Zero` and `One` traits are reintroduced in `std::num`, which\r\n  together with various other traits allow you to recover the most\r\n  common forms of generic programming.\r\n\r\n* The `FromStrRadix` trait, and associated free function, is deprecated\r\n  in favor of inherent implementations.\r\n\r\n* A wide range of methods and constants for both integers and floating\r\n  point numbers are now `#[stable]`, having been adjusted for integer\r\n  guidelines.\r\n\r\n* `is_positive` and `is_negative` are renamed to `is_sign_positive` and\r\n  `is_sign_negative`, in order to address #22985\r\n\r\n* The `Wrapping` type is moved to `std::num` and stabilized;\r\n  `WrappingOps` is deprecated in favor of inherent methods on the\r\n  integer types, and direct implementation of operations on\r\n  `Wrapping<X>` for each concrete integer type `X`.\r\n\r\nCloses #22985\r\nCloses #21069\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton"
+  },
+  {
+    "hash": "e17f4fc1d4545f5c17b21805c5145b05495484ee",
+    "author": "Sean McArthur",
+    "date": 1427764138,
+    "message": "convert: remove FromError, use From<E> instead\n\nThis removes the FromError trait, since it can now be expressed using\nthe new convert::Into trait. All implementations of FromError<E> where\nchanged to From<E>, and `try!` was changed to use From::from instead.\n\nBecause this removes FromError, it is a breaking change, but fixing it\nsimply requires changing the words `FromError` to `From`, and\n`from_error` to `from`.\n\n[breaking-change]"
+  },
+  {
+    "hash": "da04788efca6ec1e421139fb4916a5aacd49a2e2",
+    "author": "Alex Crichton",
+    "date": 1427842406,
+    "message": "rollup merge of #23875: aturon/revise-convert-2\n\n* Marks `#[stable]` the contents of the `std::convert` module.\n\n* Added methods `PathBuf::as_path`, `OsString::as_os_str`,\n  `String::as_str`, `Vec::{as_slice, as_mut_slice}`.\n\n* Deprecates `OsStr::from_str` in favor of a new, stable, and more\n  general `OsStr::new`.\n\n* Adds unstable methods `OsString::from_bytes` and `OsStr::{to_bytes,\n  to_cstring}` for ergonomic FFI usage.\n\n[breaking-change]\n\nr? @alexcrichton"
+  },
+  {
+    "hash": "9fc51efe3344a32d9e522f08383f052277b6ab63",
+    "author": "Aaron Turon",
+    "date": 1427826278,
+    "message": "Stabilize `std::convert` and related code\n\n* Marks `#[stable]` the contents of the `std::convert` module.\n\n* Added methods `PathBuf::as_path`, `OsString::as_os_str`,\n  `String::as_str`, `Vec::{as_slice, as_mut_slice}`.\n\n* Deprecates `OsStr::from_str` in favor of a new, stable, and more\n  general `OsStr::new`.\n\n* Adds unstable methods `OsString::from_bytes` and `OsStr::{to_bytes,\n  to_cstring}` for ergonomic FFI usage.\n\n[breaking-change]"
+  },
+  {
+    "hash": "606f50c46dd9a3852d36456d2015e1ccf832642e",
+    "author": "Huon Wilson",
+    "date": 1427764602,
+    "message": "Lex binary and octal literals more eagerly.\n\nPreviously 0b12 was considered two tokens, 0b1 and 2, as 2 isn't a valid\nbase 2 digit. This patch changes that to collapse them into one (and\nmakes `0b12` etc. an error: 2 isn't a valid base 2 digit).\n\nThis may break some macro invocations of macros with `tt` (or syntax\nextensions) that rely on adjacent digits being separate tokens and hence\nis a\n\n[breaking-change]\n\nThe fix is to separate the tokens, e.g. `0b12` -> `0b1 2`.\n\ncc https://github.com/rust-lang/rfcs/pull/879"
+  },
+  {
+    "hash": "d03120afd36f9e3f4c1305e9e5ca0d24a3b4a32f",
+    "author": "Alex Crichton",
+    "date": 1427842151,
+    "message": "rollup merge of #23876: alexcrichton/stabilize-any\n\nThis commit stabilizes the following APIs:\n\n* `TypeId::of` - now that it has an `Any` bound it's ready to be stable.\n* `Box<Any>::downcast` - now that an inherent impl on `Box<Any>` as well as\n  `Box<Any+Send>` is allowed the `BoxAny` trait is removed in favor of these\n  inherent methods.\n\nThis is a breaking change due to the removal of the `BoxAny` trait, but\nconsumers can simply remove imports to fix crates.\n\n[breaking-change]"
+  },
+  {
+    "hash": "f19e763e0824a73118ed715f526cb7bdd584d4c4",
+    "author": "Alex Crichton",
+    "date": 1427759051,
+    "message": "std: Stabilize the rest of Any/BoxAny\n\nThis commit stabilizes the following APIs:\n\n* `TypeId::of` - now that it has an `Any` bound it's ready to be stable.\n* `Box<Any>::downcast` - now that an inherent impl on `Box<Any>` as well as\n  `Box<Any+Send>` is allowed the `BoxAny` trait is removed in favor of these\n  inherent methods.\n\nThis is a breaking change due to the removal of the `BoxAny` trait, but\nconsumers can simply remove imports to fix crates.\n\n[breaking-change]"
+  },
+  {
+    "hash": "890f0ab10a81720606805db36628f61f29d0e816",
+    "author": "Alex Crichton",
+    "date": 1427842150,
+    "message": "rollup merge of #23766: alexcrichton/stabilize-raw-fd\n\nThis commit stabilizes the platform-specific `io` modules, specifically around\nthe traits having to do with the raw representation of each object on each\nplatform.\n\nSpecifically, the following material was stabilized:\n\n* `AsRaw{Fd,Socket,Handle}`\n* `RawFd` (renamed from `Fd`)\n* `RawHandle` (renamed from `Handle`)\n* `RawSocket` (renamed from `Socket`)\n* `AsRaw{Fd,Socket,Handle}` implementations\n* `std::os::{unix, windows}::io`\n\nThe following material was added as `#[unstable]`:\n\n* `FromRaw{Fd,Socket,Handle}`\n* Implementations for various primitives\n\nThere are a number of future improvements that are possible to make to this\nmodule, but this should cover a good bit of functionality desired from these\nmodules for now. Some specific future additions may include:\n\n* `IntoRawXXX` traits to consume the raw representation and cancel the\n  auto-destructor.\n* `Fd`, `Socket`, and `Handle` abstractions that behave like Rust objects and\n  have nice methods for various syscalls.\n\nAt this time though, these are considered backwards-compatible extensions and\nwill not be stabilized at this time.\n\nThis commit is a breaking change due to the addition of `Raw` in from of the\ntype aliases in each of the platform-specific modules.\n\n[breaking-change]"
+  },
+  {
+    "hash": "6370f2978e485fd46bcb64f51a1c003395acfedc",
+    "author": "Alex Crichton",
+    "date": 1427413236,
+    "message": "std: Stabilize parts of std::os::platform::io\n\nThis commit stabilizes the platform-specific `io` modules, specifically around\nthe traits having to do with the raw representation of each object on each\nplatform.\n\nSpecifically, the following material was stabilized:\n\n* `AsRaw{Fd,Socket,Handle}`\n* `RawFd` (renamed from `Fd`)\n* `RawHandle` (renamed from `Handle`)\n* `RawSocket` (renamed from `Socket`)\n* `AsRaw{Fd,Socket,Handle}` implementations\n* `std::os::{unix, windows}::io`\n\nThe following material was added as `#[unstable]`:\n\n* `FromRaw{Fd,Socket,Handle}`\n* Implementations for various primitives\n\nThere are a number of future improvements that are possible to make to this\nmodule, but this should cover a good bit of functionality desired from these\nmodules for now. Some specific future additions may include:\n\n* `IntoRawXXX` traits to consume the raw representation and cancel the\n  auto-destructor.\n* `Fd`, `Socket`, and `Handle` abstractions that behave like Rust objects and\n  have nice methods for various syscalls.\n\nAt this time though, these are considered backwards-compatible extensions and\nwill not be stabilized at this time.\n\nThis commit is a breaking change due to the addition of `Raw` in from of the\ntype aliases in each of the platform-specific modules.\n\n[breaking-change]"
+  },
+  {
+    "hash": "5d0beb7d85e8e711334c7fb6f2c5da270e5200cb",
+    "author": "Alex Crichton",
+    "date": 1427822126,
+    "message": "rollup merge of #23549: aturon/stab-num\n\nThis commit stabilizes the `std::num` module:\n\n* The `Int` and `Float` traits are deprecated in favor of (1) the\n  newly-added inherent methods and (2) the generic traits available in\n  rust-lang/num.\n\n* The `Zero` and `One` traits are reintroduced in `std::num`, which\n  together with various other traits allow you to recover the most\n  common forms of generic programming.\n\n* The `FromStrRadix` trait, and associated free function, is deprecated\n  in favor of inherent implementations.\n\n* A wide range of methods and constants for both integers and floating\n  point numbers are now `#[stable]`, having been adjusted for integer\n  guidelines.\n\n* `is_positive` and `is_negative` are renamed to `is_sign_positive` and\n  `is_sign_negative`, in order to address #22985\n\n* The `Wrapping` type is moved to `std::num` and stabilized;\n  `WrappingOps` is deprecated in favor of inherent methods on the\n  integer types, and direct implementation of operations on\n  `Wrapping<X>` for each concrete integer type `X`.\n\nCloses #22985\nCloses #21069\n\n[breaking-change]\n\nr? @alexcrichton"
   },
   {
     "hash": "232424d9952700682373ccf2d578109f401ff023",
@@ -526,77 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1425382276,
     "message": "Rollup merge of #22990 - japaric:privATe, r=alexcrichton\n\n Associated types are now treated as part of the public API by the privacy checker.\n\nIf you were exposing a private type in your public API via an associated type, make that type public:\n\n``` diff\n  pub struct PublicType { .. }\n\n- struct Struct { .. }\n+ pub struct Struct { .. }\n\n  pub trait PublicTrait {\n      type Output;\n\n      fn foo(&self) -> Self::Output;\n  }\n\n  impl PublicTrait for PublicType {\n      type Output = Struct;\n\n      fn foo(&self) -> Struct {  // `Struct` is part of the public API, it must be marked as `pub`lic\n          ..\n      }\n  }\n```\n\n[breaking-change]\n\n---\n\nr? @nikomatsakis\ncloses #22912"
-  },
-  {
-    "hash": "3b30b74692cfee533b45e0380591d237975ec215",
-    "author": "Manish Goregaokar",
-    "date": 1425382275,
-    "message": "Rollup merge of #22943 - ipetkov:lint-recursion, r=alexcrichton\n\n * The lint visitor's visit_ty method did not recurse, and had a\n  reference to the now closed #10894\n* The newly enabled recursion has only affected the `deprectated` lint\n  which now detects uses of deprecated items in trait impls and\n  function return types\n* Renamed some references to `CowString` and `CowVec` to `Cow<str>` and\n  `Cow<[T]>`, respectively, which appear outside of the crate which\n  defines them\n* Replaced a few instances of `InvariantType<T>` with\n  `PhantomData<Cell<T>>`\n* Disabled the `deprecated` lint in several places that\n  reference/implement traits on deprecated items which will get cleaned\n  up in the future\n* Unfortunately, this means that if a library declares\n  `#![deny(deprecated)]` and marks anything as deprecated, it will have\n  to disable the lint for any uses of said item, e.g. any impl the now\n  deprecated item\n\nFor any library that denies deprecated items but has deprecated items\nof its own, this is a [breaking-change]\n\nI had originally intended for the lint to ignore uses of deprecated items that are declared in the same crate, but this goes against some previous test cases that expect the lint to capture *all* uses of deprecated items, so I maintained the previous approach to avoid changing the expected behavior of the lint.\n\nTested locally on OS X, so hopefully there aren't any deprecated item uses behind a `cfg` that I may have missed."
-  },
-  {
-    "hash": "2b03718618d66e7e672663230be1ee857d3fb89a",
-    "author": "Ivan Petkov",
-    "date": 1425339348,
-    "message": "Enable recursion for visit_ty in lint visitor\n\n* The lint visitor's visit_ty method did not recurse, and had a\n  reference to the now closed #10894\n* The newly enabled recursion has only affected the `deprectated` lint\n  which now detects uses of deprecated items in trait impls and\n  function return types\n* Renamed some references to `CowString` and `CowVec` to `Cow<str>` and\n  `Cow<[T]>`, respectively, which appear outside of the crate which\n  defines them\n* Replaced a few instances of `InvariantType<T>` with\n  `PhantomData<Cell<T>>`\n* Disabled the `deprecated` lint in several places that\n  reference/implement traits on deprecated items which will get cleaned\n  up in the future\n* Disabled the `exceeding_bitshifts` lint for\n  compile-fail/huge-array-simple test so it doesn't shadow the expected\n  error on 32bit systems\n* Unfortunately, this means that if a library declares\n  `#![deny(deprecated)]` and marks anything as deprecated, it will have\n  to disable the lint for any uses of said item, e.g. any impl the now\n  deprecated item\n\nFor any library that denies deprecated items but has deprecated items\nof its own, this is a [breaking-change]"
-  },
-  {
-    "hash": "76e9fa63ba0b6d892aa880db9c8373ede3e67c03",
-    "author": "Brian Anderson",
-    "date": 1425341566,
-    "message": "core: Audit num module for int/uint\n\n* count_ones/zeros, trailing_ones/zeros return u32, not usize\n* rotate_left/right take u32, not usize\n* RADIX, MANTISSA_DIGITS, DIGITS, BITS, BYTES are u32, not usize\n\nDoesn't touch pow because there's another PR for it.\n\n[breaking-change]"
-  },
-  {
-    "hash": "93613a543f0cae68ea82e6a66b9b9cdfa13b673e",
-    "author": "Alex Crichton",
-    "date": 1425271297,
-    "message": "std: Stabilize the `process` module\n\nThis commits blanket marks the API of the `std::process` module as `#[stable]`.\nThe module's API is very similar to the old `std::old_io::process` API and has\ngenerally had quite a bit of time to bake both before and after the new module\nlanded.\n\nThe one modification made to the API is that `Stdio::capture` is now named\n`stdio::piped`.\n\n[breaking-change]"
-  },
-  {
-    "hash": "ef8b20a564bab2050403f2f5c1dab90e0941adf7",
-    "author": "Manish Goregaokar",
-    "date": 1425248634,
-    "message": "Rollup merge of #22821 - ipetkov:lint-method-rename, r=eddyb\n\n Traits can have associated types and not just methods. This\nclarification reflects the the type of the input the method accepts.\n\n[breaking-change]"
-  },
-  {
-    "hash": "2fc62244113d01e9524ed712210ba52e8471e2a9",
-    "author": "Ivan Petkov",
-    "date": 1425160597,
-    "message": "Rename LintPass::check_trait_method to check_trait_item\n\nTraits can have associated types and not just methods. This\nclarification reflects the the type of the input the method accepts.\n\n[breaking-change]"
-  },
-  {
-    "hash": "157614249594f187f421cd97f928e64c5ab5c1fa",
-    "author": "bors",
-    "date": 1425219778,
-    "message": "Auto merge of #22880 - alexcrichton:deprecate-io-extensions, r=huonw\n\nThe `u64_from_be_bytes` and `u64_to_be_bytes` functions are being deprecated\r\nwith no replacement for now.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "d79e91033770fc5a760d34511769f5ba6c872c77",
-    "author": "Alex Crichton",
-    "date": 1425083193,
-    "message": "std: Deprecated the `old_io::extensions` module\n\nThe `u64_from_be_bytes` and `u64_to_be_bytes` functions are being deprecated\nwith no replacement for now.\n\n[breaking-change]"
-  },
-  {
-    "hash": "d9fb9765a13d44f051cae9a9a7d010621b8e42cb",
-    "author": "Manish Goregaokar",
-    "date": 1425183588,
-    "message": "Rollup merge of #22907 - dotdash:static_assert_bool, r=eddyb\n\n static_assert is documented as working on static with type `bool`, but\nwe currently accept it on any const static and crash when the const has\nan non-integral type.\n\nThis is a breaking-change for anyone who used static_assert on types\nlikes i32, which happened to work but seems like an unintended\nconsequence of the missing error checking.\n\n[breaking-change]\n\nFixes #22056"
-  },
-  {
-    "hash": "d11b48c85c1cceb559ab8a08815ba3f7b3312c44",
-    "author": "Björn Steinbrink",
-    "date": 1425148129,
-    "message": "Error out when using static_assert on a non-boolean value\n\nstatic_assert is documented as working on static with type `bool`, but\nwe currently accept it on any const static and crash when the const has\nan non-integral type.\n\nThis is a breaking-change for anyone who used static_assert on types\nlikes i32, which happened to work but seems like an unintended\nconsequence of the missing error checking.\n\n[breaking-change]\n\nFixes #22056"
-  },
-  {
-    "hash": "040a811b9190d2c2c595e09b5d1db07bedffdde9",
-    "author": "Manish Goregaokar",
-    "date": 1425131340,
-    "message": "Rollup merge of #22884 - japaric:obsolete, r=alexcrichton\n\n This is leftover from #21843\n\nIf you still have `|&:| {}` closures in your code, simply remove the `&:` part.\n\n[breaking-change]"
-  },
-  {
-    "hash": "37760c1f25fc55814a92cce1c98edefdc0740188",
-    "author": "Manish Goregaokar",
-    "date": 1425131339,
-    "message": "Rollup merge of #22875 - kmcallister:maceager, r=sfackler\n\n MacEager is a MacResult implementation for the common case where you've already built each form of AST that you might return.\n\nFixes #17637. Based on #18814.\n\nThis is a [breaking-change] for syntax extensions:\n\n  * MacExpr::new becomes MacEager::expr.\n\n  * MacPat::new becomes MacEager::pat.\n\n  * MacItems::new becomes MacEager::items. It takes a SmallVector directly,\n    not an iterator.\n\nr? @sfackler"
   }
 ]
