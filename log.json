@@ -1,5 +1,35 @@
 [
   {
+    "hash": "655634e6ab00707ef98034dcfb32000cbfa7a01c",
+    "author": "Alex Crichton",
+    "date": 1427921780,
+    "message": "rollup merge of #23949: aturon/stab-timeout\n\nThis commit renames and stabilizes:\n\n* `Condvar::wait_timeout_ms` (renamed from `wait_timeout`)\n* `thread::park_timeout_ms` (renamed from `park_timeout`)\n* `thread::sleep_ms` (renamed from `sleep`)\n\nIn each case, the timeout is taken as a `u32` number of milliseconds,\nrather than a `Duration`.\n\nThese functions are likely to be deprecated once a stable form of\n`Duration` is available, but there is little cost to having these named\nvariants around, and it's crucial functionality for 1.0.\n\n[breaking-change]\n\nr? @alexcrichton\n\ncc @sfackler @carllerche"
+  },
+  {
+    "hash": "371277fb0d210152eb8c79e30bd7f7749c5af63c",
+    "author": "Aaron Turon",
+    "date": 1427921025,
+    "message": "Stabilize basic timeout functionality\n\nThis commit renames and stabilizes:\n\n* `Condvar::wait_timeout_ms` (renamed from `wait_timeout`)\n* `thread::park_timeout_ms` (renamed from `park_timeout`)\n* `thread::sleep_ms` (renamed from `sleep`)\n\nIn each case, the timeout is taken as a `u32` number of milliseconds,\nrather than a `Duration`.\n\nThese functions are likely to be deprecated once a stable form of\n`Duration` is available, but there is little cost to having these named\nvariants around, and it's crucial functionality for 1.0.\n\n[breaking-change]"
+  },
+  {
+    "hash": "cade32acf6f5ff209ee082d70350d9bc0362985a",
+    "author": "Niko Matsakis",
+    "date": 1427913681,
+    "message": "Remove `Thunk` struct and `Invoke` trait; change `Thunk` to be an alias\nfor `Box<FnBox()>`. I found the alias was still handy because it is\nshorter than the fully written type.\n\nThis is a [breaking-change]: convert code using `Invoke` to use `FnBox`,\nwhich is usually pretty straight-forward. Code using thunk mostly works\nif you change `Thunk::new => Box::new` and `foo.invoke(arg)` to\n`foo(arg)`."
+  },
+  {
+    "hash": "e9bacbaa2c9c88aaecf07ee30f02d08a1999e5c6",
+    "author": "Alex Crichton",
+    "date": 1427920208,
+    "message": "rollup merge of #23951: alexcrichton/splitn\n\nThis commit is an implementation of [RFC 979][rfc] which changes the meaning of\nthe count parameter to the `splitn` function on strings and slices. The\nparameter now means the number of items that are returned from the iterator, not\nthe number of splits that are made.\n\n[rfc]: https://github.com/rust-lang/rfcs/pull/979\n\nCloses #23911\n[breaking-change]"
+  },
+  {
+    "hash": "e98dce3e00a7b6bfd264418ef993bbf9cdb1f0b6",
+    "author": "Alex Crichton",
+    "date": 1427920182,
+    "message": "std: Changing the meaning of the count to splitn\n\nThis commit is an implementation of [RFC 979][rfc] which changes the meaning of\nthe count parameter to the `splitn` function on strings and slices. The\nparameter now means the number of items that are returned from the iterator, not\nthe number of splits that are made.\n\n[rfc]: https://github.com/rust-lang/rfcs/pull/979\n\nCloses #23911\n[breaking-change]"
+  },
+  {
     "hash": "ac77392f8ab1c201b0c927f6a2d30b632b95acda",
     "author": "Alex Crichton",
     "date": 1427843568,
@@ -568,35 +598,5 @@
     "author": "bors",
     "date": 1425577941,
     "message": "Auto merge of #23026 - nikomatsakis:issue-20220-supertrait, r=nikomatsakis\n\nThe main gist of this PR is commit 1077efb which removes the list of supertraits from the `TraitDef` and pulls them into a separate table, which is accessed via `lookup_super_predicates`. This is analogous to `lookup_predicates`, which gets the complete where clause. This allows us to create the `TraitDef`, which contains the list generics and so forth, without fully knowing the list of supertraits. This in turn allows the *supertrait listing* to contain references to associated types like `<Self as Foo>::Item`, which were previously impossible because conversion required having the `TraitDef` for `Foo`.\r\n\r\nWe do not yet support `Self::Item` in a supertrait listing. This doesn't work because to convert that, it attempts to expand out the full set of supertraits, which are in the process of being created. This could potentially be worked out by having the expansion of supertraits proceed in a lazy fashion, but we'd have to define shadowing rules for associated types which we don't currently have.\r\n\r\nAlong the way (in 9de9ec5) I also removed the restriction against duplicate bounds and generalized the code so that it can handle having the same supertrait multiple times with different arguments, e.g. `Foo : Bar<i32> + Bar<u32>`. This restriction was serving no particular purpose, since the same trait could be extended multiple times indirectly, and in the era of multidispatch it is actively harmful.\r\n\r\nThis is technically a [breaking-change] because it affects the definition of a super-trait. Anything in a where clause that looks like `where Self : Foo` is now considered a supertrait. Because cycles are disallowed in supertraits, that could lead to some errors. This has not been observed in any existing code.\r\n\r\nr? @nrc"
-  },
-  {
-    "hash": "cc722a4dd3e8110a8bf7e62eea977e99e3a3d128",
-    "author": "bors",
-    "date": 1425518355,
-    "message": "Auto merge of #22873 - alexcrichton:deprecate-fs, r=aturon\n\nThis commit deprecates the majority of std::old_io::fs in favor of std::fs and\r\nits new functionality. Some functions remain non-deprecated but are now behind a\r\nfeature gate called `old_fs`. These functions will be deprecated once\r\nsuitable replacements have been implemented.\r\n\r\nThe compiler has been migrated to new `std::fs` and `std::path` APIs where\r\nappropriate as part of this change.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "cdfff9db35d037c51dfd5c2bac2174f651294adb",
-    "author": "Corey Richardson",
-    "date": 1425380947,
-    "message": "rustc: implement arithmetic overflow checking\n\nAdds overflow checking to integer addition, multiplication, and subtraction\nwhen `-Z force-overflow-checks` is true, or if `--cfg ndebug` is not passed to\nthe compiler. On overflow, it panics with `arithmetic operation overflowed`.\nAlso adds `overflowing_add`, `overflowing_sub`, and `overflowing_mul`\nintrinsics for doing unchecked arithmetic.\n\n[breaking-change]"
-  },
-  {
-    "hash": "393ce1820e3f639b43d6058d2681b9757123ac1b",
-    "author": "Manish Goregaokar",
-    "date": 1425382340,
-    "message": "Rollup merge of #22876 - Florob:const, r=nikomatsakis\n\n This changes the type of some public constants/statics in libunicode.\nNotably some `&'static &'static [(char, char)]` have changed\nto `&'static [(char, char)]`. The regexp crate seems to be the\nsole user of these, yet this is technically a [breaking-change]"
-  },
-  {
-    "hash": "f35f973cb700c444d8c029ee13b37dc16d560225",
-    "author": "Florian Zeitz",
-    "date": 1425312711,
-    "message": "Use `const`s instead of `static`s where appropriate\n\nThis changes the type of some public constants/statics in libunicode.\nNotably some `&'static &'static [(char, char)]` have changed\nto `&'static [(char, char)]`. The regexp crate seems to be the\nsole user of these, yet this is technically a [breaking-change]"
-  },
-  {
-    "hash": "d0fcb1f53c9f81fbcae5379dd1c0577a8605172c",
-    "author": "Manish Goregaokar",
-    "date": 1425382276,
-    "message": "Rollup merge of #22990 - japaric:privATe, r=alexcrichton\n\n Associated types are now treated as part of the public API by the privacy checker.\n\nIf you were exposing a private type in your public API via an associated type, make that type public:\n\n``` diff\n  pub struct PublicType { .. }\n\n- struct Struct { .. }\n+ pub struct Struct { .. }\n\n  pub trait PublicTrait {\n      type Output;\n\n      fn foo(&self) -> Self::Output;\n  }\n\n  impl PublicTrait for PublicType {\n      type Output = Struct;\n\n      fn foo(&self) -> Struct {  // `Struct` is part of the public API, it must be marked as `pub`lic\n          ..\n      }\n  }\n```\n\n[breaking-change]\n\n---\n\nr? @nikomatsakis\ncloses #22912"
   }
 ]
