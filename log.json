@@ -1,5 +1,23 @@
 [
   {
+    "hash": "82dcec7ee4a8a71fdfb8e8771ae6785261ec1d5b",
+    "author": "bors",
+    "date": 1428045231,
+    "message": "Auto merge of #23934 - lfairy:write-no-deref, r=alexcrichton\n\nThis means passing in e.g. a `Vec<u8>` or `String` will work as\r\nintended, rather than deref-ing to `&mut [u8]` or `&mut str`.\r\n\r\n[breaking-change]\r\n\r\nCloses #23768"
+  },
+  {
+    "hash": "7c3efcc5bb260234fc163340c9fd7aad3d8d780e",
+    "author": "Chris Wong",
+    "date": 1427870929,
+    "message": "Don't reborrow the target of a `write!()`\n\nThis means passing in e.g. a `Vec<u8>` or `String` will work as\nintended, rather than deref-ing to `&mut [u8]` or `&mut str`.\n\n[breaking-change]\n\nCloses #23768"
+  },
+  {
+    "hash": "fc98b19cf72ea45851ebb7b28af160be92b19128",
+    "author": "bors",
+    "date": 1428035392,
+    "message": "Auto merge of #23832 - petrochenkov:usize, r=aturon\n\nThese constants are small and can fit even in `u8`, but semantically they have type `usize` because they denote sizes and are almost always used in `usize` context. The change of their type to `u32` during the integer audit led only to the large amount of `as usize` noise (see the second commit, which removes this noise).\r\n\r\nThis is a minor [breaking-change] to an unstable interface.\r\n\r\nr? @aturon"
+  },
+  {
     "hash": "655634e6ab00707ef98034dcfb32000cbfa7a01c",
     "author": "Alex Crichton",
     "date": 1427921780,
@@ -580,23 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1425612496,
     "message": "Rollup merge of #22899 - huonw:macro-stability, r=alexcrichton\n\n Unstable items used in a macro expansion will now always trigger\nstability warnings, *unless* the unstable items are directly inside a\nmacro marked with `#[allow_internal_unstable]`. IOW, the compiler warns\nunless the span of the unstable item is a subspan of the definition of a\nmacro marked with that attribute.\n\nE.g.\n\n    #[allow_internal_unstable]\n    macro_rules! foo {\n        ($e: expr) => {{\n            $e;\n            unstable(); // no warning\n            only_called_by_foo!();\n        }}\n    }\n\n    macro_rules! only_called_by_foo {\n        () => { unstable() } // warning\n    }\n\n    foo!(unstable()) // warning\n\nThe unstable inside `foo` is fine, due to the attribute. But the\n`unstable` inside `only_called_by_foo` is not, since that macro doesn't\nhave the attribute, and the `unstable` passed into `foo` is also not\nfine since it isn't contained in the macro itself (that is, even though\nit is only used directly in the macro).\n\nIn the process this makes the stability tracking much more precise,\ne.g. previously `println!(\\\"{}\\\", unstable())` got no warning, but now it\ndoes. As such, this is a bug fix that may cause [breaking-change]s.\n\nThe attribute is definitely feature gated, since it explicitly allows\nside-stepping the feature gating system.\n\n---\n\nThis updates `thread_local!` macro to use the attribute, since it uses\nunstable features internally (initialising a struct with unstable\nfields)."
-  },
-  {
-    "hash": "1fe8f221450bad3ffb1351c6549f67c18ce0b94e",
-    "author": "bors",
-    "date": 1425619211,
-    "message": "Auto merge of #22899 - huonw:macro-stability, r=alexcrichton\n\nUnstable items used in a macro expansion will now always trigger\r\nstability warnings, *unless* the unstable items are directly inside a\r\nmacro marked with `#[allow_internal_unstable]`. IOW, the compiler warns\r\nunless the span of the unstable item is a subspan of the definition of a\r\nmacro marked with that attribute.\r\n\r\nE.g.\r\n\r\n    #[allow_internal_unstable]\r\n    macro_rules! foo {\r\n        ($e: expr) => {{\r\n            $e;\r\n            unstable(); // no warning\r\n            only_called_by_foo!();\r\n        }}\r\n    }\r\n\r\n    macro_rules! only_called_by_foo {\r\n        () => { unstable() } // warning\r\n    }\r\n\r\n    foo!(unstable()) // warning\r\n\r\nThe unstable inside `foo` is fine, due to the attribute. But the\r\n`unstable` inside `only_called_by_foo` is not, since that macro doesn't\r\nhave the attribute, and the `unstable` passed into `foo` is also not\r\nfine since it isn't contained in the macro itself (that is, even though\r\nit is only used directly in the macro).\r\n\r\nIn the process this makes the stability tracking much more precise,\r\ne.g. previously `println!(\"{}\", unstable())` got no warning, but now it\r\ndoes. As such, this is a bug fix that may cause [breaking-change]s.\r\n\r\nThe attribute is definitely feature gated, since it explicitly allows\r\nside-stepping the feature gating system.\r\n\r\n---\r\n\r\nThis updates `thread_local!` macro to use the attribute, since it uses\r\nunstable features internally (initialising a struct with unstable\r\nfields)."
-  },
-  {
-    "hash": "84b060ce29bf7dd65fc23e855ad7c5a8748d806c",
-    "author": "Huon Wilson",
-    "date": 1425561508,
-    "message": "Add #[allow_internal_unstable] to track stability for macros better.\n\nUnstable items used in a macro expansion will now always trigger\nstability warnings, *unless* the unstable items are directly inside a\nmacro marked with `#[allow_internal_unstable]`. IOW, the compiler warns\nunless the span of the unstable item is a subspan of the definition of a\nmacro marked with that attribute.\n\nE.g.\n\n    #[allow_internal_unstable]\n    macro_rules! foo {\n        ($e: expr) => {{\n            $e;\n            unstable(); // no warning\n            only_called_by_foo!();\n        }}\n    }\n\n    macro_rules! only_called_by_foo {\n        () => { unstable() } // warning\n    }\n\n    foo!(unstable()) // warning\n\nThe unstable inside `foo` is fine, due to the attribute. But the\n`unstable` inside `only_called_by_foo` is not, since that macro doesn't\nhave the attribute, and the `unstable` passed into `foo` is also not\nfine since it isn't contained in the macro itself (that is, even though\nit is only used directly in the macro).\n\nIn the process this makes the stability tracking much more precise,\ne.g. previously `println!(\"{}\", unstable())` got no warning, but now it\ndoes. As such, this is a bug fix that may cause [breaking-change]s.\n\nThe attribute is definitely feature gated, since it explicitly allows\nside-stepping the feature gating system."
-  },
-  {
-    "hash": "f0c74f85f363a8081b31f9ab696463717ce312d5",
-    "author": "bors",
-    "date": 1425577941,
-    "message": "Auto merge of #23026 - nikomatsakis:issue-20220-supertrait, r=nikomatsakis\n\nThe main gist of this PR is commit 1077efb which removes the list of supertraits from the `TraitDef` and pulls them into a separate table, which is accessed via `lookup_super_predicates`. This is analogous to `lookup_predicates`, which gets the complete where clause. This allows us to create the `TraitDef`, which contains the list generics and so forth, without fully knowing the list of supertraits. This in turn allows the *supertrait listing* to contain references to associated types like `<Self as Foo>::Item`, which were previously impossible because conversion required having the `TraitDef` for `Foo`.\r\n\r\nWe do not yet support `Self::Item` in a supertrait listing. This doesn't work because to convert that, it attempts to expand out the full set of supertraits, which are in the process of being created. This could potentially be worked out by having the expansion of supertraits proceed in a lazy fashion, but we'd have to define shadowing rules for associated types which we don't currently have.\r\n\r\nAlong the way (in 9de9ec5) I also removed the restriction against duplicate bounds and generalized the code so that it can handle having the same supertrait multiple times with different arguments, e.g. `Foo : Bar<i32> + Bar<u32>`. This restriction was serving no particular purpose, since the same trait could be extended multiple times indirectly, and in the era of multidispatch it is actively harmful.\r\n\r\nThis is technically a [breaking-change] because it affects the definition of a super-trait. Anything in a where clause that looks like `where Self : Foo` is now considered a supertrait. Because cycles are disallowed in supertraits, that could lead to some errors. This has not been observed in any existing code.\r\n\r\nr? @nrc"
   }
 ]
