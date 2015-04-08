@@ -1,5 +1,11 @@
 [
   {
+    "hash": "97f24a85965c3c51a2c18be029091ae52bbd7920",
+    "author": "Tobias Bucher",
+    "date": 1428445595,
+    "message": "Make `sum` and `product` inherent methods on `Iterator`\n\nIn addition to being nicer, this also allows you to use `sum` and `product` for\niterators yielding custom types aside from the standard integers.\n\nDue to removing the `AdditiveIterator` and `MultiplicativeIterator` trait, this\nis a breaking change.\n\n[breaking-change]"
+  },
+  {
     "hash": "82dcec7ee4a8a71fdfb8e8771ae6785261ec1d5b",
     "author": "bors",
     "date": 1428045231,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1425595898,
     "message": "rustc: Add a debug_assertions #[cfg] directive\n\nThis commit is an implementation of [RFC 563][rfc] which adds a new\n`cfg(debug_assertions)` directive which is specially recognized and calculated\nby the compiler. The flag is turned off at any optimization level greater than 1\nand may also be explicitly controlled through the `-C debug-assertions`\nflag.\n\n[rfc]: https://github.com/rust-lang/rfcs/pull/563\n\nThe `debug_assert!` and `debug_assert_eq!` macros now respect this instead of\nthe `ndebug` variable and `ndebug` no longer holds any meaning to the standard\nlibrary.\n\nCode which was previously relying on `not(ndebug)` to gate expensive code should\nbe updated to rely on `debug_assertions` instead.\n\nCloses #22492\n[breaking-change]"
-  },
-  {
-    "hash": "9eb596ce8f4b70ba73e8671f9b42147c91319842",
-    "author": "Manish Goregaokar",
-    "date": 1425612496,
-    "message": "Rollup merge of #22899 - huonw:macro-stability, r=alexcrichton\n\n Unstable items used in a macro expansion will now always trigger\nstability warnings, *unless* the unstable items are directly inside a\nmacro marked with `#[allow_internal_unstable]`. IOW, the compiler warns\nunless the span of the unstable item is a subspan of the definition of a\nmacro marked with that attribute.\n\nE.g.\n\n    #[allow_internal_unstable]\n    macro_rules! foo {\n        ($e: expr) => {{\n            $e;\n            unstable(); // no warning\n            only_called_by_foo!();\n        }}\n    }\n\n    macro_rules! only_called_by_foo {\n        () => { unstable() } // warning\n    }\n\n    foo!(unstable()) // warning\n\nThe unstable inside `foo` is fine, due to the attribute. But the\n`unstable` inside `only_called_by_foo` is not, since that macro doesn't\nhave the attribute, and the `unstable` passed into `foo` is also not\nfine since it isn't contained in the macro itself (that is, even though\nit is only used directly in the macro).\n\nIn the process this makes the stability tracking much more precise,\ne.g. previously `println!(\\\"{}\\\", unstable())` got no warning, but now it\ndoes. As such, this is a bug fix that may cause [breaking-change]s.\n\nThe attribute is definitely feature gated, since it explicitly allows\nside-stepping the feature gating system.\n\n---\n\nThis updates `thread_local!` macro to use the attribute, since it uses\nunstable features internally (initialising a struct with unstable\nfields)."
   }
 ]
