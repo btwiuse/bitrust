@@ -1,5 +1,23 @@
 [
   {
+    "hash": "e3f324cd9d7b27eda6133c407a4751a8b0217631",
+    "author": "Aaron Turon",
+    "date": 1428594849,
+    "message": "Improve bounds in Iterator API\n\nThis commit changes `Iterator`'s API by:\n\n* Generalizing bounds from `Iterator` to `IntoIterator` whenever\n  possible, matching the semantics and ergonomics of `for` loops.\n\n* Tightens up a few method-level bounds so that you get an error\n  earlier. For example, `rev` did not require `DoubleEndedIterator` even\n  though the result is only an `Iterator` when the original iterator was\n  double-ended.\n\nCloses #23587\n\nThe bound-tightening is technically a:\n\n[breaking-change]\n\nbut no code should break in practice."
+  },
+  {
+    "hash": "5daee19eca622030c598042d9615df17d4ad035f",
+    "author": "Manish Goregaokar",
+    "date": 1428605683,
+    "message": "Rollup merge of #24212 - alexcrichton:destabilize-begin-unwind, r=huonw\n\n Now that we have a `#[allow_internal_unstable]` attribute for macros there's no\nneed for these two `begin_unwind` functions to be stable. Right now the `panic!`\ninterface is the only one we wish to stabilize, so remove the stability markers\nfrom these functions.\n\nWhile this is a breaking change, it is highly unlikely to break any actual code.\nIt is recommended to use the `panic!` macro instead if it breaks explicit calls\ninto `std::rt`.\n\n[breaking-change]\ncc #24208"
+  },
+  {
+    "hash": "65e3f0325a64d8f1affa146b3575a4b7c90458d7",
+    "author": "Alex Crichton",
+    "date": 1428533326,
+    "message": "std: Destabilize the internals of panic!\n\nNow that we have a `#[allow_internal_unstable]` attribute for macros there's no\nneed for these two `begin_unwind` functions to be stable. Right now the `panic!`\ninterface is the only one we wish to stabilize, so remove the stability markers\nfrom these functions.\n\nWhile this is a breaking change, it is highly unlikely to break any actual code.\nIt is recommended to use the `panic!` macro instead if it breaks explicit calls\ninto `std::rt`.\n\n[breaking-change]\ncc #24208"
+  },
+  {
     "hash": "97f24a85965c3c51a2c18be029091ae52bbd7920",
     "author": "Tobias Bucher",
     "date": 1428445595,
@@ -580,23 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1425612524,
     "message": "Rollup merge of #23010 - alexcrichton:deprecate-some-old-io, r=aturon\n\n The new `io` module has had some time to bake and this commit stabilizes some of\nthe utilities associated with it. This commit also deprecates a number of\n`std::old_io::util` functions and structures.\n\nThese items are now `#[stable]`\n\n* `Cursor`\n* `Cursor::{new, into_inner, get_ref, get_mut, position, set_position}`\n* Implementations of I/O traits for `Cursor<T>`\n* Delegating implementations of I/O traits for references and `Box` pointers\n* Implementations of I/O traits for primitives like slices and `Vec<T>`\n* `ReadExt::bytes`\n* `Bytes` (and impls)\n* `ReadExt::chain`\n* `Chain` (and impls)\n* `ReadExt::take` (and impls)\n* `BufReadExt::lines`\n* `Lines` (and impls)\n* `io::copy`\n* `io::{empty, Empty}` (and impls)\n* `io::{sink, Sink}` (and impls)\n* `io::{repeat, Repeat}` (and impls)\n\nThese items remain `#[unstable]`\n\n* Core I/O traits. These may want a little bit more time to bake along with the\n  commonly used methods like `read_to_end`.\n* `BufReadExt::split` - this function may be renamed to not conflict with\n  `SliceExt::split`.\n* `Error` - there are a number of questions about its representation,\n  `ErrorKind`, and usability.\n\nThese items are now `#[deprecated]` in `old_io`\n\n* `LimitReader` - use `take` instead\n* `NullWriter` - use `io::sink` instead\n* `ZeroReader` - use `io::repeat` instead\n* `NullReader` - use `io::empty` instead\n* `MultiWriter` - use `broadcast` instead\n* `ChainedReader` - use `chain` instead\n* `TeeReader` - use `tee` instead\n* `copy` - use `io::copy` instead\n\n[breaking-change]"
-  },
-  {
-    "hash": "0dfa9978cc57efc8eb51485fc3a333eafd1aa392",
-    "author": "Alex Crichton",
-    "date": 1425517462,
-    "message": "std: Stabilize portions of the `io` module\n\nThe new `io` module has had some time to bake and this commit stabilizes some of\nthe utilities associated with it. This commit also deprecates a number of\n`std::old_io::util` functions and structures.\n\nThese items are now `#[stable]`\n\n* `Cursor`\n* `Cursor::{new, into_inner, get_ref, get_mut, position, set_position}`\n* Implementations of I/O traits for `Cursor<T>`\n* Delegating implementations of I/O traits for references and `Box` pointers\n* Implementations of I/O traits for primitives like slices and `Vec<T>`\n* `ReadExt::bytes`\n* `Bytes` (and impls)\n* `ReadExt::chain`\n* `Chain` (and impls)\n* `ReadExt::take` (and impls)\n* `BufReadExt::lines`\n* `Lines` (and impls)\n* `io::copy`\n* `io::{empty, Empty}` (and impls)\n* `io::{sink, Sink}` (and impls)\n* `io::{repeat, Repeat}` (and impls)\n\nThese items remain `#[unstable]`\n\n* Core I/O traits. These may want a little bit more time to bake along with the\n  commonly used methods like `read_to_end`.\n* `BufReadExt::split` - this function may be renamed to not conflict with\n  `SliceExt::split`.\n* `Error` - there are a number of questions about its representation,\n  `ErrorKind`, and usability.\n\nThese items are now `#[deprecated]` in `old_io`\n\n* `LimitReader` - use `take` instead\n* `NullWriter` - use `io::sink` instead\n* `ZeroReader` - use `io::repeat` instead\n* `NullReader` - use `io::empty` instead\n* `MultiWriter` - use `broadcast` instead\n* `ChainedReader` - use `chain` instead\n* `TeeReader` - use `tee` instead\n* `copy` - use `io::copy` instead\n\n[breaking-change]"
-  },
-  {
-    "hash": "efb487b503d87f04448fc5e6f75038ca98b8670e",
-    "author": "Manish Goregaokar",
-    "date": 1425612510,
-    "message": "Rollup merge of #22980 - alexcrichton:debug-assertions, r=pnkfelix\n\n This commit is an implementation of [RFC 563][rfc] which adds a new\n`cfg(debug_assertions)` directive which is specially recognized and calculated\nby the compiler. The flag is turned off at any optimization level greater than 1\nand may also be explicitly controlled through the `-C debug-assertions`\nflag.\n\n[rfc]: https://github.com/rust-lang/rfcs/pull/563\n\nThe `debug_assert!` and `debug_assert_eq!` macros now respect this instead of\nthe `ndebug` variable and `ndebug` no longer holds any meaning to the standard\nlibrary.\n\nCode which was previously relying on `not(ndebug)` to gate expensive code should\nbe updated to rely on `debug_assertions` instead.\n\nCloses #22492\n[breaking-change]"
-  },
-  {
-    "hash": "d5d834551cd5a7e7d89ac9f2ae642a93409ed989",
-    "author": "Alex Crichton",
-    "date": 1425595898,
-    "message": "rustc: Add a debug_assertions #[cfg] directive\n\nThis commit is an implementation of [RFC 563][rfc] which adds a new\n`cfg(debug_assertions)` directive which is specially recognized and calculated\nby the compiler. The flag is turned off at any optimization level greater than 1\nand may also be explicitly controlled through the `-C debug-assertions`\nflag.\n\n[rfc]: https://github.com/rust-lang/rfcs/pull/563\n\nThe `debug_assert!` and `debug_assert_eq!` macros now respect this instead of\nthe `ndebug` variable and `ndebug` no longer holds any meaning to the standard\nlibrary.\n\nCode which was previously relying on `not(ndebug)` to gate expensive code should\nbe updated to rely on `debug_assertions` instead.\n\nCloses #22492\n[breaking-change]"
   }
 ]
