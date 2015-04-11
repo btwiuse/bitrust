@@ -1,5 +1,11 @@
 [
   {
+    "hash": "93f7fe32d30b67baa6abf09c073c5862a978dc57",
+    "author": "bors",
+    "date": 1428709764,
+    "message": "Auto merge of #24270 - pnkfelix:use-disr-val-for-derive-ord, r=brson\n\nUse `discriminant_value` intrinsic for `derive(PartialOrd)`\r\n\r\n[breaking-change]\r\n\r\nThis is a [breaking-change] because it can change the result of comparison operators when enum discriminants have been explicitly assigned.  Notably in a case like:\r\n```rust\r\n#[derive(PartialOrd)]\r\nenum E { A = 2, B = 1}\r\n```\r\n\r\nUnder the old deriving, `A < B` held, because `A` came before `B` in the order of declaration.  But now we use the ordering according to the provided values, and thus `A > B`.  (However, this change is very unlikely to break much, if any, code, since the orderings themselves should all remain well-defined, total, etc.)\r\n\r\nFix #15523"
+  },
+  {
     "hash": "d6c72306c8fc2ec0fd9d6e499c32f2bf52f0b8ba",
     "author": "Alex Crichton",
     "date": 1428624422,
@@ -592,11 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1425612697,
     "message": "Rollup merge of #23079 - alexcrichton:deprecate-process, r=aturon\n\n This module is now superseded by the `std::process` module. This module still\nhas some room to expand to get quite back up to parity with the `old_io`\nversion, and there is a [tracking issue][issue] for feature requests as well as\nknown room for expansion.\n\n[issue]: https://github.com/rust-lang/rfcs/issues/941\n[breaking-change]"
-  },
-  {
-    "hash": "7ed418c3b4ede0364bf419b2c12b27f89b706dcf",
-    "author": "Alex Crichton",
-    "date": 1425580902,
-    "message": "std: Deprecate the old_io::process module\n\nThis module is now superseded by the `std::process` module. This module still\nhas some room to expand to get quite back up to parity with the `old_io`\nversion, and there is a [tracking issue][issue] for feature requests as well as\nknown room for expansion.\n\n[issue]: https://github.com/rust-lang/rfcs/issues/941\n[breaking-change]"
   }
 ]
