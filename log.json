@@ -1,5 +1,17 @@
 [
   {
+    "hash": "524547551cd6c9b33a9677e1a58e9a9d1e19c0fc",
+    "author": "bors",
+    "date": 1428912503,
+    "message": "Auto merge of #24339 - lfairy:remove-regex-data, r=alexcrichton\n\nThe regex crate keeps its own tables now (rust-lang/regex#41) so we\r\ndon't need them here.\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "5308ac939a330b74540bea5920b0086a2d954648",
+    "author": "Chris Wong",
+    "date": 1428877810,
+    "message": "Remove regex module from libunicode\n\nThe regex crate keeps its own tables now (rust-lang/regex#41) so we\ndon't need them here.\n\n[breaking-change]"
+  },
+  {
     "hash": "5afa2704a6fdee62b267a5df9ca0934350dfc3d1",
     "author": "bors",
     "date": 1428802013,
@@ -586,17 +598,5 @@
     "author": "Alex Crichton",
     "date": 1425684968,
     "message": "rollup merge of #22813: alexcrichton/deprecate-net\n\nThe `std::net` primitives should be ready for use now and as a result the old\nones are now deprecated and slated for removal. Most TCP/UDP functionality is\nnow available through `std::net` but the `std::old_io::net::pipe` module is\nremoved entirely from the standard library.\n\nUnix socket funtionality can be found in sfackler's [`unix_socket`][unix] crate\nand there is currently no replacement for named pipes on Windows.\n\n[unix]: https://crates.io/crates/unix_socket\n\n[breaking-change]"
-  },
-  {
-    "hash": "9aea749b835a6fdcad6f2840a00adac996cc0339",
-    "author": "Alex Crichton",
-    "date": 1425666448,
-    "message": "std: Deprecate the std::old_io::net primitives\n\nThe `std::net` primitives should be ready for use now and as a result the old\nones are now deprecated and slated for removal. Most TCP/UDP functionality is\nnow available through `std::net` but the `std::old_io::net::pipe` module is\nremoved entirely from the standard library.\n\nUnix socket funtionality can be found in sfackler's [`unix_socket`][unix] crate\nand there is currently no replacement for named pipes on Windows.\n\n[unix]: https://crates.io/crates/unix_socket\n\n[breaking-change]"
-  },
-  {
-    "hash": "fe41c935603be8192c7481fcd846e629d76337b1",
-    "author": "Manish Goregaokar",
-    "date": 1425612710,
-    "message": "Rollup merge of #23081 - alexcrichton:stabilize-fs, r=aturon\n\n This commit performs a stabilization pass over the `std::fs` module now that\nit's had some time to bake. The change was largely just adding `#[stable]` tags,\nbut there are a few APIs that remain `#[unstable]`.\n\nThe following apis are now marked `#[stable]`:\n\n* `std::fs` (the name)\n* `File`\n* `Metadata`\n* `ReadDir`\n* `DirEntry`\n* `OpenOptions`\n* `Permissions`\n* `File::{open, create}`\n* `File::{sync_all, sync_data}`\n* `File::set_len`\n* `File::metadata`\n* Trait implementations for `File` and `&File`\n* `OpenOptions::new`\n* `OpenOptions::{read, write, append, truncate, create}`\n* `OpenOptions::open` - this function was modified, however, to not attempt to\n  reject cross-platform openings of directories. This means that some platforms\n  will succeed in opening a directory and others will fail.\n* `Metadata::{is_dir, is_file, len, permissions}`\n* `Permissions::{readonly, set_readonly}`\n* `Iterator for ReadDir`\n* `DirEntry::path`\n* `remove_file` - like with `OpenOptions::open`, the extra windows code to\n  remove a readonly file has been removed. This means that removing a readonly\n  file will succeed on some platforms but fail on others.\n* `metadata`\n* `rename`\n* `copy`\n* `hard_link`\n* `soft_link`\n* `read_link`\n* `create_dir`\n* `create_dir_all`\n* `remove_dir`\n* `remove_dir_all`\n* `read_dir`\n\nThe following apis remain `#[unstable]`.\n\n* `WalkDir` and `walk` - there are many methods by which a directory walk can be\n  constructed, and it's unclear whether the current semantics are the right\n  ones. For example symlinks are not handled super well currently. This is now\n  behind a new `fs_walk` feature.\n* `File::path` - this is an extra abstraction which the standard library\n  provides on top of what the system offers and it's unclear whether we should\n  be doing so. This is now behind a new `file_path` feature.\n* `Metadata::{accessed, modified}` - we do not currently have a good\n  abstraction for a moment in time which is what these APIs should likely be\n  returning, so these remain `#[unstable]` for now. These are now behind a new\n  `fs_time` feature\n* `set_file_times` - like with `Metadata::accessed`, we do not currently have\n  the appropriate abstraction for the arguments here so this API remains\n  unstable behind the `fs_time` feature gate.\n* `PathExt` - the precise set of methods on this trait may change over time and\n  some methods may be removed. This API remains unstable behind the `path_ext`\n  feature gate.\n* `set_permissions` - we may wish to expose a more granular ability to set the\n  permissions on a file instead of just a blanket \\\"set all permissions\\\" method.\n  This function remains behind the `fs` feature.\n\nThe following apis are now `#[deprecated]`\n\n* The `TempDir` type is now entirely deprecated and is [located on\n  crates.io][tempdir] as the `tempdir` crate with [its source][github] at\n  rust-lang/tempdir.\n\n[tempdir]: https://crates.io/crates/tempdir\n[github]: https://github.com/rust-lang/tempdir\n\nThe stability of some of these APIs has been questioned over the past few weeks\nin using these APIs, and it is intentional that the majority of APIs here are\nmarked `#[stable]`. The `std::fs` module has a lot of room to grow and the\nmaterial is [being tracked in a RFC issue][rfc-issue].\n\n[rfc-issue]: rust-lang/rfcs#939\n\nCloses #22879\n\n[breaking-change]"
   }
 ]
