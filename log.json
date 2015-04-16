@@ -1,5 +1,23 @@
 [
   {
+    "hash": "e40449e0d545561c73a9b9b324b5971b533a87b7",
+    "author": "bors",
+    "date": 1429147024,
+    "message": "Auto merge of #24485 - brson:is, r=alexcrichton\n\nIt was an oversight that this was not done in the great int upheaval.\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "5a3a599428f5af024857d19b5d360b148e885fa2",
+    "author": "Brian Anderson",
+    "date": 1429139606,
+    "message": "Forbid is/us suffixes. Fixes #22496\n\nIt was an oversight that this was not done in the great int upheaval.\n\n[breaking-change]"
+  },
+  {
+    "hash": "07f807d01f191ced1d7f4857c73fc57fbe31f421",
+    "author": "bors",
+    "date": 1429131916,
+    "message": "Auto merge of #24330 - pnkfelix:issue-24267, r=nikomatsakis\n\nExtend rustc::middle::dataflow to allow filtering kills from flow-exits.\r\n\r\nFix borrowck analysis so that it will not treat a break that pops through an assignment\r\n```rust\r\nx = { ... break; ... }\r\n```\r\nas a kill of the \"moved-out\" bit for `x`.\r\n\r\nFix #24267.\r\n\r\n[breaking-change], but really, its only breaking code that was already buggy."
+  },
+  {
     "hash": "6e0fb70ff6effe7b7be2c5fe951e9161613e6707",
     "author": "Aaron Turon",
     "date": 1428961697,
@@ -580,23 +598,5 @@
     "author": "bors",
     "date": 1426278136,
     "message": "Auto merge of #23292 - alexcrichton:stabilize-io, r=aturon\n\nThe new `std::io` module has had some time to bake now, and this commit\r\nstabilizes its functionality. There are still portions of the module which\r\nremain unstable, and below contains a summart of the actions taken.\r\n\r\nThis commit also deprecates the entire contents of the `old_io` module in a\r\nblanket fashion. All APIs should now have a reasonable replacement in the\r\nnew I/O modules.\r\n\r\nStable APIs:\r\n\r\n* `std::io` (the name)\r\n* `std::io::prelude` (the name)\r\n* `Read`\r\n* `Read::read`\r\n* `Read::{read_to_end, read_to_string}` after being modified to return a `usize`\r\n  for the number of bytes read.\r\n* `ReadExt`\r\n* `Write`\r\n* `Write::write`\r\n* `Write::{write_all, write_fmt}`\r\n* `WriteExt`\r\n* `BufRead`\r\n* `BufRead::{fill_buf, consume}`\r\n* `BufRead::{read_line, read_until}` after being modified to return a `usize`\r\n  for the number of bytes read.\r\n* `BufReadExt`\r\n* `BufReader`\r\n* `BufReader::{new, with_capacity}`\r\n* `BufReader::{get_ref, get_mut, into_inner}`\r\n* `{Read,BufRead} for BufReader`\r\n* `BufWriter`\r\n* `BufWriter::{new, with_capacity}`\r\n* `BufWriter::{get_ref, get_mut, into_inner}`\r\n* `Write for BufWriter`\r\n* `IntoInnerError`\r\n* `IntoInnerError::{error, into_inner}`\r\n* `{Error,Display} for IntoInnerError`\r\n* `LineWriter`\r\n* `LineWriter::{new, with_capacity}` - `with_capacity` was added\r\n* `LineWriter::{get_ref, get_mut, into_inner}` - `get_mut` was added)\r\n* `Write for LineWriter`\r\n* `BufStream`\r\n* `BufStream::{new, with_capacities}`\r\n* `BufStream::{get_ref, get_mut, into_inner}`\r\n* `{BufRead,Read,Write} for BufStream`\r\n* `stdin`\r\n* `Stdin`\r\n* `Stdin::lock`\r\n* `Stdin::read_line` - added method\r\n* `StdinLock`\r\n* `Read for Stdin`\r\n* `{Read,BufRead} for StdinLock`\r\n* `stdout`\r\n* `Stdout`\r\n* `Stdout::lock`\r\n* `StdoutLock`\r\n* `Write for Stdout`\r\n* `Write for StdoutLock`\r\n* `stderr`\r\n* `Stderr`\r\n* `Stderr::lock`\r\n* `StderrLock`\r\n* `Write for Stderr`\r\n* `Write for StderrLock`\r\n* `io::Result`\r\n* `io::Error`\r\n* `io::Error::last_os_error`\r\n* `{Display, Error} for Error`\r\n\r\nUnstable APIs:\r\n\r\n(reasons can be found in the commit itself)\r\n\r\n* `Write::flush`\r\n* `Seek`\r\n* `ErrorKind`\r\n* `Error::new`\r\n* `Error::from_os_error`\r\n* `Error::kind`\r\n\r\nDeprecated APIs\r\n\r\n* `Error::description` - available via the `Error` trait\r\n* `Error::detail` - available via the `Display` implementation\r\n* `thread::Builder::{stdout, stderr}`\r\n\r\nChanges in functionality:\r\n\r\n* `old_io::stdio::set_stderr` is now a noop as the infrastructure for printing\r\n  backtraces has migrated to `std::io`.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "d54bd9f29af67748b7ddf80a5cf285145949ddc2",
-    "author": "Alex Crichton",
-    "date": 1426217943,
-    "message": "std: Stabilize the `io` module\n\nThe new `std::io` module has had some time to bake now, and this commit\nstabilizes its functionality. There are still portions of the module which\nremain unstable, and below contains a summart of the actions taken.\n\nThis commit also deprecates the entire contents of the `old_io` module in a\nblanket fashion. All APIs should now have a reasonable replacement in the\nnew I/O modules.\n\nStable APIs:\n\n* `std::io` (the name)\n* `std::io::prelude` (the name)\n* `Read`\n* `Read::read`\n* `Read::{read_to_end, read_to_string}` after being modified to return a `usize`\n  for the number of bytes read.\n* `Write`\n* `Write::write`\n* `Write::{write_all, write_fmt}`\n* `BufRead`\n* `BufRead::{fill_buf, consume}`\n* `BufRead::{read_line, read_until}` after being modified to return a `usize`\n  for the number of bytes read.\n* `BufReader`\n* `BufReader::{new, with_capacity}`\n* `BufReader::{get_ref, get_mut, into_inner}`\n* `{Read,BufRead} for BufReader`\n* `BufWriter`\n* `BufWriter::{new, with_capacity}`\n* `BufWriter::{get_ref, get_mut, into_inner}`\n* `Write for BufWriter`\n* `IntoInnerError`\n* `IntoInnerError::{error, into_inner}`\n* `{Error,Display} for IntoInnerError`\n* `LineWriter`\n* `LineWriter::{new, with_capacity}` - `with_capacity` was added\n* `LineWriter::{get_ref, get_mut, into_inner}` - `get_mut` was added)\n* `Write for LineWriter`\n* `BufStream`\n* `BufStream::{new, with_capacities}`\n* `BufStream::{get_ref, get_mut, into_inner}`\n* `{BufRead,Read,Write} for BufStream`\n* `stdin`\n* `Stdin`\n* `Stdin::lock`\n* `Stdin::read_line` - added method\n* `StdinLock`\n* `Read for Stdin`\n* `{Read,BufRead} for StdinLock`\n* `stdout`\n* `Stdout`\n* `Stdout::lock`\n* `StdoutLock`\n* `Write for Stdout`\n* `Write for StdoutLock`\n* `stderr`\n* `Stderr`\n* `Stderr::lock`\n* `StderrLock`\n* `Write for Stderr`\n* `Write for StderrLock`\n* `io::Result`\n* `io::Error`\n* `io::Error::last_os_error`\n* `{Display, Error} for Error`\n\nUnstable APIs:\n\n(reasons can be found in the commit itself)\n\n* `Write::flush`\n* `Seek`\n* `ErrorKind`\n* `Error::new`\n* `Error::from_os_error`\n* `Error::kind`\n\nDeprecated APIs\n\n* `Error::description` - available via the `Error` trait\n* `Error::detail` - available via the `Display` implementation\n* `thread::Builder::{stdout, stderr}`\n\nChanges in functionality:\n\n* `old_io::stdio::set_stderr` is now a noop as the infrastructure for printing\n  backtraces has migrated to `std::io`.\n* The `ReadExt`, `WriteExt`, and `BufReadExt` extension traits were all removed\n  by folding functionality into the corresponding trait.\n\n[breaking-change]"
-  },
-  {
-    "hash": "79dd393a4f144fa5e6f81c720c782de3175810d7",
-    "author": "bors",
-    "date": 1426208402,
-    "message": "Auto merge of #23229 - aturon:stab-path, r=alexcrichton\n\nThis commit stabilizes essentially all of the new `std::path` API. The\r\nAPI itself is changed in a couple of ways (which brings it in closer\r\nalignment with the RFC):\r\n\r\n* `.` components are now normalized away, unless they appear at the\r\n  start of a path. This in turn effects the semantics of e.g. asking for\r\n  the file name of `foo/` or `foo/.`, both of which yield `Some(\"foo\")`\r\n  now. This semantics is what the original RFC specified, and is also\r\n  desirable given early experience rolling out the new API.\r\n\r\n* The `parent` method is now `without_file` and succeeds if, and only\r\n  if, `file_name` is `Some(_)`. That means, in particular, that it fails\r\n  for a path like `foo/../`. This change affects `pop` as well.\r\n\r\nIn addition, the `old_path` module is now deprecated.\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton"
-  },
-  {
-    "hash": "42c4e481cd98bd392839144c9ac83e55e445a12a",
-    "author": "Aaron Turon",
-    "date": 1426203538,
-    "message": "Stabilize std::path\n\nThis commit stabilizes essentially all of the new `std::path` API. The\nAPI itself is changed in a couple of ways (which brings it in closer\nalignment with the RFC):\n\n* `.` components are now normalized away, unless they appear at the\n  start of a path. This in turn effects the semantics of e.g. asking for\n  the file name of `foo/` or `foo/.`, both of which yield `Some(\"foo\")`\n  now. This semantics is what the original RFC specified, and is also\n  desirable given early experience rolling out the new API.\n\n* The `parent` function now succeeds if, and only if, the path has at\n  least one non-root/prefix component. This change affects `pop` as\n  well.\n\n* The `Prefix` component now involves a separate `PrefixComponent`\n  struct, to better allow for keeping both parsed and unparsed prefix data.\n\nIn addition, the `old_path` module is now deprecated.\n\nCloses #23264\n\n[breaking-change]"
   }
 ]
