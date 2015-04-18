@@ -1,5 +1,17 @@
 [
   {
+    "hash": "efa6a46a8eceb4ab792d5ec8e28cf3baaaa96491",
+    "author": "bors",
+    "date": 1429325633,
+    "message": "Auto merge of #24133 - kballard:add-sync-to-io-error, r=alexcrichton\n\nThis allows `io::Error` values to be stored in `Arc` properly.\r\n\r\nBecause this requires `Sync` of any value passed to `io::Error::new()`\r\nand modifies the relevant `convert::From` impls, this is a\r\n\r\n[breaking-change]\r\n\r\nFixes #24049."
+  },
+  {
+    "hash": "986852911464df87088007e64780165cc538f9b9",
+    "author": "Kevin Ballard",
+    "date": 1428366023,
+    "message": "Add `Sync` to the bounds in `io::Error`\n\nThis allows `io::Error` values to be stored in `Arc` properly.\n\nBecause this requires `Sync` of any value passed to `io::Error::new()`\nand modifies the relevant `convert::From` impls, this is a\n\n[breaking-change]\n\nFixes #24049."
+  },
+  {
     "hash": "e40449e0d545561c73a9b9b324b5971b533a87b7",
     "author": "bors",
     "date": 1429147024,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1426411122,
     "message": "Auto merge of #23316 - alexcrichton:less-question-sized, r=aturon\n\nIt is a frequent pattern among I/O functions to take `P: AsPath + ?Sized` or\r\n`AsOsStr` instead of `AsPath`. Most of these functions do not need to take\r\nownership of their argument, but for libraries in general it's much more\r\nergonomic to not deal with `?Sized` at all and simply require an argument `P`\r\ninstead of `&P`.\r\n\r\nThis change is aimed at removing unsightly `?Sized` bounds while retaining the\r\nsame level of usability as before. All affected functions now take ownership of\r\ntheir arguments instead of taking them by reference, but due to the forwarding\r\nimplementations of `AsOsStr` and `AsPath` all code should continue to work as it\r\ndid before.\r\n\r\nThis is strictly speaking a breaking change due to the signatures of these\r\nfunctions changing, but normal idiomatic usage of these APIs should not break in\r\npractice.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "60a4a2db8837be91bdae051bd51ab181077e5dc6",
-    "author": "Alex Crichton",
-    "date": 1426400634,
-    "message": "std: Remove ?Sized bounds from many I/O functions\n\nIt is a frequent pattern among I/O functions to take `P: AsPath + ?Sized` or\n`AsOsStr` instead of `AsPath`. Most of these functions do not need to take\nownership of their argument, but for libraries in general it's much more\nergonomic to not deal with `?Sized` at all and simply require an argument `P`\ninstead of `&P`.\n\nThis change is aimed at removing unsightly `?Sized` bounds while retaining the\nsame level of usability as before. All affected functions now take ownership of\ntheir arguments instead of taking them by reference, but due to the forwarding\nimplementations of `AsOsStr` and `AsPath` all code should continue to work as it\ndid before.\n\nThis is strictly speaking a breaking change due to the signatures of these\nfunctions changing, but normal idiomatic usage of these APIs should not break in\npractice.\n\n[breaking-change]"
-  },
-  {
-    "hash": "3e4be02b80a3dd27bce20870958fe0aef7e7336d",
-    "author": "bors",
-    "date": 1426278136,
-    "message": "Auto merge of #23292 - alexcrichton:stabilize-io, r=aturon\n\nThe new `std::io` module has had some time to bake now, and this commit\r\nstabilizes its functionality. There are still portions of the module which\r\nremain unstable, and below contains a summart of the actions taken.\r\n\r\nThis commit also deprecates the entire contents of the `old_io` module in a\r\nblanket fashion. All APIs should now have a reasonable replacement in the\r\nnew I/O modules.\r\n\r\nStable APIs:\r\n\r\n* `std::io` (the name)\r\n* `std::io::prelude` (the name)\r\n* `Read`\r\n* `Read::read`\r\n* `Read::{read_to_end, read_to_string}` after being modified to return a `usize`\r\n  for the number of bytes read.\r\n* `ReadExt`\r\n* `Write`\r\n* `Write::write`\r\n* `Write::{write_all, write_fmt}`\r\n* `WriteExt`\r\n* `BufRead`\r\n* `BufRead::{fill_buf, consume}`\r\n* `BufRead::{read_line, read_until}` after being modified to return a `usize`\r\n  for the number of bytes read.\r\n* `BufReadExt`\r\n* `BufReader`\r\n* `BufReader::{new, with_capacity}`\r\n* `BufReader::{get_ref, get_mut, into_inner}`\r\n* `{Read,BufRead} for BufReader`\r\n* `BufWriter`\r\n* `BufWriter::{new, with_capacity}`\r\n* `BufWriter::{get_ref, get_mut, into_inner}`\r\n* `Write for BufWriter`\r\n* `IntoInnerError`\r\n* `IntoInnerError::{error, into_inner}`\r\n* `{Error,Display} for IntoInnerError`\r\n* `LineWriter`\r\n* `LineWriter::{new, with_capacity}` - `with_capacity` was added\r\n* `LineWriter::{get_ref, get_mut, into_inner}` - `get_mut` was added)\r\n* `Write for LineWriter`\r\n* `BufStream`\r\n* `BufStream::{new, with_capacities}`\r\n* `BufStream::{get_ref, get_mut, into_inner}`\r\n* `{BufRead,Read,Write} for BufStream`\r\n* `stdin`\r\n* `Stdin`\r\n* `Stdin::lock`\r\n* `Stdin::read_line` - added method\r\n* `StdinLock`\r\n* `Read for Stdin`\r\n* `{Read,BufRead} for StdinLock`\r\n* `stdout`\r\n* `Stdout`\r\n* `Stdout::lock`\r\n* `StdoutLock`\r\n* `Write for Stdout`\r\n* `Write for StdoutLock`\r\n* `stderr`\r\n* `Stderr`\r\n* `Stderr::lock`\r\n* `StderrLock`\r\n* `Write for Stderr`\r\n* `Write for StderrLock`\r\n* `io::Result`\r\n* `io::Error`\r\n* `io::Error::last_os_error`\r\n* `{Display, Error} for Error`\r\n\r\nUnstable APIs:\r\n\r\n(reasons can be found in the commit itself)\r\n\r\n* `Write::flush`\r\n* `Seek`\r\n* `ErrorKind`\r\n* `Error::new`\r\n* `Error::from_os_error`\r\n* `Error::kind`\r\n\r\nDeprecated APIs\r\n\r\n* `Error::description` - available via the `Error` trait\r\n* `Error::detail` - available via the `Display` implementation\r\n* `thread::Builder::{stdout, stderr}`\r\n\r\nChanges in functionality:\r\n\r\n* `old_io::stdio::set_stderr` is now a noop as the infrastructure for printing\r\n  backtraces has migrated to `std::io`.\r\n\r\n[breaking-change]"
   }
 ]
