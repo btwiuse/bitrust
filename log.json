@@ -1,5 +1,23 @@
 [
   {
+    "hash": "eeb94886adccb3f13003f92f117115d17846ce1f",
+    "author": "Alex Crichton",
+    "date": 1429641463,
+    "message": "std: Remove deprecated/unstable num functionality\n\nThis commit removes all the old casting/generic traits from `std::num` that are\nno longer in use by the standard library. This additionally removes the old\n`strconv` module which has not seen much use in quite a long time. All generic\nfunctionality has been supplanted with traits in the `num` crate and the\n`strconv` module is supplanted with the [rust-strconv crate][rust-strconv].\n\n[rust-strconv]: https://github.com/lifthrasiir/rust-strconv\n\nThis is a breaking change due to the removal of these deprecated crates, and the\nalternative crates are listed above.\n\n[breaking-change]"
+  },
+  {
+    "hash": "98e9765d973d46faa5c80fb37a48040ca9e87b28",
+    "author": "Alex Crichton",
+    "date": 1429655286,
+    "message": "rollup merge of #24541: alexcrichton/issue-24538\n\nThis is an implementation of [RFC 1030][rfc] which adds these traits to the\nprelude and additionally removes all inherent `into_iter` methods on collections\nin favor of the trait implementation (which is now accessible by default).\n\n[rfc]: https://github.com/rust-lang/rfcs/pull/1030\n\nThis is technically a breaking change due to the prelude additions and removal\nof inherent methods, but it is expected that essentially no code breaks in\npractice.\n\n[breaking-change]\nCloses #24538"
+  },
+  {
+    "hash": "8f5b5f94dcdb9884737dfbc8efd893d1d70f0b14",
+    "author": "Alex Crichton",
+    "date": 1429313850,
+    "message": "std: Add Default/IntoIterator/ToOwned to the prelude\n\nThis is an implementation of [RFC 1030][rfc] which adds these traits to the\nprelude and additionally removes all inherent `into_iter` methods on collections\nin favor of the trait implementation (which is now accessible by default).\n\n[rfc]: https://github.com/rust-lang/rfcs/pull/1030\n\nThis is technically a breaking change due to the prelude additions and removal\nof inherent methods, but it is expected that essentially no code breaks in\npractice.\n\n[breaking-change]\nCloses #24538"
+  },
+  {
     "hash": "efa6a46a8eceb4ab792d5ec8e28cf3baaaa96491",
     "author": "bors",
     "date": 1429325633,
@@ -580,23 +598,5 @@
     "author": "Aaron Turon",
     "date": 1426283113,
     "message": "Deprecate range, range_step, count, distributions\n\nThis commit deprecates the `count`, `range` and `range_step` functions\nin `iter`, in favor of range notation. To recover all existing\nfunctionality, a new `step_by` adapter is provided directly on `ops::Range`\nand `ops::RangeFrom`.\n\n[breaking-change]"
-  },
-  {
-    "hash": "542e2bb3910f8860d49b4b40bcd78d9c74e733ff",
-    "author": "bors",
-    "date": 1426444974,
-    "message": "Auto merge of #23353 - alexcrichton:stabilize-os, r=aturon\n\nThis commit starts to organize the `std::os::$platform` modules and in the\r\nprocess stabilizes some of the functionality contained within. The organization\r\nof these modules will reflect the organization of the standard library itself\r\nwith extension traits for primitives in the same corresponding module.\r\n\r\nThe OS-specific modules will grow more functionality over time including\r\nconcrete types that are not extending functionality of other structures, and\r\nthese will either go into the closest module in `std::os::$platform` or they\r\nwill grow a new module in the hierarchy.\r\n\r\nThe following items are now stable:\r\n\r\n* `os::{unix, windows}`\r\n* `unix::ffi`\r\n* `unix::ffi::OsStrExt`\r\n* `unix::ffi::OsStrExt::{from_bytes, as_bytes, to_cstring}`\r\n* `unix::ffi::OsString`\r\n* `unix::ffi::OsStringExt::{from_vec, into_vec}`\r\n* `unix::process`\r\n* `unix::process::CommandExt`\r\n* `unix::process::CommandExt::{uid, gid}`\r\n* `unix::process::ExitStatusExt`\r\n* `unix::process::ExitStatusExt::signal`\r\n* `unix::prelude`\r\n* `windows::ffi`\r\n* `windows::ffi::OsStringExt`\r\n* `windows::ffi::OsStringExt::from_wide`\r\n* `windows::ffi::OsStrExt`\r\n* `windows::ffi::OsStrExt::encode_wide`\r\n* `windows::prelude`\r\n\r\nThe following items remain unstable:\r\n\r\n* `unix::io`\r\n* `unix::io::{Fd, AsRawFd}`\r\n* `unix::fs::{PermissionsExt, OpenOptionsExt}`\r\n* `windows::io`\r\n* `windows::io::{Handle, AsRawHandle}`\r\n* `windows::io::{Socket, AsRawSocket}`\r\n* `windows::fs`\r\n* `windows::fs::OpenOptionsExt`\r\n\r\nDue to the reorgnization of the platform extension modules, this commit is a\r\nbreaking change. Most imports can be fixed by adding the relevant libstd module\r\nin the `use` path (such as `ffi` or `fs`).\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "1f5f76adc36082ec514a6cfa4ad2d7e6655a5253",
-    "author": "Alex Crichton",
-    "date": 1426440514,
-    "message": "std: Stabilize portions of `std::os::$platform`\n\nThis commit starts to organize the `std::os::$platform` modules and in the\nprocess stabilizes some of the functionality contained within. The organization\nof these modules will reflect the organization of the standard library itself\nwith extension traits for primitives in the same corresponding module.\n\nThe OS-specific modules will grow more functionality over time including\nconcrete types that are not extending functionality of other structures, and\nthese will either go into the closest module in `std::os::$platform` or they\nwill grow a new module in the hierarchy.\n\nThe following items are now stable:\n\n* `os::{unix, windows}`\n* `unix::ffi`\n* `unix::ffi::OsStrExt`\n* `unix::ffi::OsStrExt::{from_bytes, as_bytes, to_cstring}`\n* `unix::ffi::OsString`\n* `unix::ffi::OsStringExt::{from_vec, into_vec}`\n* `unix::process`\n* `unix::process::CommandExt`\n* `unix::process::CommandExt::{uid, gid}`\n* `unix::process::ExitStatusExt`\n* `unix::process::ExitStatusExt::signal`\n* `unix::prelude`\n* `windows::ffi`\n* `windows::ffi::OsStringExt`\n* `windows::ffi::OsStringExt::from_wide`\n* `windows::ffi::OsStrExt`\n* `windows::ffi::OsStrExt::encode_wide`\n* `windows::prelude`\n\nThe following items remain unstable:\n\n* `unix::io`\n* `unix::io::{Fd, AsRawFd}`\n* `unix::fs::{PermissionsExt, OpenOptionsExt}`\n* `windows::io`\n* `windows::io::{Handle, AsRawHandle}`\n* `windows::io::{Socket, AsRawSocket}`\n* `windows::fs`\n* `windows::fs::OpenOptionsExt`\n\nDue to the reorgnization of the platform extension modules, this commit is a\nbreaking change. Most imports can be fixed by adding the relevant libstd module\nin the `use` path (such as `ffi` or `fs`).\n\n[breaking-change]"
-  },
-  {
-    "hash": "54660fc392343e4ddee8a0ea1ca196ffc533585b",
-    "author": "bors",
-    "date": 1426411122,
-    "message": "Auto merge of #23316 - alexcrichton:less-question-sized, r=aturon\n\nIt is a frequent pattern among I/O functions to take `P: AsPath + ?Sized` or\r\n`AsOsStr` instead of `AsPath`. Most of these functions do not need to take\r\nownership of their argument, but for libraries in general it's much more\r\nergonomic to not deal with `?Sized` at all and simply require an argument `P`\r\ninstead of `&P`.\r\n\r\nThis change is aimed at removing unsightly `?Sized` bounds while retaining the\r\nsame level of usability as before. All affected functions now take ownership of\r\ntheir arguments instead of taking them by reference, but due to the forwarding\r\nimplementations of `AsOsStr` and `AsPath` all code should continue to work as it\r\ndid before.\r\n\r\nThis is strictly speaking a breaking change due to the signatures of these\r\nfunctions changing, but normal idiomatic usage of these APIs should not break in\r\npractice.\r\n\r\n[breaking-change]"
   }
 ]
