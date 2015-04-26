@@ -14,7 +14,7 @@ struct Commit {
     hash: String,
     /// Author name
     author: String,
-    /// UNIX timestamp
+    /// Commit creationg date as UNIX timestamp
     date: i64,
     /// Commit message
     message: String
@@ -34,12 +34,7 @@ fn fetch_commits(repo: &Repository, start: &Option<Oid>, query: &str, amount: us
 
     let commits = revs
     .filter_map(|commit_id| { repo.find_commit(commit_id).ok() })
-    .filter_map(|commit| {
-        match commit.message().and_then(|msg| { Some(msg.contains(query)) }) {
-            Some(true) => Some(commit),
-            _ => None
-        }
-    })
+    .filter(|commit| { commit.message().map(|m| m.contains(query)).unwrap_or(false) })
     .map(|commit| {
         let c = Commit {
             hash: commit.id().to_string(),
@@ -54,7 +49,7 @@ fn fetch_commits(repo: &Repository, start: &Option<Oid>, query: &str, amount: us
     .take(amount)
     .collect();
 
-    Result::Ok(commits)
+    Ok(commits)
 }
 
 fn main() {
