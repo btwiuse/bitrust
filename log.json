@@ -1,5 +1,17 @@
 [
   {
+    "hash": "6365080c5cd27b74ec87420c351a3e7bdcff988e",
+    "author": "bors",
+    "date": 1430041948,
+    "message": "Auto merge of #23085 - goffrie:interpolating-quote, r=huonw\n\nThis changes the `ToTokens` implementations for expressions, statements, etc. with almost-trivial ones that produce `Interpolated(*Nt(...))` pseudo-tokens. In this way, quasiquote now works the same way as macros do: already-parsed AST fragments are used as-is, not reparsed.\r\n\r\nThe `ToSource` trait is removed. Quasiquote no longer involves pretty-printing at all, which removes the need for the `encode_with_hygiene` hack. All associated machinery is removed.\r\n\r\nNew `Nonterminal`s are added: NtArm, NtImplItem, and NtTraitItem. These are just for quasiquote, not macros.\r\n\r\n`ToTokens` is no longer implemented for `Arg` (although this could be added again) and `Generics` (which I don't think makes sense).\r\n\r\nThis breaks any compiler extensions that relied on the ability of `ToTokens` to turn AST fragments back into inspectable token trees. For this reason, this closes #16987.\r\n\r\nAs such, this is a [breaking-change].\r\n\r\nFixes #16472.\r\nFixes #15962.\r\nFixes #17397.\r\nFixes #16617."
+  },
+  {
+    "hash": "2d9831dea598d8a45c69e8c799503e8a397aacc0",
+    "author": "Geoffry Song",
+    "date": 1430012530,
+    "message": "Interpolate AST nodes in quasiquote.\n\nThis changes the `ToTokens` implementations for expressions, statements,\netc. with almost-trivial ones that produce `Interpolated(*Nt(...))`\npseudo-tokens. In this way, quasiquote now works the same way as macros\ndo: already-parsed AST fragments are used as-is, not reparsed.\n\nThe `ToSource` trait is removed. Quasiquote no longer involves\npretty-printing at all, which removes the need for the\n`encode_with_hygiene` hack. All associated machinery is removed.\n\nA new `Nonterminal` is added, NtArm, which the parser now interpolates.\nThis is just for quasiquote, not macros (although it could be in the\nfuture).\n\n`ToTokens` is no longer implemented for `Arg` (although this could be\nadded again) and `Generics` (which I don't think makes sense).\n\nThis breaks any compiler extensions that relied on the ability of\n`ToTokens` to turn AST fragments back into inspectable token trees. For\nthis reason, this closes #16987.\n\nAs such, this is a [breaking-change].\n\nFixes #16472.\nFixes #15962.\nFixes #17397.\nFixes #16617."
+  },
+  {
     "hash": "00c48d3779fb4c372d2dfe7a8654c6cd1e065511",
     "author": "bors",
     "date": 1429998290,
@@ -586,17 +598,5 @@
     "author": "Alex Crichton",
     "date": 1426290462,
     "message": "std: Stabilize the `net` module\n\nThis commit performs a stabilization pass over the std::net module,\nincorporating the changes from RFC 923. Specifically, the following actions were\ntaken:\n\nStable functionality:\n\n* `net` (the name)\n* `Shutdown`\n* `Shutdown::{Read, Write, Both}`\n* `lookup_host`\n* `LookupHost`\n* `SocketAddr`\n* `SocketAddr::{V4, V6}`\n* `SocketAddr::port`\n* `SocketAddrV4`\n* `SocketAddrV4::{new, ip, port}`\n* `SocketAddrV6`\n* `SocketAddrV4::{new, ip, port, flowinfo, scope_id}`\n* Common trait impls for socket addr structures\n* `ToSocketAddrs`\n* `ToSocketAddrs::Iter`\n* `ToSocketAddrs::to_socket_addrs`\n* `ToSocketAddrs for {SocketAddr*, (Ipv*Addr, u16), str, (str, u16)}`\n* `Ipv4Addr`\n* `Ipv4Addr::{new, octets, to_ipv6_compatible, to_ipv6_mapped}`\n* `Ipv6Addr`\n* `Ipv6Addr::{new, segments, to_ipv4}`\n* `TcpStream`\n* `TcpStream::connect`\n* `TcpStream::{peer_addr, local_addr, shutdown, try_clone}`\n* `{Read,Write} for {TcpStream, &TcpStream}`\n* `TcpListener`\n* `TcpListener::bind`\n* `TcpListener::{local_addr, try_clone, accept, incoming}`\n* `Incoming`\n* `UdpSocket`\n* `UdpSocket::bind`\n* `UdpSocket::{recv_from, send_to, local_addr, try_clone}`\n\nUnstable functionality:\n\n* Extra methods on `Ipv{4,6}Addr` for various methods of inspecting the address\n  and determining qualities of it.\n* Extra methods on `TcpStream` to configure various protocol options.\n* Extra methods on `UdpSocket` to configure various protocol options.\n\nDeprecated functionality:\n\n* The `socket_addr` method has been renamed to `local_addr`\n\nThis commit is a breaking change due to the restructuring of the `SocketAddr`\ntype as well as the renaming of the `socket_addr` method. Migration should be\nfairly straightforward, however, after accounting for the new level of\nabstraction in `SocketAddr` (protocol distinction at the socket address level,\nnot the IP address).\n\n[breaking-change]"
-  },
-  {
-    "hash": "92dd995e1705a8c398a5266c8483e2519e494f47",
-    "author": "bors",
-    "date": 1426544032,
-    "message": "Auto merge of #23331 - eddyb:attr-lookahead, r=nikomatsakis\n\nMost of the changes are cleanup facilitated by straight-forward attribute handling.\r\nThis is a minor [breaking-change] for users of `quote_stmt!` (returns `Option<P<Stmt>>` now) and some of the public methods in `Parser` (a few `Vec<Attribute>` arguments/returns were removed).\r\n\r\nr? @nikomatsakis"
-  },
-  {
-    "hash": "bde09eea35113f25d4e0bcc4a8344de971f3069a",
-    "author": "bors",
-    "date": 1426525331,
-    "message": "Auto merge of #23347 - aturon:stab-misc, r=alexcrichton\n\nThis commit deprecates the `count`, `range` and `range_step` functions\r\nin `iter`, in favor of range notation. To recover all existing\r\nfunctionality, a new `step_by` adapter is provided directly on `ops::Range`\r\nand `ops::RangeFrom`.\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton"
   }
 ]
