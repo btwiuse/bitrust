@@ -1,5 +1,17 @@
 [
   {
+    "hash": "441b3f0c26c2e30ddb012be968141da7ce7d9d62",
+    "author": "bors",
+    "date": 1430241156,
+    "message": "Auto merge of #24906 - pnkfelix:fsk-fix-24895, r=alexcrichton\n\ndropck: Remove `Copy` from special-cased traits\r\n\r\nFix #24895.\r\n\r\n[breaking-change]\r\n\r\nWhat does this break?  Basically, code that implements `Drop` and is\r\nusing `T:Copy` for one of its type parameters and is relying on the\r\nDrop Check rule not applying to it.\r\n\r\nHere is an example:\r\n\r\n```rust\r\n#![allow(dead_code,unused_variables,unused_assignments)]\r\nstruct D<T:Copy>(T);\r\nimpl<T:Copy> Drop for D<T> { fn drop(&mut self) { } }\r\n\r\ntrait UserT { fn c(&self) { } }\r\nimpl<T:Copy> UserT for T { }\r\nstruct E<T:UserT>(T);\r\nimpl<T:UserT> Drop for E<T> { fn drop(&mut self) { } }\r\n\r\n// This one will start breaking.\r\nfn foo() { let (d2, d1); d1 = D(34); d2 = D(&d1); }\r\n\r\n#[cfg(this_one_does_and_should_always_break)]\r\nfn bar() { let (e2, e1); e1 = E(34); e2 = E(&e1); }\r\n\r\nfn main() {\r\n    foo();\r\n}\r\n```"
+  },
+  {
+    "hash": "b892264ea4f048feb5f380d3e659d82ba463f5b7",
+    "author": "Felix S. Klock II",
+    "date": 1430236036,
+    "message": "Fix #24895.\n\n[breaking-change]\n\nWhat does this break?  Basically, code that implements `Drop` and is\nusing `T:Copy` for one of its type parameters and is relying on the\nDrop Check rule not applying to it.\n\nHere is an example:\n\n```rust\n#![allow(dead_code,unused_variables,unused_assignments)]\nstruct D<T:Copy>(T);\nimpl<T:Copy> Drop for D<T> { fn drop(&mut self) { } }\n\ntrait UserT { fn c(&self) { } }\nimpl<T:Copy> UserT for T { }\nstruct E<T:UserT>(T);\nimpl<T:UserT> Drop for E<T> { fn drop(&mut self) { } }\n\n// This one will start breaking.\nfn foo() { let (d2, d1); d1 = D(34); d2 = D(&d1); }\n\n#[cfg(this_one_does_and_should_always_break)]\nfn bar() { let (e2, e1); e1 = E(34); e2 = E(&e1); }\n\nfn main() {\n    foo();\n}\n```"
+  },
+  {
     "hash": "9c88f3be126d0fe02a92c20e1d78192f4b648401",
     "author": "bors",
     "date": 1430167608,
@@ -586,17 +598,5 @@
     "author": "Nick Cameron",
     "date": 1426457034,
     "message": "Error if `pub use` references a private item.\n\n[breaking-change]\n\nCloses #23266"
-  },
-  {
-    "hash": "e46610966f798a083350724461648c6ffdd151f4",
-    "author": "bors",
-    "date": 1426562630,
-    "message": "Auto merge of #23104 - japaric:inherent, r=nikomatsakis\n\n- Allow inherent implementations on `char`, `str`, `[T]`, `*const T`, `*mut T` and all the numeric primitives.\r\n- copy `unicode::char::CharExt` methods into `impl char`\r\n- remove `unicode::char::CharExt`, its re-export `std::char::CharExt` and `CharExt` from the prelude\r\n- copy `collections::str::StrExt` methods into `impl str`\r\n- remove `collections::str::StrExt` its re-export `std::str::StrExt`, and `StrExt` from the prelude\r\n- copy `collections::slice::SliceExt` methods into `impl<T> [T]`\r\n- remove `collections::slice::SliceExt` its re-export `std::slice::SliceExt`, and `SliceExt` from the prelude\r\n- copy `core::ptr::PtrExt` methods into `impl<T> *const T`\r\n- remove `core::ptr::PtrExt` its re-export `std::ptr::PtrExt`, and `PtrExt` from the prelude\r\n- copy `core::ptr::PtrExt` and `core::ptr::MutPtrExt` methods into `impl<T> *mut T`\r\n- remove `core::ptr::MutPtrExt` its re-export `std::ptr::MutPtrExt`, and `MutPtrExt` from the prelude\r\n- copy `core::num::Int` and `core::num::SignedInt` methods into `impl i{8,16,32,64,size}`\r\n- copy `core::num::Int` and `core::num::UnsignedInt` methods into `impl u{8,16,32,64,size}`\r\n- remove `core::num::UnsignedInt` and its re-export `std::num::UnsignedInt`\r\n- move `collections` tests into its own crate: `collectionstest`\r\n- copy `core::num::Float` methods into `impl f{32,64}`\r\n\r\nBecause this PR removes several traits, this is a [breaking-change], however functionality remains unchanged and breakage due to unresolved imports should be minimal. If you encounter an error due to an unresolved import, simply remove the import:\r\n\r\n``` diff\r\n  fn main() {\r\n-     use std::num::UnsignedInt;  //~ error: unresolved import `std::num::UnsignedInt`.\r\n-\r\n      println!(\"{}\", 8_usize.is_power_of_two());\r\n  }\r\n```\r\n\r\n---\r\n\r\ncc  #16862\r\n[preview docs](http://japaric.github.io/inherent/std/index.html)\r\n[unicode::char](http://japaric.github.io/inherent/unicode/primitive.char.html)\r\n[collections::str](http://japaric.github.io/inherent/collections/primitive.str.html)\r\n[std::f32](http://japaric.github.io/inherent/std/primitive.f32.html)"
-  },
-  {
-    "hash": "a2572885ab62512a2508868a27c22d615382174a",
-    "author": "bors",
-    "date": 1426553426,
-    "message": "Auto merge of #23352 - alexcrichton:stabilize-net, r=aturon\n\nThis commit performs a stabilization pass over the std::net module,\r\nincorporating the changes from RFC 923. Specifically, the following actions were\r\ntaken:\r\n\r\nStable functionality:\r\n\r\n* `net` (the name)\r\n* `Shutdown`\r\n* `Shutdown::{Read, Write, Both}`\r\n* `lookup_host`\r\n* `LookupHost`\r\n* `SocketAddr`\r\n* `SocketAddr::{V4, V6}`\r\n* `SocketAddr::port`\r\n* `SocketAddrV4`\r\n* `SocketAddrV4::{new, ip, port}`\r\n* `SocketAddrV6`\r\n* `SocketAddrV4::{new, ip, port, flowinfo, scope_id}`\r\n* Common trait impls for socket addr structures\r\n* `ToSocketAddrs`\r\n* `ToSocketAddrs::Iter`\r\n* `ToSocketAddrs::to_socket_addrs`\r\n* `ToSocketAddrs for {SocketAddr*, (Ipv*Addr, u16), str, (str, u16)}`\r\n* `Ipv4Addr`\r\n* `Ipv4Addr::{new, octets, to_ipv6_compatible, to_ipv6_mapped}`\r\n* `Ipv6Addr`\r\n* `Ipv6Addr::{new, segments, to_ipv4}`\r\n* `TcpStream`\r\n* `TcpStream::connect`\r\n* `TcpStream::{peer_addr, local_addr, shutdown, try_clone}`\r\n* `{Read,Write} for {TcpStream, &TcpStream}`\r\n* `TcpListener`\r\n* `TcpListener::bind`\r\n* `TcpListener::{local_addr, try_clone, accept, incoming}`\r\n* `Incoming`\r\n* `UdpSocket`\r\n* `UdpSocket::bind`\r\n* `UdpSocket::{recv_from, send_to, local_addr, try_clone}`\r\n\r\nUnstable functionality:\r\n\r\n* Extra methods on `Ipv{4,6}Addr` for various methods of inspecting the address\r\n  and determining qualities of it.\r\n* Extra methods on `TcpStream` to configure various protocol options.\r\n* Extra methods on `UdpSocket` to configure various protocol options.\r\n\r\nDeprecated functionality:\r\n\r\n* The `socket_addr` method has been renamed to `local_addr`\r\n\r\nThis commit is a breaking change due to the restructuring of the `SocketAddr`\r\ntype as well as the renaming of the `socket_addr` method. Migration should be\r\nfairly straightforward, however, after accounting for the new level of\r\nabstraction in `SocketAddr` (protocol distinction at the socket address level,\r\nnot the IP address).\r\n\r\n[breaking-change]"
   }
 ]
