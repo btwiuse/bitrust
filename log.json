@@ -1,5 +1,11 @@
 [
   {
+    "hash": "b475fc7d6aa1cafa91790c273908fddfb669a82e",
+    "author": "Ulrik Sverdrup",
+    "date": 1430213913,
+    "message": "collections: Implement vec::drain(range) according to RFC 574\n\nOld `.drain()` on vec is performed using `.drain(..)` now.\n\n`.drain(range)` is unstable and under feature(collections_drain)\n\n[breaking-change]"
+  },
+  {
     "hash": "441b3f0c26c2e30ddb012be968141da7ce7d9d62",
     "author": "bors",
     "date": 1430241156,
@@ -592,11 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1426585797,
     "message": "Rollup merge of #23409 - GBGamer:patch-2, r=alexcrichton\n\n To the correct MAP_NORESERVE. Every other instance is known as MAP_NORESERVE, so this is just a basic typo.\n\nI really doubt this will break anybody's but my own code.\n\n[breaking-change]"
-  },
-  {
-    "hash": "170ccd615f976fc9e90a8f14ce6c373bfdf01533",
-    "author": "Nick Cameron",
-    "date": 1426457034,
-    "message": "Error if `pub use` references a private item.\n\n[breaking-change]\n\nCloses #23266"
   }
 ]
