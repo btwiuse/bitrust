@@ -1,5 +1,17 @@
 [
   {
+    "hash": "5c710b593b429d39ea01375172a9ce968f43ab26",
+    "author": "bors",
+    "date": 1430454173,
+    "message": "Auto merge of #24793 - aturon:io-error-any, r=alexcrichton\n\nThis commit brings the `Error` trait in line with the [Error interoperation\r\nRFC](https://github.com/rust-lang/rfcs/pull/201) by adding downcasting,\r\nwhich has long been intended. This change means that for any `Error`\r\ntrait objects that are `'static`, you can downcast to concrete error\r\ntypes.\r\n\r\nTo make this work, it is necessary for `Error` to inherit from\r\n`Reflect` (which is currently used to mark concrete types as \"permitted\r\nfor reflection, aka downcasting\"). This is a breaking change: it means\r\nthat impls like\r\n\r\n```rust\r\nimpl<T> Error for MyErrorType<T> { ... }\r\n```\r\n\r\nmust change to\r\n\r\n```rust\r\nimpl<T: Reflect> Error for MyErrorType<T> { ... }\r\n```\r\n\r\nThis commit furthermore marks `Reflect` as stable, since we are already\r\nessentially committed to it via `Any`. Note that in the future, if we\r\ndetermine that the parametricity aspects of `Reflect` are not needed, we\r\ncan deprecate the trait and provide a blanket implementation for it\r\nfor *all* types (rather than by using OIBIT), which would allow all\r\nmentions of `Reflect` to be dropped over time. So there is not a strong\r\ncommitment here.\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton"
+  },
+  {
+    "hash": "a5762625a168f195afbc5b74d674a93f8c692a8e",
+    "author": "Aaron Turon",
+    "date": 1430443222,
+    "message": "Add downcasting to std::error::Error\n\nThis commit brings the `Error` trait in line with the [Error interoperation\nRFC](https://github.com/rust-lang/rfcs/pull/201) by adding downcasting,\nwhich has long been intended. This change means that for any `Error`\ntrait objects that are `'static`, you can downcast to concrete error\ntypes.\n\nTo make this work, it is necessary for `Error` to inherit from\n`Reflect` (which is currently used to mark concrete types as \"permitted\nfor reflection, aka downcasting\"). This is a breaking change: it means\nthat impls like\n\n```rust\nimpl<T> Error for MyErrorType<T> { ... }\n```\n\nmust change to something like\n\n```rust\nimpl<T: Reflect> Error for MyErrorType<T> { ... }\n```\n\nexcept that `Reflect` is currently unstable (and should remain so for\nthe time being). For now, code can instead bound by `Any`:\n\n```rust\nimpl<T: Any> Error for MyErrorType<T> { ... }\n```\n\nwhich *is* stable and has `Reflect` as a super trait. The downside is\nthat this imposes a `'static` constraint, but that only\nconstrains *when* `Error` is implemented -- it does not actually\nconstrain the types that can implement `Error`.\n\n[breaking-change]"
+  },
+  {
     "hash": "b475fc7d6aa1cafa91790c273908fddfb669a82e",
     "author": "Ulrik Sverdrup",
     "date": 1430213913,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1426627382,
     "message": "Auto merge of #23376 - eddyb:die-tydesc-die, r=nikomatsakis\n\nFinal remnant of reflection is gone. Also, virtual `Trait` destructors are no longer tied to `Box`.\r\nThat means they can be used to drop any instance of the type (used in libarena to replace TyDesc).\r\n\r\nThis is [breaking-change] for direct users of intrinsics:\r\n* use `intrinsics::type_name::<T>()` instead of `(*intrinsics::get_tydesc::<T>()).name`\r\n* the only way to get the destructor is from a trait object's vtable (see libarena changes)\r\n\r\nr? @pcwalton f? @dotdash"
-  },
-  {
-    "hash": "c64d671671aea2e44ee7fc6eb00ee75fc30ed7b9",
-    "author": "bors",
-    "date": 1426598988,
-    "message": "Auto merge of #23423 - nikomatsakis:issue-18737-trait-subtyping, r=nrc\n\nThis upcast coercion currently never requires vtable changes. It should be generalized. \r\n\r\nThis is a [breaking-change] -- if you have an impl on an object type like `impl SomeTrait`, then this will no longer be applicable to object types like `SomeTrait+Send`. In the standard library, this primarily affected `Any`, and this PR adds impls for `Any+Send` as to keep the API the same in practice. An alternate workaround is to use UFCS form or standalone fns. For more details, see <https://github.com/rust-lang/rust/issues/18737#issuecomment-78450798>.\r\n\r\nr? @nrc"
-  },
-  {
-    "hash": "c2671b59ccbc899b8defbabf453e88f89900c3a0",
-    "author": "Manish Goregaokar",
-    "date": 1426585797,
-    "message": "Rollup merge of #23409 - GBGamer:patch-2, r=alexcrichton\n\n To the correct MAP_NORESERVE. Every other instance is known as MAP_NORESERVE, so this is just a basic typo.\n\nI really doubt this will break anybody's but my own code.\n\n[breaking-change]"
   }
 ]
