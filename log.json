@@ -1,5 +1,11 @@
 [
   {
+    "hash": "f6574c5b0404f55c4dd4056be47d37eff33684b5",
+    "author": "bors",
+    "date": 1430520849,
+    "message": "Auto merge of #25006 - alexcrichton:unstable-indexing, r=aturon\n\nThese implementations were intended to be unstable, but currently the stability\r\nattributes cannot handle a stable trait with an unstable `impl` block. This\r\ncommit also audits the rest of the standard library for explicitly-`#[unstable]`\r\nimpl blocks. No others were removed but some annotations were changed to\r\n`#[stable]` as they're defacto stable anyway.\r\n\r\nOne particularly interesting `impl` marked `#[stable]` as part of this commit\r\nis the `Add<&[T]>` impl for `Vec<T>`, which uses `push_all` and implicitly\r\nclones all elements of the vector provided.\r\n\r\nCloses #24791\r\n\r\n[breaking-change]"
+  },
+  {
     "hash": "5c710b593b429d39ea01375172a9ce968f43ab26",
     "author": "bors",
     "date": 1430454173,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1426648932,
     "message": "Auto merge of #23452 - nikomatsakis:unsafety-subtyping, r=nrc\n\nSafe fns are no longer subtypes of unsafe fns, but you can coerce from one to the other.\r\n\r\nThis is a [breaking-change] in that impl fns must now be declared `unsafe` if the trait is declared `unsafe`. In some rare cases, the subtyping change may also direct affect you, but no such cases were encountered in practice.\r\n\r\nFixes #23449.\r\n\r\nr? @nrc"
-  },
-  {
-    "hash": "ea8b82e90c450febb1f26a07862a1ec89c22addd",
-    "author": "bors",
-    "date": 1426627382,
-    "message": "Auto merge of #23376 - eddyb:die-tydesc-die, r=nikomatsakis\n\nFinal remnant of reflection is gone. Also, virtual `Trait` destructors are no longer tied to `Box`.\r\nThat means they can be used to drop any instance of the type (used in libarena to replace TyDesc).\r\n\r\nThis is [breaking-change] for direct users of intrinsics:\r\n* use `intrinsics::type_name::<T>()` instead of `(*intrinsics::get_tydesc::<T>()).name`\r\n* the only way to get the destructor is from a trait object's vtable (see libarena changes)\r\n\r\nr? @pcwalton f? @dotdash"
   }
 ]
