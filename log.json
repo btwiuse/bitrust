@@ -1,5 +1,17 @@
 [
   {
+    "hash": "eae692e375cec222803efb7175c79fedc228eea9",
+    "author": "bors",
+    "date": 1430849907,
+    "message": "Auto merge of #25009 - alexcrichton:less-buffered-stream, r=aturon\n\nAs pointed out in #17136 the semantics of a `BufStream` aren't always what one\r\nexpects, and it looks like other [languages like C#][c-sharp] implement a\r\nbuffered stream with only one underlying buffer. For now this commit\r\ndestabilizes the primitive in the `std::io` module to give us some more time in\r\nfiguring out what to do with it.\r\n\r\n[c-sharp]: https://msdn.microsoft.com/en-us/library/system.io.bufferedstream%28v=vs.110%29.aspx\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "db477eef72924c7b34e9617627eaae37c71bdc1c",
+    "author": "Alex Crichton",
+    "date": 1430434978,
+    "message": "std: Destabilize io::BufStream\n\nAs pointed out in #17136 the semantics of a `BufStream` aren't always what one\nexpects, and it looks like other [languages like C#][c-sharp] implement a\nbuffered stream with only one underlying buffer. For now this commit\ndestabilizes the primitive in the `std::io` module to give us some more time in\nfiguring out what to do with it.\n\n[c-sharp]: https://msdn.microsoft.com/en-us/library/system.io.bufferedstream%28v=vs.110%29.aspx\n\n[breaking-change]"
+  },
+  {
     "hash": "f6574c5b0404f55c4dd4056be47d37eff33684b5",
     "author": "bors",
     "date": 1430520849,
@@ -586,17 +598,5 @@
     "author": "Niko Matsakis",
     "date": 1426723647,
     "message": "Require braces when a closure has an explicit return type. This is a\n[breaking-change]: instead of a closure like `|| -> i32 22`, prefer `||\n-> i32 { 22 }`.\n\nFixes #23420."
-  },
-  {
-    "hash": "46f649c479ce40f3b4590590dda6c2895e8d60f6",
-    "author": "bors",
-    "date": 1426667242,
-    "message": "Auto merge of #22838 - petrochenkov:bytelit, r=alexcrichton\n\nThis patch changes the type of byte string literals from `&[u8]` to `&[u8; N]`.\r\nIt also implements some necessary traits (`IntoBytes`, `Seek`, `Read`, `BufRead`) for fixed-size arrays (also related to #21725) and adds test for #17233, which seems to be resolved.\r\n\r\nFixes #18465\r\n[breaking-change]"
-  },
-  {
-    "hash": "c10918905fda1344e78bc16e6e73294d096ee97d",
-    "author": "bors",
-    "date": 1426648932,
-    "message": "Auto merge of #23452 - nikomatsakis:unsafety-subtyping, r=nrc\n\nSafe fns are no longer subtypes of unsafe fns, but you can coerce from one to the other.\r\n\r\nThis is a [breaking-change] in that impl fns must now be declared `unsafe` if the trait is declared `unsafe`. In some rare cases, the subtyping change may also direct affect you, but no such cases were encountered in practice.\r\n\r\nFixes #23449.\r\n\r\nr? @nrc"
   }
 ]
