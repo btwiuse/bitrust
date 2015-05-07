@@ -1,5 +1,11 @@
 [
   {
+    "hash": "d131f335579b8c080a2416a65ca703169fae560b",
+    "author": "Sean McArthur",
+    "date": 1430889983,
+    "message": "lint: deny transmuting from immutable to mutable, since it's undefined behavior\n\n[breaking-change] Technically breaking, since code that had been using\nthese transmutes before will no longer compile. However, it was\nundefined behavior, so really, it's a good thing. Fixing your code would\nrequire some re-working to use an UnsafeCell instead.\n\nCloses #13146"
+  },
+  {
     "hash": "eae692e375cec222803efb7175c79fedc228eea9",
     "author": "bors",
     "date": 1430849907,
@@ -592,11 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1426735174,
     "message": "Rollup merge of #23475 - nikomatsakis:closure-ret-syntax, r=acrichto\n\n Require braces when a closure has an explicit return type. This is a [breaking-change]: instead of a closure like `|| -> i32 22`, prefer `|| -> i32 { 22 }`.\n\nFixes #23420."
-  },
-  {
-    "hash": "c225824bded695c8bced713f5a4c62fe327277bc",
-    "author": "Niko Matsakis",
-    "date": 1426723647,
-    "message": "Require braces when a closure has an explicit return type. This is a\n[breaking-change]: instead of a closure like `|| -> i32 22`, prefer `||\n-> i32 { 22 }`.\n\nFixes #23420."
   }
 ]
