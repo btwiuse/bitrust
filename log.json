@@ -1,5 +1,17 @@
 [
   {
+    "hash": "67ba6dcf68860d8a20891faad88a33b35ed58df5",
+    "author": "bors",
+    "date": 1431183416,
+    "message": "Auto merge of #24612 - lifthrasiir:flt2dec, r=pnkfelix\n\nThis is a direct port of my prior work on the float formatting. The detailed description is available [here](https://github.com/lifthrasiir/rust-strconv#flt2dec). In brief,\r\n\r\n* This adds a new hidden module `core::num::flt2dec` for testing from `libcoretest`. Why is it in `core::num` instead of `core::fmt`? Because I envision that the table used by `flt2dec` is directly applicable to `dec2flt` (cf. #24557) as well, which exceeds the realm of \"formatting\".\r\n* This contains both Dragon4 algorithm (exact, complete but slow) and Grisu3 algorithm (exact, fast but incomplete).\r\n* The code is accompanied with a large amount of self-tests and some exhaustive tests. In particular, `libcoretest` gets a new dependency on `librand`. For the external interface it relies on the existing test suite.\r\n* It is known that, in the best case, the entire formatting code has about 30 KBs of binary overhead (judged from strconv experiments). Not too bad but there might be a potential room for improvements.\r\n\r\nThis is rather large code. I did my best to comment and annotate the code, but you have been warned.\r\n\r\nFor the maximal availability the original code was licensed in CC0, but I've also dual-licensed it in MIT/Apache as well so there should be no licensing concern.\r\n\r\nThis is [breaking-change] as it changes the float output slightly (and it also affects the casing of `inf` and `nan`). I hope this is not a big deal though :)\r\n\r\nFixes #7030, #18038 and #24556. Also related to #6220 and #20870.\r\n\r\n## Known Issues\r\n\r\n- [x] I've yet to finish `make check-stage1`. It does pass main test suites including `run-pass` but there might be some unknown edges on the doctests.\r\n- [ ] Figure out how this PR affects rustc.\r\n- [ ] Determine which internal routine is mapped to the formatting specifier. Depending on the decision, some internal routine can be safely removed (for instance, currently `to_shortest_str` is unused)."
+  },
+  {
+    "hash": "5aa9f38285b47e2eadaaac0e343da90b922994f1",
+    "author": "Kang Seonghoon",
+    "date": 1430889701,
+    "message": "core: made the core formatter to use a new flt2dec.\n\nAs a side effect `core::fmt::float` is gone now. This also slightly\nchanges the float output, so this is:\n\n[breaking-change]"
+  },
+  {
     "hash": "3906edf41e8faa0610daea954ffbda39841fbc0d",
     "author": "bors",
     "date": 1431163243,
@@ -586,17 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1426835591,
     "message": "Rollup merge of #23525 - steveklabnik:test_tasks, r=alexcrichton\n\n We don't use 'task' anymore, these are now threads.\n\nBecause this changes the name of a compiler option, this is\n\n[breaking-change]\n\nI think this is small enough to not need an RFC, nor a period of accepting both. If we want to take both for a while, I can change the patch."
-  },
-  {
-    "hash": "7cbc42849f7586d3c567d7ac8f202839f9b968e8",
-    "author": "Steve Klabnik",
-    "date": 1426794176,
-    "message": "RUST_TEST_TASKS -> RUST_TEST_THREADS\n\nWe don't use 'task' anymore, these are now threads.\n\nBecause this changes the name of a compiler option, this is\n\n[breaking-change]"
-  },
-  {
-    "hash": "3e433738fb1ab9f353c943d60061d72024c6af07",
-    "author": "Manish Goregaokar",
-    "date": 1426835591,
-    "message": "Rollup merge of #23504 - alexcrichton:parse-error-not-unit, r=aturon\n\n The IP and socket address types all had `FromStr` implemented but the\nimplementations were not marked stable, nor was the error type returned ready to\nbe properly stabilized.\n\nThis commit marks the implementations of `FromStr` as stable and also renamed\nthe `ParseError` structure to `AddrParseError`. The error is now also an opaque\nstructure that cannot be constructed outside the standard library.\n\ncc #22949\n[breaking-change]"
   }
 ]
