@@ -1,5 +1,17 @@
 [
   {
+    "hash": "3906edf41e8faa0610daea954ffbda39841fbc0d",
+    "author": "bors",
+    "date": 1431163243,
+    "message": "Auto merge of #25212 - pnkfelix:dropck-box-trait, r=nikomatsakis\n\ndropck: must assume `Box<Trait + 'a>` has a destructor of interest.\r\n\r\nFix #25199.\r\n\r\nThis detail was documented in [RFC 769]; the implementation was just missing.\r\n\r\n[breaking-change]\r\n\r\nThe breakage here falls into both obvious and non-obvious cases.\r\n\r\nThe obvious case: if you were relying on the unsoundness this exposes (namely being able to reference dead storage from a destructor, by doing it via a boxed trait object bounded by the lifetime of the dead storage), then this change disallows that.\r\n\r\nThe non-obvious cases: The way dropck works, it causes lifetimes to be extended to longer extents than they covered before. I.e.  lifetimes that are attached as trait-bounds may become longer than they were previously.\r\n\r\n* This includes lifetimes that are only *implicitly* attached as trait-bounds (due to [RFC 599]). So you may have code that was e.g. taking a parameter of type `&'a Box<Trait>` (which expands to `&'a Box<Trait+'a>`), that now may need to be assigned type `&'a Box<Trait+'static>` to ensure that `'a` is not inadvertantly inferred to a region that is actually too long.  (See commit ee06263 for an example of this.)\r\n\r\n[RFC 769]: https://github.com/rust-lang/rfcs/blob/master/text/0769-sound-generic-drop.md#the-drop-check-rule\r\n\r\n[RFC 599]: https://github.com/rust-lang/rfcs/blob/master/text/0599-default-object-bound.md"
+  },
+  {
+    "hash": "b5b5a177588c0e8dfc6b9e79540bcbd1eeb9ef91",
+    "author": "Felix S. Klock II",
+    "date": 1431090376,
+    "message": "dropck: must assume `Box<Trait + 'a>` has a destructor of interest.\n\nImplements this (previously overlooked) note from [RFC 769]:\n\n> (Note: When encountering a D of the form `Box<Trait+'b>`, we\n> conservatively assume that such a type has a Drop implementation\n> parametric in 'b.)\n\nFix #25199.\n\n[breaking-change]\n\nThe breakage here falls into both obvious and non-obvious cases.\n\nThe obvious case: if you were relying on the unsoundness this exposes\n(namely being able to reference dead storage from a destructor, by\ndoing it via a boxed trait object bounded by the lifetime of the dead\nstorage), then this change disallows that.\n\nThe non-obvious cases: The way dropck works, it causes lifetimes to be\nextended to longer extents than they covered before. I.e.  lifetimes\nthat are attached as trait-bounds may become longer than they were\npreviously.\n\n* This includes lifetimes that are only *implicitly* attached as\n  trait-bounds (due to [RFC 599]). So you may have code that was\n  e.g. taking a parameter of type `&'a Box<Trait>` (which expands to\n  `&'a Box<Trait+'a>`), that now may need to be assigned type `&'a\n  Box<Trait+'static>` to ensure that `'a` is not inadvertantly\n  inferred to a region that is actually too long.  (See earlier commit\n  in this PR for an example of this.)\n\n[RFC 769]: https://github.com/rust-lang/rfcs/blob/master/text/0769-sound-generic-drop.md#the-drop-check-rule\n\n[RFC 599]: https://github.com/rust-lang/rfcs/blob/master/text/0599-default-object-bound.md"
+  },
+  {
     "hash": "5ae026e8923d71d16a4d2b9a592bbcab92d8723a",
     "author": "bors",
     "date": 1431035111,
@@ -586,17 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1426835591,
     "message": "Rollup merge of #23504 - alexcrichton:parse-error-not-unit, r=aturon\n\n The IP and socket address types all had `FromStr` implemented but the\nimplementations were not marked stable, nor was the error type returned ready to\nbe properly stabilized.\n\nThis commit marks the implementations of `FromStr` as stable and also renamed\nthe `ParseError` structure to `AddrParseError`. The error is now also an opaque\nstructure that cannot be constructed outside the standard library.\n\ncc #22949\n[breaking-change]"
-  },
-  {
-    "hash": "fda8673531c2ecea13c86216f964feb6091b4ade",
-    "author": "bors",
-    "date": 1426825804,
-    "message": "Auto merge of #23504 - alexcrichton:parse-error-not-unit, r=aturon\n\nThe IP and socket address types all had `FromStr` implemented but the\r\nimplementations were not marked stable, nor was the error type returned ready to\r\nbe properly stabilized.\r\n\r\nThis commit marks the implementations of `FromStr` as stable and also renamed\r\nthe `ParseError` structure to `AddrParseError`. The error is now also an opaque\r\nstructure that cannot be constructed outside the standard library.\r\n\r\ncc #22949\r\n[breaking-change]"
-  },
-  {
-    "hash": "f2e3c7469b56cd744e613a05a1ea73f441f66401",
-    "author": "Alex Crichton",
-    "date": 1426734615,
-    "message": "std: Stabilize FromStr implementations in std::net\n\nThe IP and socket address types all had `FromStr` implemented but the\nimplementations were not marked stable, nor was the error type returned ready to\nbe properly stabilized.\n\nThis commit marks the implementations of `FromStr` as stable and also renamed\nthe `ParseError` structure to `AddrParseError`. The error is now also an opaque\nstructure that cannot be constructed outside the standard library.\n\ncc #22949\n[breaking-change]"
   }
 ]
