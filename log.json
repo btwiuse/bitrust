@@ -1,5 +1,29 @@
 [
   {
+    "hash": "2e07b0d6be3d2ffcfb154b5cbbe02bc166014172",
+    "author": "Adolfo Ochagavía",
+    "date": 1422700727,
+    "message": "Deprecate SyntaxExtension::Modifier\n\nReplaced by SyntaxExtension::MultiModifier\n\n[breaking-change]"
+  },
+  {
+    "hash": "6f233aaa0c743cc6ca7e42d7dcd4b7d92ef4ad9a",
+    "author": "Adolfo Ochagavía",
+    "date": 1422700727,
+    "message": "Deprecate SyntaxExtension::Decorator\n\nIt has been replaced by SyntaxExtension::MultiDecorator\n\n[breaking-change]"
+  },
+  {
+    "hash": "57690399a2ab6dd579ea1f97e9866b213f8b14d4",
+    "author": "Adolfo Ochagavía",
+    "date": 1422700725,
+    "message": "Deprecate ItemDecorator in favor of MultiItemDecorator\n\n[breaking-change]"
+  },
+  {
+    "hash": "53579e6d866eea41f2d3d8d0ddff42c73e75cea1",
+    "author": "Adolfo Ochagavía",
+    "date": 1422700724,
+    "message": "Deprecate ItemModifier in favor of MultiItemModifier\n\n[breaking-change]"
+  },
+  {
     "hash": "67ba6dcf68860d8a20891faad88a33b35ed58df5",
     "author": "bors",
     "date": 1431183416,
@@ -574,29 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1427066666,
     "message": "Rollup merge of #23559 - aturon:future-proof-map-index, r=Gankro\n\n This commit removes the `IndexMut` impls on `HashMap` and `BTreeMap`, in\norder to future-proof the API against the eventual inclusion of an\n`IndexSet` trait.\n\nIdeally, we would eventually be able to support:\n\n```rust\nmap[owned_key] = val;\nmap[borrowed_key].mutating_method(arguments);\n&mut map[borrowed_key];\n```\n\nbut to keep the design space as unconstrained as possible, we do not\ncurrently want to support `IndexMut`, in case some other strategy will\neventually be needed.\n\nCode currently using mutating index notation can use `get_mut` instead.\n\n[breaking-change]\n\nCloses #23448\n\nr? @Gankro"
-  },
-  {
-    "hash": "5fe0bb743a0af0413f8989a70a4f926fa5c63074",
-    "author": "Aaron Turon",
-    "date": 1426873591,
-    "message": "Future-proof indexing on maps: remove IndexMut\n\nThis commit removes the `IndexMut` impls on `HashMap` and `BTreeMap`, in\norder to future-proof the API against the eventual inclusion of an\n`IndexSet` trait.\n\nIdeally, we would eventually be able to support:\n\n```rust\nmap[owned_key] = val;\nmap[borrowed_key].mutating_method(arguments);\n&mut map[borrowed_key];\n```\n\nbut to keep the design space as unconstrained as possible, we do not\ncurrently want to support `IndexMut`, in case some other strategy will\neventually be needed.\n\nCode currently using mutating index notation can use `get_mut` instead.\n\n[breaking-change]\n\nCloses #23448"
-  },
-  {
-    "hash": "6107e4c0b88d9e22482ed88c52b98c2ec2034bb1",
-    "author": "Manish Goregaokar",
-    "date": 1426835595,
-    "message": "Rollup merge of  #23534 - steveklabnik:remove_sched_threads, r=alexcrichton\n\nAs @alexcrichton says, this was really a libgreen thing, and isn't\nrelevant now.\n\nAs this removes a technically-public function, this is a\n\n[breaking-change]"
-  },
-  {
-    "hash": "71321ff33fa3fe71cc1df541b3d0547b4e208923",
-    "author": "Steve Klabnik",
-    "date": 1426809967,
-    "message": "Remove rt::default_sched_threads and RUST_THREADS.\n\nAs @alexcrichton says, this was really a libgreen thing, and isn't\nrelevant now.\n\nAs this removes a technically-public function, this is a\n\n[breaking-change]\n\nConflicts:\n\tsrc/libtest/lib.rs"
-  },
-  {
-    "hash": "e2d32b74ecedc3f603def4d5130c0c300edce7d1",
-    "author": "Manish Goregaokar",
-    "date": 1426835591,
-    "message": "Rollup merge of #23525 - steveklabnik:test_tasks, r=alexcrichton\n\n We don't use 'task' anymore, these are now threads.\n\nBecause this changes the name of a compiler option, this is\n\n[breaking-change]\n\nI think this is small enough to not need an RFC, nor a period of accepting both. If we want to take both for a while, I can change the patch."
   }
 ]
