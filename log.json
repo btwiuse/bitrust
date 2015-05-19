@@ -1,5 +1,11 @@
 [
   {
+    "hash": "bd85983d059151c9ef07dbd11a35f1d16463eb94",
+    "author": "Steven Fackler",
+    "date": 1431909209,
+    "message": "Make debug builders take &mut self, add entries method\n\n[breaking-change]"
+  },
+  {
     "hash": "c23a9d42ea082830593a73d25821842baf9ccf33",
     "author": "bors",
     "date": 1431821134,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1427148439,
     "message": "rollup merge of #23119: nikomatsakis/issue-23116-ref-mut\n\nDon't allow upcasting to a supertype in the type of the match discriminant. Fixes #23116.\n\nThis is a [breaking-change] in that it closes a type hole that previously existed.\n\nr? @pnkfelix"
-  },
-  {
-    "hash": "45fae882568d9bf36ade39f210a2721d05e556dd",
-    "author": "Niko Matsakis",
-    "date": 1427103043,
-    "message": "When matching against a pattern (either via `match` or `let`) that\ncontains ref-bindings, do not permit any upcasting from the type of\nthe value being matched. Similarly, do not permit coercion in a `let`.\n\nThis is a [breaking-change] in that it closes a type hole that\npreviously existed, and in that coercion is not performed. You should\nbe able to work around the latter by converting:\n\n```rust\nlet ref mut x: T = expr;\n```\n\ninto\n\n```rust\nlet x: T = expr;\nlet ref mut x = x;\n```\n\nRestricting coercion not to apply in the case of `let ref` or `let ref mut` is sort\nof unexciting to me, but seems the best solution:\n\n1. Mixing coercion and `let ref` or `let ref mut` is a bit odd, because you are taking\n   the address of a (coerced) temporary, but only sometimes. It's not syntactically evident,\n   in other words, what's going on. When you're doing a coercion, you're kind of\n\n2. Put another way, I would like to preserve the relationship that\n   `equality <= subtyping <= coercion <= as-coercion`, where this is\n   an indication of the number of `(T1,T2)` pairs that are accepted by\n   the various relations. Trying to mix `let ref mut` and coercion\n   would create another kind of relation that is like coercion, but\n   acts differently in the case where a precise match is needed.\n\n3. In any case, this is strictly more conservative than what we had\n   before and we can undo it in the future if we find a way to make\n   coercion mix with type equality.\n\nThe change to match I feel ok about but similarly unthrilled. There is\nsome subtle text already concerning whether to use eqtype or subtype\nfor identifier bindings. The best fix I think would be to always have\nmatch use strict equality but use subtyping on identifier bindings,\nbut the comment `(*)` explains why that's not working at the moment.\nAs above, I think we can change this as we clean up the code there."
   }
 ]
