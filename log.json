@@ -1,5 +1,11 @@
 [
   {
+    "hash": "32211e1d27c258c62cafb6ba357e67db932367bf",
+    "author": "Ulrik Sverdrup",
+    "date": 1433016940,
+    "message": "Mark Arc function get_mut and method make_unique unsafe\n\nThis is a temporary mitigation for issue #24880 which points out that\nthese functions are racy in a particular situation where weak pointers\nexist.\n\nTo mitigate this, mark the functions unsafe until this can be fixed or\nanother decision is made.\n\nThis is a breaking change to unstable API, because the new version\nrequires an `unsafe` block. Review carefully if weak pointers may race\nfor any uses of this API and consider abandoning it.\n\n[breaking-change]"
+  },
+  {
     "hash": "bd85983d059151c9ef07dbd11a35f1d16463eb94",
     "author": "Steven Fackler",
     "date": 1431909209,
@@ -592,11 +598,5 @@
     "author": "Felix S. Klock II",
     "date": 1426847120,
     "message": "Added panic-on-overflow for rhs of left and right shift expressions.\n\nThis includes a slight refactoring of the `cast_shift_rhs` and related\nfunctions in `trans::base`, so that I can call them from much later in\nthe compiler's control flow (so that we can clearly dilineate where\nautomatic conversions of the RHS occur, versus where we check it).\n\nThe rhs-checking and fallback-masking is generalized to 8- and 16-bit\nvalues, and the fallback-masking is turned on unconditionally.\n\nFix #10183.\n\nIs this a [breaking-change]?  I would argue it is not; it only adds a\nstrict definition to what was previously undefined behavior; however,\nthere might be code that was e.g. assuming that `1_i8 << 17` yields 0.\n(This happens in certain contexts and at certain optimization levels.)"
-  },
-  {
-    "hash": "ad41e7cd7a3d1969e666508d7e4a3ba305cee2ec",
-    "author": "Alex Crichton",
-    "date": 1427148439,
-    "message": "rollup merge of #23119: nikomatsakis/issue-23116-ref-mut\n\nDon't allow upcasting to a supertype in the type of the match discriminant. Fixes #23116.\n\nThis is a [breaking-change] in that it closes a type hole that previously existed.\n\nr? @pnkfelix"
   }
 ]
