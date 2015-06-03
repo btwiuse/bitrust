@@ -1,5 +1,17 @@
 [
   {
+    "hash": "b70f49b86fa4d8780f46e869880e84e1c24c2f19",
+    "author": "bors",
+    "date": 1433355669,
+    "message": "Auto merge of #24910 - steveklabnik:remove_static_assert, r=alexcrichton\n\nThis was always a weird feature, and isn't being used in the compiler.\r\nStatic assertions should be done better than this.\r\n\r\nFixes #13951\r\nFixes #23008\r\nFixes #6676\r\n\r\nThis is behind a feature gate, but that's still a\r\n\r\n[breaking-change]\r\n\r\n(It's not entirely clear to me that this should or shouldn't have an RFC, but if it does, I'm fine blocking on such a thing.)"
+  },
+  {
+    "hash": "5235065d740cad78ab55a89299fc1f5d32bf8f46",
+    "author": "Steve Klabnik",
+    "date": 1433338693,
+    "message": "Remove #[static_assert]\n\nThis was always a weird feature, and isn't being used in the compiler.\nStatic assertions should be done better than this.\n\nThis implements RFC #1096.\n\nFixes #13951\nFixes #23008\nFixes #6676\n\nThis is behind a feature gate, but that's still a\n\n[breaking-change]"
+  },
+  {
     "hash": "32211e1d27c258c62cafb6ba357e67db932367bf",
     "author": "Ulrik Sverdrup",
     "date": 1433016940,
@@ -586,17 +598,5 @@
     "author": "Aaron Turon",
     "date": 1427135239,
     "message": "Stabilize the Error trait\n\nThis small commit stabilizes the `Error` trait as-is, except that `Send`\nand `Debug` are added as constraints. The `Send` constraint is because\nmost uses of `Error` will be for trait objects, and by default we would\nlike these objects to be transferrable between threads. The `Debug`\nconstraint is to ensure that e.g. `Box<Error>` is `Debug`, and because\ntypes that implement `Display` should certainly implement `Debug` in any case.\n\nIn the near future we expect to add `Any`-like downcasting features to\n`Error`, but this is waiting on some additional\nmechanisms (`Reflect`). It will be added before 1.0 via default methods.\n\n[breaking-change]"
-  },
-  {
-    "hash": "8389253df0431e58bfe0a8e0e3949d58ebe7400f",
-    "author": "Aaron Turon",
-    "date": 1427148105,
-    "message": "Add generic conversion traits\n\nThis commit:\n\n* Introduces `std::convert`, providing an implementation of\nRFC 529.\n\n* Deprecates the `AsPath`, `AsOsStr`, and `IntoBytes` traits, all\nin favor of the corresponding generic conversion traits.\n\n  Consequently, various IO APIs now take `AsRef<Path>` rather than\n`AsPath`, and so on. Since the types provided by `std` implement both\ntraits, this should cause relatively little breakage.\n\n* Deprecates many `from_foo` constructors in favor of `from`.\n\n* Changes `PathBuf::new` to take no argument (creating an empty buffer,\n  as per convention). The previous behavior is now available as\n  `PathBuf::from`.\n\n* De-stabilizes `IntoCow`. It's not clear whether we need this separate trait.\n\nCloses #22751\nCloses #14433\n\n[breaking-change]"
-  },
-  {
-    "hash": "19fef72a8c14100029e5ce39cbc5472ab091dad8",
-    "author": "Felix S. Klock II",
-    "date": 1426847120,
-    "message": "Added panic-on-overflow for rhs of left and right shift expressions.\n\nThis includes a slight refactoring of the `cast_shift_rhs` and related\nfunctions in `trans::base`, so that I can call them from much later in\nthe compiler's control flow (so that we can clearly dilineate where\nautomatic conversions of the RHS occur, versus where we check it).\n\nThe rhs-checking and fallback-masking is generalized to 8- and 16-bit\nvalues, and the fallback-masking is turned on unconditionally.\n\nFix #10183.\n\nIs this a [breaking-change]?  I would argue it is not; it only adds a\nstrict definition to what was previously undefined behavior; however,\nthere might be code that was e.g. assuming that `1_i8 << 17` yields 0.\n(This happens in certain contexts and at certain optimization levels.)"
   }
 ]
