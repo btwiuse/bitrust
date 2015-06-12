@@ -1,5 +1,11 @@
 [
   {
+    "hash": "7648776503040b302fe0589311fb27afe7c1e6cc",
+    "author": "bors",
+    "date": 1434067227,
+    "message": "Auto merge of #26225 - arielb1:raw-self, r=eddyb\n\nThis can't be made to work with the current setup.\r\n\r\nTechnically a [breaking-change], but a simple bug fix.\r\n\r\nFixes #26194."
+  },
+  {
     "hash": "b70f49b86fa4d8780f46e869880e84e1c24c2f19",
     "author": "bors",
     "date": 1433355669,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1427148548,
     "message": "rollup merge of #23541: aturon/stab-error\n\nThis small commit stabilizes the `Error` trait as-is, except that `Send`\nand `Debug` are added as constraints. The `Send` constraint is because\nmost uses of `Error` will be for trait objects, and by default we would\nlike these objects to be transferrable between threads. The `Debug`\nconstraint is to ensure that e.g. `Box<Error>` is `Debug`, and because\ntypes that implement `Display` should certainly implement `Debug` in any case.\n\nIn the near future we expect to add `Any`-like downcasting features to\n`Error`, but this is waiting on some additional\nmechanisms (`Reflect`). It will be added before 1.0 via default methods.\n\n[breaking-change]\n\nr? @alexcrichton\n\nCloses #21790"
-  },
-  {
-    "hash": "9231ceb6dd273d8101e1b3906e6060f802e6423d",
-    "author": "Aaron Turon",
-    "date": 1427135239,
-    "message": "Stabilize the Error trait\n\nThis small commit stabilizes the `Error` trait as-is, except that `Send`\nand `Debug` are added as constraints. The `Send` constraint is because\nmost uses of `Error` will be for trait objects, and by default we would\nlike these objects to be transferrable between threads. The `Debug`\nconstraint is to ensure that e.g. `Box<Error>` is `Debug`, and because\ntypes that implement `Display` should certainly implement `Debug` in any case.\n\nIn the near future we expect to add `Any`-like downcasting features to\n`Error`, but this is waiting on some additional\nmechanisms (`Reflect`). It will be added before 1.0 via default methods.\n\n[breaking-change]"
   }
 ]
