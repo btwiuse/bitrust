@@ -1,5 +1,17 @@
 [
   {
+    "hash": "7517ecf4fc9cfe2adff8a38ecc2ef660692a4b5b",
+    "author": "bors",
+    "date": 1434350682,
+    "message": "Auto merge of #26168 - sfackler:stdout-panic, r=alexcrichton\n\nCloses #25977\r\n\r\nThe various `stdfoo_raw` methods in std::io now return `io::Result`s,\r\nsince they may not exist on Windows. They will always return `Ok` on\r\nUnix-like platforms.\r\n\r\n[breaking-change]"
+  },
+  {
+    "hash": "a7bbd7da4eb98127104fdfd415ad6c746f7e2a12",
+    "author": "Steven Fackler",
+    "date": 1434338226,
+    "message": "Implement RFC 1014\n\nCloses #25977\n\nThe various `stdfoo_raw` methods in std::io now return `io::Result`s,\nsince they may not exist on Windows. They will always return `Ok` on\nUnix-like platforms.\n\n[breaking-change]"
+  },
+  {
     "hash": "7648776503040b302fe0589311fb27afe7c1e6cc",
     "author": "bors",
     "date": 1434067227,
@@ -586,17 +598,5 @@
     "author": "Alex Crichton",
     "date": 1427148549,
     "message": "rollup merge of #23557: aturon/rfc-909\n\nThis commit implements [RFC 909](https://github.com/rust-lang/rfcs/pull/909):\n\nThe `std::thread_local` module is now deprecated, and its contents are\navailable directly in `std::thread` as `LocalKey`, `LocalKeyState`, and\n`ScopedKey`.\n\nThe macros remain exactly as they were, which means little if any code\nshould break. Nevertheless, this is technically a:\n\n[breaking-change]\n\nCloses #23547"
-  },
-  {
-    "hash": "6bd3ab0d8140053475a901ad4e2e80e98955bcb0",
-    "author": "Aaron Turon",
-    "date": 1427135334,
-    "message": "Implement RFC 909: move thread_local into thread\n\nThis commit implements [RFC\n909](https://github.com/rust-lang/rfcs/pull/909):\n\nThe `std::thread_local` module is now deprecated, and its contents are\navailable directly in `std::thread` as `LocalKey`, `LocalKeyState`, and\n`ScopedKey`.\n\nThe macros remain exactly as they were, which means little if any code\nshould break. Nevertheless, this is technically a:\n\n[breaking-change]\n\nCloses #23547"
-  },
-  {
-    "hash": "b97e1cc28e0d3fe6a745a02a7c1750564a090f34",
-    "author": "Alex Crichton",
-    "date": 1427148548,
-    "message": "rollup merge of #23541: aturon/stab-error\n\nThis small commit stabilizes the `Error` trait as-is, except that `Send`\nand `Debug` are added as constraints. The `Send` constraint is because\nmost uses of `Error` will be for trait objects, and by default we would\nlike these objects to be transferrable between threads. The `Debug`\nconstraint is to ensure that e.g. `Box<Error>` is `Debug`, and because\ntypes that implement `Display` should certainly implement `Debug` in any case.\n\nIn the near future we expect to add `Any`-like downcasting features to\n`Error`, but this is waiting on some additional\nmechanisms (`Reflect`). It will be added before 1.0 via default methods.\n\n[breaking-change]\n\nr? @alexcrichton\n\nCloses #21790"
   }
 ]
