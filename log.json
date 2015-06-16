@@ -1,5 +1,11 @@
 [
   {
+    "hash": "73fb19c04ac227fe2aad2c618f76b6eb05dd7ec9",
+    "author": "bors",
+    "date": 1434397935,
+    "message": "Auto merge of #26275 - arielb1:unconstrained-projection, r=nikomatsakis\n\nFixes #26262\r\n\r\nBecause this rejects code that previously compiled, this is a [breaking-change]\r\n\r\nr? @nikomatsakis"
+  },
+  {
     "hash": "7517ecf4fc9cfe2adff8a38ecc2ef660692a4b5b",
     "author": "bors",
     "date": 1434350682,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1427148650,
     "message": "rollup merge of #23601: nikomatsakis/by-value-index\n\nThis is a [breaking-change]. When indexing a generic map (hashmap, etc) using the `[]` operator, it is now necessary to borrow explicitly, so change `map[key]` to `map[&key]` (consistent with the `get` routine). However, indexing of string-valued maps with constant strings can now be written `map[\"abc\"]`.\n\nr? @japaric\ncc @aturon @Gankro"
-  },
-  {
-    "hash": "2153c581ef66de1537286b58b1b323d24c25d07f",
-    "author": "Alex Crichton",
-    "date": 1427148549,
-    "message": "rollup merge of #23557: aturon/rfc-909\n\nThis commit implements [RFC 909](https://github.com/rust-lang/rfcs/pull/909):\n\nThe `std::thread_local` module is now deprecated, and its contents are\navailable directly in `std::thread` as `LocalKey`, `LocalKeyState`, and\n`ScopedKey`.\n\nThe macros remain exactly as they were, which means little if any code\nshould break. Nevertheless, this is technically a:\n\n[breaking-change]\n\nCloses #23547"
   }
 ]
