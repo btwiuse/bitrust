@@ -1,5 +1,11 @@
 [
   {
+    "hash": "713d9176adc5072afdf0934dc95b868995e867c0",
+    "author": "bors",
+    "date": 1434581417,
+    "message": "Auto merge of #26326 - nikomatsakis:optimize-fulfillment-cache-in-tcx, r=pcwalton\n\nWhen we successfully resolve a trait reference with no type/lifetime parameters, like `i32: Foo` or `Box<u32>: Sized`, this is in fact globally true. This patch adds a simple global to the tcx to cache such cases. The main advantage of this is really about caching things like `Box<Vec<Foo>>: Sized`. It also points to the need to revamp our caching infrastructure -- the current caches make selection cost cheaper, but we still wind up paying a high cost in the confirmation process, and in particular unrolling out dependent obligations. Moreover, we should probably do caching more uniformly and with a key that takes the where-clauses into account. But that's for later.\r\n\r\nFor me, this shows up as a reasonably nice win (20%) on Servo's script crate (when built in dev mode). This is not as big as my initial measurements suggested, I think because I was building my rustc with more debugging enabled at the time. I've not yet done follow-up profiling and so forth to see where the new hot spots are. Bootstrap times seem to be largely unaffected.\r\n\r\ncc @pcwalton \r\n\r\nThis is technically a [breaking-change] in that functions with unsatisfiable where-clauses may now yield errors where before they may have been accepted. Even before, these functions could never have been *called* by actual code. In the future, such functions will probably become illegal altogether, but in this commit they are still accepted, so long as they do not rely on the unsatisfiable where-clauses. As before, the functions still cannot be called in any case."
+  },
+  {
     "hash": "73fb19c04ac227fe2aad2c618f76b6eb05dd7ec9",
     "author": "bors",
     "date": 1434397935,
@@ -592,11 +598,5 @@
     "author": "Steve Klabnik",
     "date": 1427144743,
     "message": "Rollup merge of #23119 - nikomatsakis:issue-23116-ref-mut, r=pnkfelix\n\nDon't allow upcasting to a supertype in the type of the match discriminant. Fixes #23116.\r\n\r\nThis is a [breaking-change] in that it closes a type hole that previously existed.\r\n\r\nr? @pnkfelix"
-  },
-  {
-    "hash": "753efb5042563dd34a4a524197fa14a129ddf449",
-    "author": "Alex Crichton",
-    "date": 1427148650,
-    "message": "rollup merge of #23601: nikomatsakis/by-value-index\n\nThis is a [breaking-change]. When indexing a generic map (hashmap, etc) using the `[]` operator, it is now necessary to borrow explicitly, so change `map[key]` to `map[&key]` (consistent with the `get` routine). However, indexing of string-valued maps with constant strings can now be written `map[\"abc\"]`.\n\nr? @japaric\ncc @aturon @Gankro"
   }
 ]
