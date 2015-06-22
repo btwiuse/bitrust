@@ -1,5 +1,17 @@
 [
   {
+    "hash": "31d9aee68499cba8d1a5332b841eca5c67991001",
+    "author": "bors",
+    "date": 1434931860,
+    "message": "Auto merge of #26394 - arielb1:implement-rfc401-part2, r=nrc\n\nThis makes them compliant with the new version of RFC 401 (i.e.\r\n    RFC 1052).\r\n\r\nFixes #26391. I *hope* the tests I have are enough.\r\n\r\nThis is a [breaking-change]\r\n\r\nr? @nrc"
+  },
+  {
+    "hash": "ea7637ebc0e5d325ccf0537a8013316c2ed78108",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1434631866,
+    "message": "Prohibit casts between fat pointers to different traits\n\nThis makes them compliant with the new version of RFC 401 (i.e.\n    RFC 1052).\n\nFixes #26391. I *hope* the tests I have are enough.\n\nThis is a [breaking-change]"
+  },
+  {
     "hash": "713d9176adc5072afdf0934dc95b868995e867c0",
     "author": "bors",
     "date": 1434581417,
@@ -586,17 +598,5 @@
     "author": "Felix S. Klock II",
     "date": 1427232443,
     "message": "Reject specialized Drop impls.\n\nSee Issue 8142 for discussion.\n\nThis makes it illegal for a Drop impl to be more specialized than the\noriginal item.\n\nSo for example, all of the following are now rejected (when they would\nhave been blindly accepted before):\n\n```rust\nstruct S<A> { ... };\nimpl Drop for S<i8> { ... } // error: specialized to concrete type\n\nstruct T<'a> { ... };\nimpl Drop for T<'static> { ... } // error: specialized to concrete region\n\nstruct U<A> { ... };\nimpl<A:Clone> Drop for U<A> { ... } // error: added extra type requirement\n\nstruct V<'a,'b>;\nimpl<'a,'b:a> Drop for V<'a,'b> { ... } // error: added extra region requirement\n```\n\nDue to examples like the above, this is a [breaking-change].\n\n(The fix is to either remove the specialization from the `Drop` impl,\nor to transcribe the requirements into the struct/enum definition;\nexamples of both are shown in the PR's fixed to `libstd`.)\n\n----\n\nThis is likely to be the last thing blocking the removal of the\n`#[unsafe_destructor]` attribute.\n\nIncludes two new error codes for the new dropck check.\n\nUpdate run-pass tests to accommodate new dropck pass.\n\nUpdate tests and docs to reflect new destructor restriction.\n\n----\n\nImplementation notes:\n\nWe identify Drop impl specialization by not being as parametric as the\nstruct/enum definition via unification.\n\nMore specifically:\n\n 1. Attempt unification of a skolemized instance of the struct/enum\n    with an instance of the Drop impl's type expression where all of\n    the impl's generics (i.e. the free variables of the type\n    expression) have been replaced with unification variables.\n\n 2. If unification fails, then reject Drop impl as specialized.\n\n 3. If unification succeeds, check if any of the skolemized\n    variables \"leaked\" into the constraint set for the inference\n    context; if so, then reject Drop impl as specialized.\n\n 4. Otherwise, unification succeeded without leaking skolemized\n    variables: accept the Drop impl.\n\nWe identify whether a Drop impl is injecting new predicates by simply\nlooking whether the predicate, after an appropriate substitution,\nappears on the struct/enum definition."
-  },
-  {
-    "hash": "9330bae4bde720dbdf8d379bd5529a1bb7a6f1e9",
-    "author": "Niko Matsakis",
-    "date": 1427155050,
-    "message": "Fallout from changing fn traits to use inheritance rather than bridge\nimpls. This is a [breaking-change] (for gated code) in that when you\nimplement `Fn` (`FnMut`) you must also implement `FnOnce`. This commit\ndemonstrates how to fix it."
-  },
-  {
-    "hash": "f78815979706bca435bff80155b28acc80a19781",
-    "author": "Steve Klabnik",
-    "date": 1427144743,
-    "message": "Rollup merge of #23119 - nikomatsakis:issue-23116-ref-mut, r=pnkfelix\n\nDon't allow upcasting to a supertype in the type of the match discriminant. Fixes #23116.\r\n\r\nThis is a [breaking-change] in that it closes a type hole that previously existed.\r\n\r\nr? @pnkfelix"
   }
 ]
