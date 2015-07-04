@@ -1,5 +1,11 @@
 [
   {
+    "hash": "6b27005f2f8b20834838828588233b877a29d509",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1436008166,
+    "message": "require reimplementations of all items when a defaulted associated type is overriden\n\nThis is a\n[breaking-change]\nbut it follows the RFC (not sure whether it will be accepted)."
+  },
+  {
     "hash": "f027bdc1c8a133693651f333624b756abe21960f",
     "author": "bors",
     "date": 1435959106,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1427476061,
     "message": "rollup merge of #23535: pnkfelix/fsk-filling-drop\n\nReplace zeroing-on-drop with filling-on-drop.\n\nThis is meant to set the stage for removing *all* zeroing and filling (on drop) in the future.\n\nNote that the code is meant to be entirely abstract with respect to the particular values used for the drop flags: the final commit demonstrates how to go from zeroing-on-drop to filling-on-drop by changing the value of three constants (in two files).\n\nSee further discussion on the internals thread:\n  http://internals.rust-lang.org/t/attention-hackers-filling-drop/1715/11\n\n[breaking-change] especially for structs / enums using `#[unsafe_no_drop_flag]`."
-  },
-  {
-    "hash": "3b13b9c2b4e72d08cb1c68024ccc4f50001f4878",
-    "author": "Alex Crichton",
-    "date": 1427236034,
-    "message": "rollup merge of #23638: pnkfelix/fsk-reject-specialized-drops\n\nReject specialized Drop impls.\n\nSee Issue #8142 for discussion.\n\nThis makes it illegal for a Drop impl to be more specialized than the original item.\n\nSo for example, all of the following are now rejected (when they would have been blindly accepted before):\n\n```rust\nstruct S<A> { ... };\nimpl Drop for S<i8> { ... } // error: specialized to concrete type\n\nstruct T<'a> { ... };\nimpl Drop for T<'static> { ... } // error: specialized to concrete region\n\nstruct U<A> { ... };\nimpl<A:Clone> Drop for U<A> { ... } // error: added extra type requirement\n\nstruct V<'a,'b>;\nimpl<'a,'b:a> Drop for V<'a,'b> { ... } // error: added extra region requirement\n```\n\nDue to examples like the above, this is a [breaking-change].\n\n(The fix is to either remove the specialization from the `Drop` impl, or to transcribe the requirements into the struct/enum definition; examples of both are shown in the PR's fixed to `libstd`.)\n\n----\n\nThis is likely to be the last thing blocking the removal of the `#[unsafe_destructor]` attribute.\n\nFix #8142\nFix #23584"
   }
 ]
