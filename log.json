@@ -1,5 +1,11 @@
 [
   {
+    "hash": "e05ac3938bcbdd616930bb010a3bbfa35f22850e",
+    "author": "bors",
+    "date": 1437158150,
+    "message": "Auto merge of #27045 - nikomatsakis:better-object-defaults-error, r=pnkfelix\n\nTransition to the new object lifetime defaults, replacing the old defaults completely.\r\n\r\nr? @pnkfelix \r\n\r\nThis is a [breaking-change] as specified by [RFC 1156][1156] (though all cases that would break should have been receiving warnings starting in Rust 1.2). Types like `&'a Box<Trait>` (or `&'a Rc<Trait>`, etc) will change from being interpreted as `&'a Box<Trait+'a>` to `&'a Box<Trait+'static>`. To restore the old behavior, write the `+'a` explicitly. For example, the function:\r\n\r\n\r\n```rust\r\ntrait Trait { }\r\nfn foo(x: &Box<Trait>) { ... }\r\n```\r\n\r\nwould be rewritten as:\r\n\r\n```rust\r\ntrait Trait { }\r\nfn foo(x: &'a Box<Trait+'a>) { ... }\r\n```\r\n\r\nif one wanted to preserve the current typing.\r\n\r\n[1156]: https://github.com/rust-lang/rfcs/blob/master/text/1156-adjust-default-object-bounds.md"
+  },
+  {
     "hash": "6b27005f2f8b20834838828588233b877a29d509",
     "author": "Ariel Ben-Yehuda",
     "date": 1436008166,
@@ -592,11 +598,5 @@
     "author": "Aaron Turon",
     "date": 1427417233,
     "message": "Stabilize some stragglers in `std::option`\n\nMarks as `#[stable}`:\n\n* `ok_or`\n* `ok_or_else`\n* `iter_mut`\n* `cloned`\n\nSimilarly to `IteratorExt::cloned`, the `cloned` method is pared down to\nwork only on `Option<&T>`. Thus, this is a:\n\n[breaking-change]"
-  },
-  {
-    "hash": "e42521aa58be928dd62b5450c443368d29ab6a65",
-    "author": "Alex Crichton",
-    "date": 1427476061,
-    "message": "rollup merge of #23535: pnkfelix/fsk-filling-drop\n\nReplace zeroing-on-drop with filling-on-drop.\n\nThis is meant to set the stage for removing *all* zeroing and filling (on drop) in the future.\n\nNote that the code is meant to be entirely abstract with respect to the particular values used for the drop flags: the final commit demonstrates how to go from zeroing-on-drop to filling-on-drop by changing the value of three constants (in two files).\n\nSee further discussion on the internals thread:\n  http://internals.rust-lang.org/t/attention-hackers-filling-drop/1715/11\n\n[breaking-change] especially for structs / enums using `#[unsafe_no_drop_flag]`."
   }
 ]
