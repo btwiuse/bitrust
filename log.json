@@ -1,5 +1,17 @@
 [
   {
+    "hash": "18557500cb91596f3614d4cf65439f8c5f47b2e0",
+    "author": "bors",
+    "date": 1437410313,
+    "message": "Auto merge of #27026 - nagisa:overflowing-unsigned, r=pnkfelix\n\nThis commit fixes the negate_unsigned feature gate to appropriately\r\naccount for inferred variables.\r\n\r\nThis is technically a [breaking-change], but I’d consider it a bug fix.\r\n\r\ncc @brson for your relnotes.\r\n\r\nFixes https://github.com/rust-lang/rust/issues/24676\r\nFixes #26840 \r\nFixes https://github.com/rust-lang/rust/issues/25206"
+  },
+  {
+    "hash": "0c9e3dc75cf2b2d122af0596225594240ed254eb",
+    "author": "Simonas Kazlauskas",
+    "date": 1436899723,
+    "message": "Fix negate_unsigned feature gate check\n\nThis commit fixes the negate_unsigned feature gate to appropriately\naccount for infered variables.\n\nThis is technically a [breaking-change]."
+  },
+  {
     "hash": "e05ac3938bcbdd616930bb010a3bbfa35f22850e",
     "author": "bors",
     "date": 1437158150,
@@ -586,17 +598,5 @@
     "author": "Alex Crichton",
     "date": 1427401533,
     "message": "rustc: Remove support for old_impl_check\n\nThis commit removes compiler support for the `old_impl_check` attribute which\nshould in theory be entirely removed now. The last remaining use of it in the\nstandard library has been updated by moving the type parameter on the\n`old_io::Acceptor` trait into an associated type. As a result, this is a\nbreaking change for all current users of the deprecated `old_io::Acceptor`\ntrait. Code can be migrated by using the `Connection` associated type instead.\n\n[breaking-change]"
-  },
-  {
-    "hash": "45f1324037b098d6e92da7b34cc0aba274fdae97",
-    "author": "Alex Crichton",
-    "date": 1427476072,
-    "message": "rollup merge of #23771: aturon/stab-straggle-1\n\nMarks as `#[stable}`:\n\n* `ok_or`\n* `ok_or_else`\n* `iter_mut`\n* `cloned`\n\nSimilarly to `IteratorExt::cloned`, the `cloned` method is pared down to\nwork only on `Option<&T>`. Thus, this is a:\n\n[breaking-change]\n\nr? @alexcrichton"
-  },
-  {
-    "hash": "c9f600bceeb5086ea292c3872ee3094ce770f9b0",
-    "author": "Aaron Turon",
-    "date": 1427417233,
-    "message": "Stabilize some stragglers in `std::option`\n\nMarks as `#[stable}`:\n\n* `ok_or`\n* `ok_or_else`\n* `iter_mut`\n* `cloned`\n\nSimilarly to `IteratorExt::cloned`, the `cloned` method is pared down to\nwork only on `Option<&T>`. Thus, this is a:\n\n[breaking-change]"
   }
 ]
