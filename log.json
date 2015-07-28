@@ -1,5 +1,11 @@
 [
   {
+    "hash": "661a5ad38e79f336976b529aa717871d177ab7ed",
+    "author": "bors",
+    "date": 1438096500,
+    "message": "Auto merge of #26173 - pnkfelix:fsk-trans-nzmove-take3, r=nikomatsakis\n\nAdd dropflag hints (stack-local booleans) for unfragmented paths in trans.  Part of #5016.\r\n\r\nAdded code to maintain these hints at runtime, and to conditionalize drop-filling and calls to destructors.\r\n\r\nIn this early stage of my incremental implementation strategy, we are using hints, so we are always free to leave out a flag for a path -- then we just pass `None` as the dropflag hint in the corresponding schedule cleanup call. But, once a path has a hint, we must at least maintain it: i.e. if the hint exists, we must ensure it is never set to \"moved\" if the data in question might actually have been initialized. It remains sound to conservatively set the hint to \"initialized\" as long as the true drop-flag embedded in the value itself is up-to-date.\r\n\r\nI hope the commit series has been broken up to be readable; most of the commits in the series should build (though I did not always check this).\r\n\r\n----\r\n\r\nOh, I think this technically qualifies as a:\r\n[breaking-change]\r\nbecause it removes drop-filling in some cases where one could previously observe it. That should only affect `unsafe` code; no safe code should be able to inspect whether the drop-fill was present or not. For an example of code that needed to change to account for this, see commit a81c24ae0216ab47df59acd724f8a33124fb6d97 (a unit test of the `move_val_init` intrinsic).  I have not encountered actual code that needed to be updated to account for the change, since this should only be skipping the drop-filling on *moved* values, not on dropped one, and so even types that use `unsafe_no_drop_flag` should be unchanged by this particular PR. (Their time will come later.)"
+  },
+  {
     "hash": "18557500cb91596f3614d4cf65439f8c5f47b2e0",
     "author": "bors",
     "date": 1437410313,
@@ -592,11 +598,5 @@
     "author": "Brian Anderson",
     "date": 1427485849,
     "message": "Feature gate *all* slice patterns. #23121\n\nUntil some backwards-compatibility hazards are fixed in #23121,\nthese need to be unstable.\n\n[breaking-change]"
-  },
-  {
-    "hash": "9754b06cd80cfcc523573535090519bec935fec3",
-    "author": "Alex Crichton",
-    "date": 1427401533,
-    "message": "rustc: Remove support for old_impl_check\n\nThis commit removes compiler support for the `old_impl_check` attribute which\nshould in theory be entirely removed now. The last remaining use of it in the\nstandard library has been updated by moving the type parameter on the\n`old_io::Acceptor` trait into an associated type. As a result, this is a\nbreaking change for all current users of the deprecated `old_io::Acceptor`\ntrait. Code can be migrated by using the `Connection` associated type instead.\n\n[breaking-change]"
   }
 ]
