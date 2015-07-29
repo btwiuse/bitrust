@@ -1,5 +1,23 @@
 [
   {
+    "hash": "d576ef3d7be3efe28f902bbb3b2197f4553db412",
+    "author": "bors",
+    "date": 1438152475,
+    "message": "Auto merge of #27261 - arielb1:drop-sanity-check, r=pnkfelix\n\nThis fixes multiple bugs, and as several of these are soundness issue, is a [breaking-change].\r\n\r\nr? @pnkfelix"
+  },
+  {
+    "hash": "bfbc7bc45d66ba7be8ab2ba60316cb1e303f4544",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1437770777,
+    "message": "handle all type variants correctly in dropck\n\nThis fixes a few soundness bugs in dropck, so to anyone who relied on them,\nthis is a\n[breaking-change]\n\nFixes #24086.\nFixes #25389.\nFixes #25598.\nFixes #25750.\nFixes #26641.\nFixes #26657.\nFixes #27240.\nFixes #27241."
+  },
+  {
+    "hash": "55ede7ed8e4f3752c371f7d04da4695ba9aa1c26",
+    "author": "bors",
+    "date": 1438118068,
+    "message": "Auto merge of #27234 - oli-obk:move_get_name_get_ident_to_impl, r=eddyb\n\nthis has quite some fallout. but also made lots of stuff more readable imo\r\n\r\n[breaking-change] for plugin authors"
+  },
+  {
     "hash": "661a5ad38e79f336976b529aa717871d177ab7ed",
     "author": "bors",
     "date": 1438096500,
@@ -580,23 +598,5 @@
     "author": "bors",
     "date": 1427533790,
     "message": "Auto merge of #23799 - reem:error-no-send, r=aturon\n\nThe Send bound is an unnecessary restriction, and though provided as a convenience, can't be removed by downstream code.\r\n\r\nThe removal of this bound is a [breaking-change] since it removes an implicit Send bound on all `E: Error` and all `Error` trait objects.\r\n\r\nTo migrate, consider if your code actually requires the Send bound and, if so, add it explicitly.\r\n\r\nFixes #23774\r\n\r\nr? @aturon"
-  },
-  {
-    "hash": "3feeea59dbfe397cccc6760b68f7bfb8291540b7",
-    "author": "Jonathan Reem",
-    "date": 1427499316,
-    "message": "Make `std::error::Error` not inherit from Send\n\nThe Send bound is an unnecessary restriction, and though provided as a\nconvenience, can't be removed by downstream code.\n\nThe removal of this bound is a [breaking-change] since it\nremoves an implicit Send bound on all `E: Error` and all\n`Error` trait objects.\n\nTo migrate, consider if your code actually requires the Send\nbound and, if so, add it explicitly.\n\nFixes #23774"
-  },
-  {
-    "hash": "b24a3b82011c3b78573ace4ade3f99d7c4701a11",
-    "author": "Alex Crichton",
-    "date": 1427476799,
-    "message": "rustc: Remove support for hyphens in crate names\n\nThis commit removes parser support for `extern crate \"foo\" as bar` as the\nrenamed crate is now required to be an identifier. Additionally this commit\nenables hard errors on crate names that contain hyphens in them, they must now\nsolely contain alphanumeric characters or underscores.\n\nIf the crate name is inferred from the file name, however, the file name\n`foo-bar.rs` will have the crate name inferred as `foo_bar`. If a binary is\nbeing emitted it will have the name `foo-bar` and a library will have the name\n`libfoo_bar.rlib`.\n\nThis commit is a breaking change for a number of reasons:\n\n* Old syntax is being removed. This was previously only issuing warnings.\n* The output for the compiler when input is received on stdin is now `rust_out`\n  instead of `rust-out`.\n* The crate name for a crate in the file `foo-bar.rs` is now `foo_bar` which can\n  affect infrastructure such as logging.\n\n[breaking-change]"
-  },
-  {
-    "hash": "1639e51f6e4d036478705f4581de3a7417ccec0f",
-    "author": "Brian Anderson",
-    "date": 1427485849,
-    "message": "Feature gate *all* slice patterns. #23121\n\nUntil some backwards-compatibility hazards are fixed in #23121,\nthese need to be unstable.\n\n[breaking-change]"
   }
 ]
