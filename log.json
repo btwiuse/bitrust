@@ -1,5 +1,11 @@
 [
   {
+    "hash": "757b0c176fa185fda59283efaf0d8079b702ca69",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1438102268,
+    "message": "prohibit the lhs of an @-pattern being a constant\n\nas this breaks code that worked under some conditions, this is a\n[breaking-change]\n\nFixes #27033\nFixes #27077"
+  },
+  {
     "hash": "d576ef3d7be3efe28f902bbb3b2197f4553db412",
     "author": "bors",
     "date": 1438152475,
@@ -592,11 +598,5 @@
     "author": "Steven Fackler",
     "date": 1427576025,
     "message": "Remove IteratorExt\n\nAll methods are inlined into Iterator with `Self: Sized` bounds to make\nsure Iterator is still object safe.\n\n[breaking-change]"
-  },
-  {
-    "hash": "f8b6e28e758231f611e8e7923aa607cebd150717",
-    "author": "bors",
-    "date": 1427533790,
-    "message": "Auto merge of #23799 - reem:error-no-send, r=aturon\n\nThe Send bound is an unnecessary restriction, and though provided as a convenience, can't be removed by downstream code.\r\n\r\nThe removal of this bound is a [breaking-change] since it removes an implicit Send bound on all `E: Error` and all `Error` trait objects.\r\n\r\nTo migrate, consider if your code actually requires the Send bound and, if so, add it explicitly.\r\n\r\nFixes #23774\r\n\r\nr? @aturon"
   }
 ]
