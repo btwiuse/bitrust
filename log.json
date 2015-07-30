@@ -1,5 +1,17 @@
 [
   {
+    "hash": "87055a68c3194db212456f99ece080728a5fc2f8",
+    "author": "bors",
+    "date": 1438251923,
+    "message": "Auto merge of #27371 - Gankro:str-clone, r=alexcrichton\n\nThis is a minor [breaking-change], as it changes what\r\n`boxed_str.to_owned()` does (previously it would deref to `&str` and\r\ncall `to_owned` on that to get a `String`). However `Box<str>` is such an\r\nexceptionally rare type that this is not expected to be a serious\r\nconcern. Also a `Box<str>` can be freely converted to a `String` to\r\nobtain the previous result anyway."
+  },
+  {
+    "hash": "3e954a8cb2fd094d79713059d83d37b2daa7b396",
+    "author": "Alexis Beingessner",
+    "date": 1438220581,
+    "message": "implement Clone for Box<str>, closes #27323\n\nThis is a minor [breaking-change], as it changes what\n`boxed_str.to_owned()` does (previously it would deref to `&str` and\ncall `to_owned` on that to get a `String`). However `Box<str>` is such an\nexceptionally rare type that this is not expected to be a serious\nconcern. Also a `Box<str>` can be freely converted to a `String` to\nobtain the previous behaviour anyway."
+  },
+  {
     "hash": "757b0c176fa185fda59283efaf0d8079b702ca69",
     "author": "Ariel Ben-Yehuda",
     "date": 1438102268,
@@ -586,17 +598,5 @@
     "author": "Steven Fackler",
     "date": 1427564031,
     "message": "Update debug helpers and add list builder\n\nThe collections debug helpers no longer prefix output with the\ncollection name, in line with the current conventions for Debug\nimplementations. Implementations that want to preserve the current\nbehavior can simply add a `try!(write!(fmt, \"TypeName \"));` at the\nbeginning of the `fmt` method.\n\n[breaking-change]"
-  },
-  {
-    "hash": "c89de2c56baeb61e7cc434924dcc8bedd32b26b8",
-    "author": "bors",
-    "date": 1427580709,
-    "message": "Auto merge of #23300 - sfackler:rm-iterator-ext, r=alexcrichton\n\nAll methods are inlined into Iterator with `Self: Sized` bounds to make\r\nsure Iterator is still object safe.\r\n\r\n[breaking-change]\r\n\r\nThis is blocked on ICEs: https://gist.github.com/sfackler/5aff7c57cf8d896e2c6f\r\nSeem to be similar to #23281."
-  },
-  {
-    "hash": "d502f4221fd5472c4a7905cdc3c59533e9612822",
-    "author": "Steven Fackler",
-    "date": 1427576025,
-    "message": "Remove IteratorExt\n\nAll methods are inlined into Iterator with `Self: Sized` bounds to make\nsure Iterator is still object safe.\n\n[breaking-change]"
   }
 ]
