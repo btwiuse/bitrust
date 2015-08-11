@@ -1,5 +1,17 @@
 [
   {
+    "hash": "50141d7e1e5b1b539d45240dff709fa68e7472c2",
+    "author": "bors",
+    "date": 1439264836,
+    "message": "Auto merge of #26818 - sfackler:duration-stabilization, r=aturon\n\nThis commit stabilizes the `std::time` module and the `Duration` type.\r\n`Duration::span` remains unstable, and the `Display` implementation for\r\n`Duration` has been removed as it is still being reworked and all trait\r\nimplementations for stable types are de facto stable.\r\n\r\nThis is a [breaking-change] to those using `Duration`'s `Display`\r\nimplementation.\r\n\r\nI'm opening this PR as a platform for discussion - there may be some method renaming to do as part of the stabilization process."
+  },
+  {
+    "hash": "999bdeca88a06938ac1e1c608091d3afe4d7e173",
+    "author": "Steven Fackler",
+    "date": 1439251458,
+    "message": "Stabilize the Duration API\n\nThis commit stabilizes the `std::time` module and the `Duration` type.\n`Duration::span` remains unstable, and the `Display` implementation for\n`Duration` has been removed as it is still being reworked and all trait\nimplementations for stable types are de facto stable.\n\nThis is a [breaking-change] to those using `Duration`'s `Display`\nimplementation."
+  },
+  {
     "hash": "87055a68c3194db212456f99ece080728a5fc2f8",
     "author": "bors",
     "date": 1438251923,
@@ -586,17 +598,5 @@
     "author": "Corey Richardson",
     "date": 1427624151,
     "message": "mk: don't build docs for internal or behind-the-facade crates in beta/stable\n\nThis saves a bunch of a time and will make distributions smaller, as well as\navoiding filling the implementors page with internal garbage. Turn it back on\nwith `--enable-compiler-docs` if you want compiler docs during development.\n\nCrates behind the facade are only documented on nightly/dev builds (where they\ncan be used).\n\n[breaking-change]\n\nCloses #23772\nCloses #21297"
-  },
-  {
-    "hash": "227b46bdede794d5c8476b810bb1c30926bd9c04",
-    "author": "bors",
-    "date": 1427606489,
-    "message": "Auto merge of #23810 - sfackler:debug-collections, r=alexcrichton\n\nThe collections debug helpers no longer prefix output with the\r\ncollection name, in line with the current conventions for Debug\r\nimplementations. Implementations that want to preserve the current\r\nbehavior can simply add a `try!(write!(fmt, \"TypeName \"));` at the\r\nbeginning of the `fmt` method.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "4037f2a368edd75c561bc6f3d8c6f0d644bc4180",
-    "author": "Steven Fackler",
-    "date": 1427564031,
-    "message": "Update debug helpers and add list builder\n\nThe collections debug helpers no longer prefix output with the\ncollection name, in line with the current conventions for Debug\nimplementations. Implementations that want to preserve the current\nbehavior can simply add a `try!(write!(fmt, \"TypeName \"));` at the\nbeginning of the `fmt` method.\n\n[breaking-change]"
   }
 ]
