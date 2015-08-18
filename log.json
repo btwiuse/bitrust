@@ -1,5 +1,11 @@
 [
   {
+    "hash": "c66554cab3518a9f5c36eafd622ca4c8a3fda631",
+    "author": "Huon Wilson",
+    "date": 1439847697,
+    "message": "switch core::simd to repr(simd) and deprecate it.\n\nThis functionality will be available out of tree in the `simd` crate on\ncrates.io.\n\n[breaking-change]"
+  },
+  {
     "hash": "bb954cfa75ec63b2cf28229ecc4aee7024381d0b",
     "author": "bors",
     "date": 1439472578,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1427749720,
     "message": "std: Standardize (input, output) param orderings\n\nThis functions swaps the order of arguments to a few functions that previously\ntook (output, input) parameters, but now take (input, output) parameters (in\nthat order).\n\nThe affected functions are:\n\n* ptr::copy\n* ptr::copy_nonoverlapping\n* slice::bytes::copy_memory\n* intrinsics::copy\n* intrinsics::copy_nonoverlapping\n\nCloses #22890\n[breaking-change]"
-  },
-  {
-    "hash": "c92bdcb232da3973a8a548e6b2044b610e286210",
-    "author": "Niko Matsakis",
-    "date": 1427706140,
-    "message": "Fallout where types must be specified.\n\nThis is due to a [breaking-change] to operators. The primary affected\ncode is uses of the `Rng` trait where we used to (incorrectly) infer the\nright-hand-side type from the left-hand-side, in the case that the LHS\ntype was a scalar like `i32`. The fix is to add a type annotation like\n`x + rng.gen::<i32>()`."
   }
 ]
