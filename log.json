@@ -1,5 +1,17 @@
 [
   {
+    "hash": "983d2b3d1a97846c90ea8f689774be8353b340be",
+    "author": "bors",
+    "date": 1440225053,
+    "message": "Auto merge of #27826 - sfackler:wait-timeout-enum, r=alexcrichton\n\nReturning a primitive bool results in a somewhat confusing API - does\r\n`true` indicate success - i.e. no timeout, or that a timeout has\r\noccurred? An explicitly named enum makes it clearer.\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton"
+  },
+  {
+    "hash": "42a386fcf89a40e6c3a8806ccf381514c2a77c10",
+    "author": "Steven Fackler",
+    "date": 1440028815,
+    "message": "Make Condvar::wait_timeout return an enum instead of a bool\n\nReturning a primitive bool results in a somewhat confusing API - does\n`true` indicate success - i.e. no timeout, or that a timeout has\noccurred? An explicitly named enum makes it clearer.\n\n[breaking-change]"
+  },
+  {
     "hash": "c66554cab3518a9f5c36eafd622ca4c8a3fda631",
     "author": "Huon Wilson",
     "date": 1439847697,
@@ -586,17 +598,5 @@
     "author": "Aaron Turon",
     "date": 1427813425,
     "message": "Stabilize std::num\n\nThis commit stabilizes the `std::num` module:\n\n* The `Int` and `Float` traits are deprecated in favor of (1) the\n  newly-added inherent methods and (2) the generic traits available in\n  rust-lang/num.\n\n* The `Zero` and `One` traits are reintroduced in `std::num`, which\n  together with various other traits allow you to recover the most\n  common forms of generic programming.\n\n* The `FromStrRadix` trait, and associated free function, is deprecated\n  in favor of inherent implementations.\n\n* A wide range of methods and constants for both integers and floating\n  point numbers are now `#[stable]`, having been adjusted for integer\n  guidelines.\n\n* `is_positive` and `is_negative` are renamed to `is_sign_positive` and\n  `is_sign_negative`, in order to address #22985\n\n* The `Wrapping` type is moved to `std::num` and stabilized;\n  `WrappingOps` is deprecated in favor of inherent methods on the\n  integer types, and direct implementation of operations on\n  `Wrapping<X>` for each concrete integer type `X`.\n\nCloses #22985\nCloses #21069\n\n[breaking-change]"
-  },
-  {
-    "hash": "57938041c18ee1c1bef362e60f24f5b2d3a46213",
-    "author": "Manish Goregaokar",
-    "date": 1427772878,
-    "message": "Rollup merge of #23866 - alexcrichton:switch-some-orders, r=aturon\n\nThis functions swaps the order of arguments to a few functions that previously\r\ntook (output, input) parameters, but now take (input, output) parameters (in\r\nthat order).\r\n\r\nThe affected functions are:\r\n\r\n* ptr::copy\r\n* ptr::copy_nonoverlapping\r\n* slice::bytes::copy_memory\r\n* intrinsics::copy\r\n* intrinsics::copy_nonoverlapping\r\n\r\nCloses #22890\r\n[breaking-change]"
-  },
-  {
-    "hash": "acd48a2b3e7fcc0372f7718a2fac1cf80e03db95",
-    "author": "Alex Crichton",
-    "date": 1427749720,
-    "message": "std: Standardize (input, output) param orderings\n\nThis functions swaps the order of arguments to a few functions that previously\ntook (output, input) parameters, but now take (input, output) parameters (in\nthat order).\n\nThe affected functions are:\n\n* ptr::copy\n* ptr::copy_nonoverlapping\n* slice::bytes::copy_memory\n* intrinsics::copy\n* intrinsics::copy_nonoverlapping\n\nCloses #22890\n[breaking-change]"
   }
 ]
