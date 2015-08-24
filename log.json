@@ -1,5 +1,11 @@
 [
   {
+    "hash": "db67cbe43dfce043c664c53d709b91252d5afc9e",
+    "author": "bors",
+    "date": 1440410628,
+    "message": "Auto merge of #27856 - nikomatsakis:move-def-id-to-rustc, r=eddyb\n\nIt doesn't really make sense for DefId to be in libsyntax -- it is concerned with a single crate only. It is the compiler that understands the idea of many crates. (At some point, there might be a useful intermediate point here.) This is a refactoring in support of incr. compilation, which will be adjusting the notion of a DefId to make it more durable across compilations.\r\n\r\nThis will probably be a [breaking-change] for every plugin ever. You need to adjust things as follows:\r\n\r\n    use rustc::middle::def_id::{DefId, LOCAL_CRATE}; // two most common definitions\r\n    ast_util::is_local(def_id) => def_id.is_local()\r\n    ast_util::local_def(node_id) => DefId::local(node_id)"
+  },
+  {
     "hash": "983d2b3d1a97846c90ea8f689774be8353b340be",
     "author": "bors",
     "date": 1440225053,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1427822126,
     "message": "rollup merge of #23549: aturon/stab-num\n\nThis commit stabilizes the `std::num` module:\n\n* The `Int` and `Float` traits are deprecated in favor of (1) the\n  newly-added inherent methods and (2) the generic traits available in\n  rust-lang/num.\n\n* The `Zero` and `One` traits are reintroduced in `std::num`, which\n  together with various other traits allow you to recover the most\n  common forms of generic programming.\n\n* The `FromStrRadix` trait, and associated free function, is deprecated\n  in favor of inherent implementations.\n\n* A wide range of methods and constants for both integers and floating\n  point numbers are now `#[stable]`, having been adjusted for integer\n  guidelines.\n\n* `is_positive` and `is_negative` are renamed to `is_sign_positive` and\n  `is_sign_negative`, in order to address #22985\n\n* The `Wrapping` type is moved to `std::num` and stabilized;\n  `WrappingOps` is deprecated in favor of inherent methods on the\n  integer types, and direct implementation of operations on\n  `Wrapping<X>` for each concrete integer type `X`.\n\nCloses #22985\nCloses #21069\n\n[breaking-change]\n\nr? @alexcrichton"
-  },
-  {
-    "hash": "232424d9952700682373ccf2d578109f401ff023",
-    "author": "Aaron Turon",
-    "date": 1427813425,
-    "message": "Stabilize std::num\n\nThis commit stabilizes the `std::num` module:\n\n* The `Int` and `Float` traits are deprecated in favor of (1) the\n  newly-added inherent methods and (2) the generic traits available in\n  rust-lang/num.\n\n* The `Zero` and `One` traits are reintroduced in `std::num`, which\n  together with various other traits allow you to recover the most\n  common forms of generic programming.\n\n* The `FromStrRadix` trait, and associated free function, is deprecated\n  in favor of inherent implementations.\n\n* A wide range of methods and constants for both integers and floating\n  point numbers are now `#[stable]`, having been adjusted for integer\n  guidelines.\n\n* `is_positive` and `is_negative` are renamed to `is_sign_positive` and\n  `is_sign_negative`, in order to address #22985\n\n* The `Wrapping` type is moved to `std::num` and stabilized;\n  `WrappingOps` is deprecated in favor of inherent methods on the\n  integer types, and direct implementation of operations on\n  `Wrapping<X>` for each concrete integer type `X`.\n\nCloses #22985\nCloses #21069\n\n[breaking-change]"
   }
 ]
