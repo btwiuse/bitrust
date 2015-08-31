@@ -1,5 +1,11 @@
 [
   {
+    "hash": "1f81ef4d0f2547cacc316b01ad03603ad772e38e",
+    "author": "Tobias Bucher",
+    "date": 1440923045,
+    "message": "Atomically set CLOEXEC on duplicated sockets\n\nFor Bitrig, NetBSD and OpenBSD the constant was incorrectly in posix01, when\nit's actually posix08, so we move it. This is a [breaking-change], but we\nalready had one in #27930.\n\nFix NetBSD's F_DUPFD_CLOEXEC constant.\n\nFor a similar feature detection, see this musl thread:\nhttp://comments.gmane.org/gmane.linux.lib.musl.general/2963\n\nThis assumes that an int literal has type `c_int` for varidic functions."
+  },
+  {
     "hash": "db67cbe43dfce043c664c53d709b91252d5afc9e",
     "author": "bors",
     "date": 1440410628,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1427413236,
     "message": "std: Stabilize parts of std::os::platform::io\n\nThis commit stabilizes the platform-specific `io` modules, specifically around\nthe traits having to do with the raw representation of each object on each\nplatform.\n\nSpecifically, the following material was stabilized:\n\n* `AsRaw{Fd,Socket,Handle}`\n* `RawFd` (renamed from `Fd`)\n* `RawHandle` (renamed from `Handle`)\n* `RawSocket` (renamed from `Socket`)\n* `AsRaw{Fd,Socket,Handle}` implementations\n* `std::os::{unix, windows}::io`\n\nThe following material was added as `#[unstable]`:\n\n* `FromRaw{Fd,Socket,Handle}`\n* Implementations for various primitives\n\nThere are a number of future improvements that are possible to make to this\nmodule, but this should cover a good bit of functionality desired from these\nmodules for now. Some specific future additions may include:\n\n* `IntoRawXXX` traits to consume the raw representation and cancel the\n  auto-destructor.\n* `Fd`, `Socket`, and `Handle` abstractions that behave like Rust objects and\n  have nice methods for various syscalls.\n\nAt this time though, these are considered backwards-compatible extensions and\nwill not be stabilized at this time.\n\nThis commit is a breaking change due to the addition of `Raw` in from of the\ntype aliases in each of the platform-specific modules.\n\n[breaking-change]"
-  },
-  {
-    "hash": "5d0beb7d85e8e711334c7fb6f2c5da270e5200cb",
-    "author": "Alex Crichton",
-    "date": 1427822126,
-    "message": "rollup merge of #23549: aturon/stab-num\n\nThis commit stabilizes the `std::num` module:\n\n* The `Int` and `Float` traits are deprecated in favor of (1) the\n  newly-added inherent methods and (2) the generic traits available in\n  rust-lang/num.\n\n* The `Zero` and `One` traits are reintroduced in `std::num`, which\n  together with various other traits allow you to recover the most\n  common forms of generic programming.\n\n* The `FromStrRadix` trait, and associated free function, is deprecated\n  in favor of inherent implementations.\n\n* A wide range of methods and constants for both integers and floating\n  point numbers are now `#[stable]`, having been adjusted for integer\n  guidelines.\n\n* `is_positive` and `is_negative` are renamed to `is_sign_positive` and\n  `is_sign_negative`, in order to address #22985\n\n* The `Wrapping` type is moved to `std::num` and stabilized;\n  `WrappingOps` is deprecated in favor of inherent methods on the\n  integer types, and direct implementation of operations on\n  `Wrapping<X>` for each concrete integer type `X`.\n\nCloses #22985\nCloses #21069\n\n[breaking-change]\n\nr? @alexcrichton"
   }
 ]
