@@ -1,5 +1,17 @@
 [
   {
+    "hash": "ae75ef9e62b7df8c46865cfb907c56cab1f29f81",
+    "author": "bors",
+    "date": 1441098772,
+    "message": "Auto merge of #28137 - nrc:remove-non-multi, r=huonw\n\nThis is a [breaking-change] for syntax extension authors. The fix is to use MultiModifier or MultiDecorator, which have the same functionality but are more flexible. Users of syntax extensions are unaffected."
+  },
+  {
+    "hash": "20e1ea2dd84d5b29414059a4e07ce7327d1bef19",
+    "author": "Nick Cameron",
+    "date": 1441070163,
+    "message": "Remove the Modifier and Decorator kinds of syntax extensions.\n\nThis is a [breaking-change] for syntax extension authors. The fix is to use MultiModifier or MultiDecorator, which have the same functionality but are more flexible. Users of syntax extensions are unaffected."
+  },
+  {
     "hash": "1f81ef4d0f2547cacc316b01ad03603ad772e38e",
     "author": "Tobias Bucher",
     "date": 1440923045,
@@ -586,17 +598,5 @@
     "author": "Alex Crichton",
     "date": 1427759051,
     "message": "std: Stabilize the rest of Any/BoxAny\n\nThis commit stabilizes the following APIs:\n\n* `TypeId::of` - now that it has an `Any` bound it's ready to be stable.\n* `Box<Any>::downcast` - now that an inherent impl on `Box<Any>` as well as\n  `Box<Any+Send>` is allowed the `BoxAny` trait is removed in favor of these\n  inherent methods.\n\nThis is a breaking change due to the removal of the `BoxAny` trait, but\nconsumers can simply remove imports to fix crates.\n\n[breaking-change]"
-  },
-  {
-    "hash": "890f0ab10a81720606805db36628f61f29d0e816",
-    "author": "Alex Crichton",
-    "date": 1427842150,
-    "message": "rollup merge of #23766: alexcrichton/stabilize-raw-fd\n\nThis commit stabilizes the platform-specific `io` modules, specifically around\nthe traits having to do with the raw representation of each object on each\nplatform.\n\nSpecifically, the following material was stabilized:\n\n* `AsRaw{Fd,Socket,Handle}`\n* `RawFd` (renamed from `Fd`)\n* `RawHandle` (renamed from `Handle`)\n* `RawSocket` (renamed from `Socket`)\n* `AsRaw{Fd,Socket,Handle}` implementations\n* `std::os::{unix, windows}::io`\n\nThe following material was added as `#[unstable]`:\n\n* `FromRaw{Fd,Socket,Handle}`\n* Implementations for various primitives\n\nThere are a number of future improvements that are possible to make to this\nmodule, but this should cover a good bit of functionality desired from these\nmodules for now. Some specific future additions may include:\n\n* `IntoRawXXX` traits to consume the raw representation and cancel the\n  auto-destructor.\n* `Fd`, `Socket`, and `Handle` abstractions that behave like Rust objects and\n  have nice methods for various syscalls.\n\nAt this time though, these are considered backwards-compatible extensions and\nwill not be stabilized at this time.\n\nThis commit is a breaking change due to the addition of `Raw` in from of the\ntype aliases in each of the platform-specific modules.\n\n[breaking-change]"
-  },
-  {
-    "hash": "6370f2978e485fd46bcb64f51a1c003395acfedc",
-    "author": "Alex Crichton",
-    "date": 1427413236,
-    "message": "std: Stabilize parts of std::os::platform::io\n\nThis commit stabilizes the platform-specific `io` modules, specifically around\nthe traits having to do with the raw representation of each object on each\nplatform.\n\nSpecifically, the following material was stabilized:\n\n* `AsRaw{Fd,Socket,Handle}`\n* `RawFd` (renamed from `Fd`)\n* `RawHandle` (renamed from `Handle`)\n* `RawSocket` (renamed from `Socket`)\n* `AsRaw{Fd,Socket,Handle}` implementations\n* `std::os::{unix, windows}::io`\n\nThe following material was added as `#[unstable]`:\n\n* `FromRaw{Fd,Socket,Handle}`\n* Implementations for various primitives\n\nThere are a number of future improvements that are possible to make to this\nmodule, but this should cover a good bit of functionality desired from these\nmodules for now. Some specific future additions may include:\n\n* `IntoRawXXX` traits to consume the raw representation and cancel the\n  auto-destructor.\n* `Fd`, `Socket`, and `Handle` abstractions that behave like Rust objects and\n  have nice methods for various syscalls.\n\nAt this time though, these are considered backwards-compatible extensions and\nwill not be stabilized at this time.\n\nThis commit is a breaking change due to the addition of `Raw` in from of the\ntype aliases in each of the platform-specific modules.\n\n[breaking-change]"
   }
 ]
