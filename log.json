@@ -1,5 +1,17 @@
 [
   {
+    "hash": "4d6dc7f9ba9fe61e38d737b29bfe490e835f6921",
+    "author": "bors",
+    "date": 1442213478,
+    "message": "Auto merge of #28396 - arielb1:misplaced-binding, r=eddyb\n\nTechnically a [breaking-change], but the broken code is useless,\r\nlike `i32<Param=()>`.\r\n\r\nFixes #24682\r\n\r\nr? @eddyb"
+  },
+  {
+    "hash": "5d4455510afe3b7f74e04d3125ef8536a63d9e60",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1442177261,
+    "message": "ensure projections are prohibited when type parameters are\n\nTechnically a [breaking-change], but the broken code is useless,\nlike `i32<Param=()>`.\n\nFixes #24682"
+  },
+  {
     "hash": "ae75ef9e62b7df8c46865cfb907c56cab1f29f81",
     "author": "bors",
     "date": 1441098772,
@@ -586,17 +598,5 @@
     "author": "Huon Wilson",
     "date": 1427764602,
     "message": "Lex binary and octal literals more eagerly.\n\nPreviously 0b12 was considered two tokens, 0b1 and 2, as 2 isn't a valid\nbase 2 digit. This patch changes that to collapse them into one (and\nmakes `0b12` etc. an error: 2 isn't a valid base 2 digit).\n\nThis may break some macro invocations of macros with `tt` (or syntax\nextensions) that rely on adjacent digits being separate tokens and hence\nis a\n\n[breaking-change]\n\nThe fix is to separate the tokens, e.g. `0b12` -> `0b1 2`.\n\ncc https://github.com/rust-lang/rfcs/pull/879"
-  },
-  {
-    "hash": "d03120afd36f9e3f4c1305e9e5ca0d24a3b4a32f",
-    "author": "Alex Crichton",
-    "date": 1427842151,
-    "message": "rollup merge of #23876: alexcrichton/stabilize-any\n\nThis commit stabilizes the following APIs:\n\n* `TypeId::of` - now that it has an `Any` bound it's ready to be stable.\n* `Box<Any>::downcast` - now that an inherent impl on `Box<Any>` as well as\n  `Box<Any+Send>` is allowed the `BoxAny` trait is removed in favor of these\n  inherent methods.\n\nThis is a breaking change due to the removal of the `BoxAny` trait, but\nconsumers can simply remove imports to fix crates.\n\n[breaking-change]"
-  },
-  {
-    "hash": "f19e763e0824a73118ed715f526cb7bdd584d4c4",
-    "author": "Alex Crichton",
-    "date": 1427759051,
-    "message": "std: Stabilize the rest of Any/BoxAny\n\nThis commit stabilizes the following APIs:\n\n* `TypeId::of` - now that it has an `Any` bound it's ready to be stable.\n* `Box<Any>::downcast` - now that an inherent impl on `Box<Any>` as well as\n  `Box<Any+Send>` is allowed the `BoxAny` trait is removed in favor of these\n  inherent methods.\n\nThis is a breaking change due to the removal of the `BoxAny` trait, but\nconsumers can simply remove imports to fix crates.\n\n[breaking-change]"
   }
 ]
