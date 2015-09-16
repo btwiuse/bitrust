@@ -1,5 +1,17 @@
 [
   {
+    "hash": "fc4d566b432d48933e27dd65a973c936b564d6e9",
+    "author": "bors",
+    "date": 1442363724,
+    "message": "Auto merge of #28399 - nrc:attrs, r=nikomatsakis\n\nThis could be a [breaking-change] if your lint or syntax extension (is that even possible?) uses HIR attributes or literals."
+  },
+  {
+    "hash": "e9f1b063295c48c97e239ce479b08f192a3eece4",
+    "author": "Nick Cameron",
+    "date": 1442357826,
+    "message": "Use ast attributes every where (remove HIR attributes).\n\nThis could be a [breaking-change] if your lint or syntax extension (is that even possible?) uses HIR attributes or literals."
+  },
+  {
     "hash": "4d6dc7f9ba9fe61e38d737b29bfe490e835f6921",
     "author": "bors",
     "date": 1442213478,
@@ -586,17 +598,5 @@
     "author": "Alex Crichton",
     "date": 1427842406,
     "message": "rollup merge of #23875: aturon/revise-convert-2\n\n* Marks `#[stable]` the contents of the `std::convert` module.\n\n* Added methods `PathBuf::as_path`, `OsString::as_os_str`,\n  `String::as_str`, `Vec::{as_slice, as_mut_slice}`.\n\n* Deprecates `OsStr::from_str` in favor of a new, stable, and more\n  general `OsStr::new`.\n\n* Adds unstable methods `OsString::from_bytes` and `OsStr::{to_bytes,\n  to_cstring}` for ergonomic FFI usage.\n\n[breaking-change]\n\nr? @alexcrichton"
-  },
-  {
-    "hash": "9fc51efe3344a32d9e522f08383f052277b6ab63",
-    "author": "Aaron Turon",
-    "date": 1427826278,
-    "message": "Stabilize `std::convert` and related code\n\n* Marks `#[stable]` the contents of the `std::convert` module.\n\n* Added methods `PathBuf::as_path`, `OsString::as_os_str`,\n  `String::as_str`, `Vec::{as_slice, as_mut_slice}`.\n\n* Deprecates `OsStr::from_str` in favor of a new, stable, and more\n  general `OsStr::new`.\n\n* Adds unstable methods `OsString::from_bytes` and `OsStr::{to_bytes,\n  to_cstring}` for ergonomic FFI usage.\n\n[breaking-change]"
-  },
-  {
-    "hash": "606f50c46dd9a3852d36456d2015e1ccf832642e",
-    "author": "Huon Wilson",
-    "date": 1427764602,
-    "message": "Lex binary and octal literals more eagerly.\n\nPreviously 0b12 was considered two tokens, 0b1 and 2, as 2 isn't a valid\nbase 2 digit. This patch changes that to collapse them into one (and\nmakes `0b12` etc. an error: 2 isn't a valid base 2 digit).\n\nThis may break some macro invocations of macros with `tt` (or syntax\nextensions) that rely on adjacent digits being separate tokens and hence\nis a\n\n[breaking-change]\n\nThe fix is to separate the tokens, e.g. `0b12` -> `0b1 2`.\n\ncc https://github.com/rust-lang/rfcs/pull/879"
   }
 ]
