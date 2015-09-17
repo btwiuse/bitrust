@@ -1,5 +1,17 @@
 [
   {
+    "hash": "a642d853aa29f8ec8486e736be551cf77f34e219",
+    "author": "Nick Cameron",
+    "date": 1442449006,
+    "message": "Change to a multi-trait approach\n\n[breaking-change] for lint authors\n\nYou must now implement LateLintPass or EarlyLintPass as well as LintPass and use either register_late_lint_pass or register_early_lint_pass, rather than register_lint_pass."
+  },
+  {
+    "hash": "76856e19ff3c7c699931d0acee8e61bc0dfec512",
+    "author": "Nick Cameron",
+    "date": 1442449006,
+    "message": "Add an early lint pass for lints that operate on the AST\n\nThere is a minor [breaking-change] for lint authors - some functions which were previously defined on `lint::Context` have moved to a trait - `LintContext`, you may need to import that trait to avoid name resolution errors."
+  },
+  {
     "hash": "fc4d566b432d48933e27dd65a973c936b564d6e9",
     "author": "bors",
     "date": 1442363724,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1427813446,
     "message": "Auto merge of #23549 - aturon:stab-num, r=alexcrichton\n\nThis commit stabilizes the `std::num` module:\r\n\r\n* The `Int` and `Float` traits are deprecated in favor of (1) the\r\n  newly-added inherent methods and (2) the generic traits available in\r\n  rust-lang/num.\r\n\r\n* The `Zero` and `One` traits are reintroduced in `std::num`, which\r\n  together with various other traits allow you to recover the most\r\n  common forms of generic programming.\r\n\r\n* The `FromStrRadix` trait, and associated free function, is deprecated\r\n  in favor of inherent implementations.\r\n\r\n* A wide range of methods and constants for both integers and floating\r\n  point numbers are now `#[stable]`, having been adjusted for integer\r\n  guidelines.\r\n\r\n* `is_positive` and `is_negative` are renamed to `is_sign_positive` and\r\n  `is_sign_negative`, in order to address #22985\r\n\r\n* The `Wrapping` type is moved to `std::num` and stabilized;\r\n  `WrappingOps` is deprecated in favor of inherent methods on the\r\n  integer types, and direct implementation of operations on\r\n  `Wrapping<X>` for each concrete integer type `X`.\r\n\r\nCloses #22985\r\nCloses #21069\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton"
-  },
-  {
-    "hash": "e17f4fc1d4545f5c17b21805c5145b05495484ee",
-    "author": "Sean McArthur",
-    "date": 1427764138,
-    "message": "convert: remove FromError, use From<E> instead\n\nThis removes the FromError trait, since it can now be expressed using\nthe new convert::Into trait. All implementations of FromError<E> where\nchanged to From<E>, and `try!` was changed to use From::from instead.\n\nBecause this removes FromError, it is a breaking change, but fixing it\nsimply requires changing the words `FromError` to `From`, and\n`from_error` to `from`.\n\n[breaking-change]"
-  },
-  {
-    "hash": "da04788efca6ec1e421139fb4916a5aacd49a2e2",
-    "author": "Alex Crichton",
-    "date": 1427842406,
-    "message": "rollup merge of #23875: aturon/revise-convert-2\n\n* Marks `#[stable]` the contents of the `std::convert` module.\n\n* Added methods `PathBuf::as_path`, `OsString::as_os_str`,\n  `String::as_str`, `Vec::{as_slice, as_mut_slice}`.\n\n* Deprecates `OsStr::from_str` in favor of a new, stable, and more\n  general `OsStr::new`.\n\n* Adds unstable methods `OsString::from_bytes` and `OsStr::{to_bytes,\n  to_cstring}` for ergonomic FFI usage.\n\n[breaking-change]\n\nr? @alexcrichton"
   }
 ]
