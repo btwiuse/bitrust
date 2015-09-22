@@ -1,5 +1,11 @@
 [
   {
+    "hash": "920f32becd5d54864a966900963a376d74d09922",
+    "author": "Sebastian Wicki",
+    "date": 1442874820,
+    "message": "Add `no_default_libraries` target linker option\n\nIf set to false, `-nodefaultlibs` is not passed to the linker. This\nwas the default behavior on Windows, but it should be configurable\nper target.\n\nThis is a [breaking-change] for target specifications that have\nthe `is_like_windows` option set to true. Such targets need to\nset `no_default_libraries` to false in order to restore the old\nbehavior."
+  },
+  {
     "hash": "a642d853aa29f8ec8486e736be551cf77f34e219",
     "author": "Nick Cameron",
     "date": 1442449006,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1427834354,
     "message": "std: Remove #[old_orphan_check] from PartialEq\n\nThis is a deprecated attribute that is slated for removal, and it also affects\nall implementors of the trait. This commit removes the attribute and fixes up\nimplementors accordingly. The primary implementation which was lost was the\nability to compare `&[T]` and `Vec<T>` (in that order).\n\nThis change also modifies the `assert_eq!` macro to not consider both directions\nof equality, only the one given in the left/right forms to the macro. This\nmodification is motivated due to the fact that `&[T] == Vec<T>` no longer\ncompiles, causing hundreds of errors in unit tests in the standard library (and\nlikely throughout the community as well).\n\ncc #19470\n[breaking-change]"
-  },
-  {
-    "hash": "80bf31dd514055177b22c3dc66836d39eb5b1648",
-    "author": "bors",
-    "date": 1427813446,
-    "message": "Auto merge of #23549 - aturon:stab-num, r=alexcrichton\n\nThis commit stabilizes the `std::num` module:\r\n\r\n* The `Int` and `Float` traits are deprecated in favor of (1) the\r\n  newly-added inherent methods and (2) the generic traits available in\r\n  rust-lang/num.\r\n\r\n* The `Zero` and `One` traits are reintroduced in `std::num`, which\r\n  together with various other traits allow you to recover the most\r\n  common forms of generic programming.\r\n\r\n* The `FromStrRadix` trait, and associated free function, is deprecated\r\n  in favor of inherent implementations.\r\n\r\n* A wide range of methods and constants for both integers and floating\r\n  point numbers are now `#[stable]`, having been adjusted for integer\r\n  guidelines.\r\n\r\n* `is_positive` and `is_negative` are renamed to `is_sign_positive` and\r\n  `is_sign_negative`, in order to address #22985\r\n\r\n* The `Wrapping` type is moved to `std::num` and stabilized;\r\n  `WrappingOps` is deprecated in favor of inherent methods on the\r\n  integer types, and direct implementation of operations on\r\n  `Wrapping<X>` for each concrete integer type `X`.\r\n\r\nCloses #22985\r\nCloses #21069\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton"
   }
 ]
