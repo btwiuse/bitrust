@@ -1,5 +1,11 @@
 [
   {
+    "hash": "5ca60d94316bd56f412ef4c13292237e206babf1",
+    "author": "bors",
+    "date": 1443127376,
+    "message": "Auto merge of #28608 - eddyb:no-place-for-an-old-box, r=pnkfelix\n\nWhile this is technically a [breaking-change], there is no excuse for touching `HEAP`.\r\nr? @pnkfelix"
+  },
+  {
     "hash": "6a2187414a8c25f485dc788088b4466f595a7dd9",
     "author": "bors",
     "date": 1443120900,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1427843568,
     "message": "std: Stabilize last bits of io::Error\n\nThis commit stabilizes a few remaining bits of the `io::Error` type:\n\n* The `Error::new` method is now stable. The last `detail` parameter was removed\n  and the second `desc` parameter was generalized to `E: Into<Box<Error>>` to\n  allow creating an I/O error from any form of error. Currently there is no form\n  of downcasting, but this will be added in time.\n\n* An implementation of `From<&str> for Box<Error>` was added to liballoc to\n  allow construction of errors from raw strings.\n\n* The `Error::raw_os_error` method was stabilized as-is.\n\n* Trait impls for `Clone`, `Eq`, and `PartialEq` were removed from `Error` as it\n  is not possible to use them with trait objects.\n\nThis is a breaking change due to the modification of the `new` method as well as\nthe removal of the trait implementations for the `Error` type.\n\n[breaking-change]"
-  },
-  {
-    "hash": "3422be3666cba57f1a6fb6ab3deb1a6df66b7695",
-    "author": "Alex Crichton",
-    "date": 1427842775,
-    "message": "rollup merge of #23288: alexcrichton/issue-19470\n\nThis is a deprecated attribute that is slated for removal, and it also affects\nall implementors of the trait. This commit removes the attribute and fixes up\nimplementors accordingly. The primary implementation which was lost was the\nability to compare `&[T]` and `Vec<T>` (in that order).\n\nThis change also modifies the `assert_eq!` macro to not consider both directions\nof equality, only the one given in the left/right forms to the macro. This\nmodification is motivated due to the fact that `&[T] == Vec<T>` no longer\ncompiles, causing hundreds of errors in unit tests in the standard library (and\nlikely throughout the community as well).\n\nCloses #19470\n[breaking-change]"
   }
 ]
