@@ -1,5 +1,11 @@
 [
   {
+    "hash": "e82faeb65594302897223b2ca4ee6927fb54625f",
+    "author": "bors",
+    "date": 1443716788,
+    "message": "Auto merge of #28742 - nikomatsakis:def-id-encapsulate, r=eddyb\n\nAs described in https://github.com/rust-lang/rfcs/pull/1298, the idea here is to make DefIds independent of changes to the content of other items. They are also *mostly* independent from ordering, so e.g. reordering two functions will change the defids, but it will not change the paths that they expand into (but this is not the case for some things, such as impls).\r\n\r\nThis is a major refactoring, so I did it in slices. The final commit is in some sense The Big One where most of the work is done. The earlier commits just pave the way by gradually refactoring accesses to the `node` field.\r\n\r\nThis is a [breaking-change] for plugin authors. The things you need to do to migrate your code are as follows:\r\n\r\n1. For local def-ids, rather than do `def_id.node`, call `tcx.map.as_local_node_id(def_id)`.\r\n2. To construct a local def-id, call `tcx.map.local_def_id(node_id)`.\r\n3. Note that you cannot make def-ids for any node, but only for \"definitions\" -- which include all items, as well as a number of other things, but not e.g. arbitrary expressions.\r\n4. You can get the path to a def-id by calling `tcx.def_path(def_id)`.\r\n\r\nOne thing that is NOT part of this PR, but which I plan do in a follow-up, is converting uses of the existing `with_path` API to use `def_path`, which is basically the same.\r\n\r\nr? @eddyb (or @nrc)"
+  },
+  {
     "hash": "587be42d0bd318d6c2f41fe4716e040366dc8951",
     "author": "bors",
     "date": 1443673744,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1427920208,
     "message": "rollup merge of #23951: alexcrichton/splitn\n\nThis commit is an implementation of [RFC 979][rfc] which changes the meaning of\nthe count parameter to the `splitn` function on strings and slices. The\nparameter now means the number of items that are returned from the iterator, not\nthe number of splits that are made.\n\n[rfc]: https://github.com/rust-lang/rfcs/pull/979\n\nCloses #23911\n[breaking-change]"
-  },
-  {
-    "hash": "e98dce3e00a7b6bfd264418ef993bbf9cdb1f0b6",
-    "author": "Alex Crichton",
-    "date": 1427920182,
-    "message": "std: Changing the meaning of the count to splitn\n\nThis commit is an implementation of [RFC 979][rfc] which changes the meaning of\nthe count parameter to the `splitn` function on strings and slices. The\nparameter now means the number of items that are returned from the iterator, not\nthe number of splits that are made.\n\n[rfc]: https://github.com/rust-lang/rfcs/pull/979\n\nCloses #23911\n[breaking-change]"
   }
 ]
