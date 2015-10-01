@@ -1,5 +1,11 @@
 [
   {
+    "hash": "587be42d0bd318d6c2f41fe4716e040366dc8951",
+    "author": "bors",
+    "date": 1443673744,
+    "message": "Auto merge of #28605 - alexcrichton:link-native-first, r=brson\n\nThis commit swaps the order of linking local native libraries and upstream\r\nnative libraries on the linker command line. Detail of bugs this can cause can\r\nbe found in #28595, and this change also invalidates the test case that was\r\nadded for #12446 which is now considered a bug because the downstream dependency\r\nwould need to declare that it depends on the native library somehow.\r\n\r\nCloses #28595\r\n[breaking-change]"
+  },
+  {
     "hash": "5ca60d94316bd56f412ef4c13292237e206babf1",
     "author": "bors",
     "date": 1443127376,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1427920182,
     "message": "std: Changing the meaning of the count to splitn\n\nThis commit is an implementation of [RFC 979][rfc] which changes the meaning of\nthe count parameter to the `splitn` function on strings and slices. The\nparameter now means the number of items that are returned from the iterator, not\nthe number of splits that are made.\n\n[rfc]: https://github.com/rust-lang/rfcs/pull/979\n\nCloses #23911\n[breaking-change]"
-  },
-  {
-    "hash": "ac77392f8ab1c201b0c927f6a2d30b632b95acda",
-    "author": "Alex Crichton",
-    "date": 1427843568,
-    "message": "std: Stabilize last bits of io::Error\n\nThis commit stabilizes a few remaining bits of the `io::Error` type:\n\n* The `Error::new` method is now stable. The last `detail` parameter was removed\n  and the second `desc` parameter was generalized to `E: Into<Box<Error>>` to\n  allow creating an I/O error from any form of error. Currently there is no form\n  of downcasting, but this will be added in time.\n\n* An implementation of `From<&str> for Box<Error>` was added to liballoc to\n  allow construction of errors from raw strings.\n\n* The `Error::raw_os_error` method was stabilized as-is.\n\n* Trait impls for `Clone`, `Eq`, and `PartialEq` were removed from `Error` as it\n  is not possible to use them with trait objects.\n\nThis is a breaking change due to the modification of the `new` method as well as\nthe removal of the trait implementations for the `Error` type.\n\n[breaking-change]"
   }
 ]
