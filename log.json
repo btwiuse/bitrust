@@ -1,5 +1,11 @@
 [
   {
+    "hash": "ef07d7dd40e33d7af95c7b00717503730ce69c11",
+    "author": "bors",
+    "date": 1443813399,
+    "message": "Auto merge of #28650 - sanxiyn:attr-usage, r=nrc\n\nThis is technically a [breaking-change].\r\n\r\nFix #2809.\r\nFix #22746."
+  },
+  {
     "hash": "e82faeb65594302897223b2ca4ee6927fb54625f",
     "author": "bors",
     "date": 1443716788,
@@ -592,11 +598,5 @@
     "author": "Niko Matsakis",
     "date": 1427913681,
     "message": "Remove `Thunk` struct and `Invoke` trait; change `Thunk` to be an alias\nfor `Box<FnBox()>`. I found the alias was still handy because it is\nshorter than the fully written type.\n\nThis is a [breaking-change]: convert code using `Invoke` to use `FnBox`,\nwhich is usually pretty straight-forward. Code using thunk mostly works\nif you change `Thunk::new => Box::new` and `foo.invoke(arg)` to\n`foo(arg)`."
-  },
-  {
-    "hash": "e9bacbaa2c9c88aaecf07ee30f02d08a1999e5c6",
-    "author": "Alex Crichton",
-    "date": 1427920208,
-    "message": "rollup merge of #23951: alexcrichton/splitn\n\nThis commit is an implementation of [RFC 979][rfc] which changes the meaning of\nthe count parameter to the `splitn` function on strings and slices. The\nparameter now means the number of items that are returned from the iterator, not\nthe number of splits that are made.\n\n[rfc]: https://github.com/rust-lang/rfcs/pull/979\n\nCloses #23911\n[breaking-change]"
   }
 ]
