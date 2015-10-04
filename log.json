@@ -1,5 +1,17 @@
 [
   {
+    "hash": "130851e03046db41d555a401a08c87f187fd911a",
+    "author": "bors",
+    "date": 1443910057,
+    "message": "Auto merge of #28669 - arielb1:well-formed-methods, r=nikomatsakis\n\nBy RFC1214:\r\n>    Before calling a fn, we check that its argument and return types are WF.\r\n    \r\nThe previous code only checked the trait-ref, which was not enough\r\nin several cases.\r\n    \r\nAs this is a soundness fix, it is a [breaking-change]. Some new annotations are needed, which I think are because of #18653 and the imperfection of `projection_must_outlive` (that can probably be worked around by moving the wf obligation later).\r\n    \r\nFixes #28609\r\n\r\nr? @nikomatsakis"
+  },
+  {
+    "hash": "603a75c8eaa8ee168e4333e4fba5eb782ed7192b",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1443818410,
+    "message": "ensure that the types of methods are well-formed\n\nBy RFC1214:\nBefore calling a fn, we check that its argument and return types are WF. This check takes place after all higher-ranked lifetimes have been instantiated. Checking the argument types ensures that the implied bounds due to argument types are correct. Checking the return type ensures that the resulting type of the call is WF.\n\nThe previous code only checked the trait-ref, which was not enough\nin several cases.\n\nAs this is a soundness fix, it is a [breaking-change].\n\nFixes #28609"
+  },
+  {
     "hash": "ef07d7dd40e33d7af95c7b00717503730ce69c11",
     "author": "bors",
     "date": 1443813399,
@@ -586,17 +598,5 @@
     "author": "Alex Crichton",
     "date": 1427921780,
     "message": "rollup merge of #23949: aturon/stab-timeout\n\nThis commit renames and stabilizes:\n\n* `Condvar::wait_timeout_ms` (renamed from `wait_timeout`)\n* `thread::park_timeout_ms` (renamed from `park_timeout`)\n* `thread::sleep_ms` (renamed from `sleep`)\n\nIn each case, the timeout is taken as a `u32` number of milliseconds,\nrather than a `Duration`.\n\nThese functions are likely to be deprecated once a stable form of\n`Duration` is available, but there is little cost to having these named\nvariants around, and it's crucial functionality for 1.0.\n\n[breaking-change]\n\nr? @alexcrichton\n\ncc @sfackler @carllerche"
-  },
-  {
-    "hash": "371277fb0d210152eb8c79e30bd7f7749c5af63c",
-    "author": "Aaron Turon",
-    "date": 1427921025,
-    "message": "Stabilize basic timeout functionality\n\nThis commit renames and stabilizes:\n\n* `Condvar::wait_timeout_ms` (renamed from `wait_timeout`)\n* `thread::park_timeout_ms` (renamed from `park_timeout`)\n* `thread::sleep_ms` (renamed from `sleep`)\n\nIn each case, the timeout is taken as a `u32` number of milliseconds,\nrather than a `Duration`.\n\nThese functions are likely to be deprecated once a stable form of\n`Duration` is available, but there is little cost to having these named\nvariants around, and it's crucial functionality for 1.0.\n\n[breaking-change]"
-  },
-  {
-    "hash": "cade32acf6f5ff209ee082d70350d9bc0362985a",
-    "author": "Niko Matsakis",
-    "date": 1427913681,
-    "message": "Remove `Thunk` struct and `Invoke` trait; change `Thunk` to be an alias\nfor `Box<FnBox()>`. I found the alias was still handy because it is\nshorter than the fully written type.\n\nThis is a [breaking-change]: convert code using `Invoke` to use `FnBox`,\nwhich is usually pretty straight-forward. Code using thunk mostly works\nif you change `Thunk::new => Box::new` and `foo.invoke(arg)` to\n`foo(arg)`."
   }
 ]
