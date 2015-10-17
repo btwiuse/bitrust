@@ -1,5 +1,11 @@
 [
   {
+    "hash": "d6bd8d8491e89277edbfc9a4e0f8953847abbdd6",
+    "author": "Andrew Paseltiner",
+    "date": 1445034931,
+    "message": "Add `Shared` pointer and have `{Arc, Rc}` use it\n\nThis change has two consequences:\n\n1. It makes `Arc<T>` and `Rc<T>` covariant in `T`.\n\n2. It causes the compiler to reject code that was unsound with respect\nto dropck. See compile-fail/issue-29106.rs for an example of code that\nno longer compiles. Because of this, this is a [breaking-change].\n\nFixes #29037.\nFixes #29106."
+  },
+  {
     "hash": "130851e03046db41d555a401a08c87f187fd911a",
     "author": "bors",
     "date": 1443910057,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1428035392,
     "message": "Auto merge of #23832 - petrochenkov:usize, r=aturon\n\nThese constants are small and can fit even in `u8`, but semantically they have type `usize` because they denote sizes and are almost always used in `usize` context. The change of their type to `u32` during the integer audit led only to the large amount of `as usize` noise (see the second commit, which removes this noise).\r\n\r\nThis is a minor [breaking-change] to an unstable interface.\r\n\r\nr? @aturon"
-  },
-  {
-    "hash": "655634e6ab00707ef98034dcfb32000cbfa7a01c",
-    "author": "Alex Crichton",
-    "date": 1427921780,
-    "message": "rollup merge of #23949: aturon/stab-timeout\n\nThis commit renames and stabilizes:\n\n* `Condvar::wait_timeout_ms` (renamed from `wait_timeout`)\n* `thread::park_timeout_ms` (renamed from `park_timeout`)\n* `thread::sleep_ms` (renamed from `sleep`)\n\nIn each case, the timeout is taken as a `u32` number of milliseconds,\nrather than a `Duration`.\n\nThese functions are likely to be deprecated once a stable form of\n`Duration` is available, but there is little cost to having these named\nvariants around, and it's crucial functionality for 1.0.\n\n[breaking-change]\n\nr? @alexcrichton\n\ncc @sfackler @carllerche"
   }
 ]
