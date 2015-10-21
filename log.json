@@ -1,5 +1,11 @@
 [
   {
+    "hash": "97ba52ec379e17cc0984224b756282b68bc3a53b",
+    "author": "bors",
+    "date": 1445367747,
+    "message": "Auto merge of #29148 - petrochenkov:noshow, r=alexcrichton\n\nCloses https://github.com/rust-lang/rust/issues/29145\r\n\r\n[breaking-change], needs a crater run."
+  },
+  {
     "hash": "d6bd8d8491e89277edbfc9a4e0f8953847abbdd6",
     "author": "Andrew Paseltiner",
     "date": 1445034931,
@@ -592,11 +598,5 @@
     "author": "Chris Wong",
     "date": 1427870929,
     "message": "Don't reborrow the target of a `write!()`\n\nThis means passing in e.g. a `Vec<u8>` or `String` will work as\nintended, rather than deref-ing to `&mut [u8]` or `&mut str`.\n\n[breaking-change]\n\nCloses #23768"
-  },
-  {
-    "hash": "fc98b19cf72ea45851ebb7b28af160be92b19128",
-    "author": "bors",
-    "date": 1428035392,
-    "message": "Auto merge of #23832 - petrochenkov:usize, r=aturon\n\nThese constants are small and can fit even in `u8`, but semantically they have type `usize` because they denote sizes and are almost always used in `usize` context. The change of their type to `u32` during the integer audit led only to the large amount of `as usize` noise (see the second commit, which removes this noise).\r\n\r\nThis is a minor [breaking-change] to an unstable interface.\r\n\r\nr? @aturon"
   }
 ]
