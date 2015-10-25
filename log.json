@@ -1,5 +1,17 @@
 [
   {
+    "hash": "04e497c0056aed899cd6edbc98e7a68a9b391c5c",
+    "author": "bors",
+    "date": 1445689272,
+    "message": "Auto merge of #29259 - arielb1:supertrait-self-2, r=eddyb\n\n…being it\r\n\r\nThis is a [breaking-change]:lang, but the broken code does not make\r\nmuch sense.\r\n\r\nFixes #26056\r\n\r\nr? @eddyb"
+  },
+  {
+    "hash": "5d6d26c241b785daef873a0c6b9a0553c3a9451d",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1445635349,
+    "message": "object_safety: check whether a supertrait contains Self even without being it\n\nThis is a [breaking-change]:lang, but the broken code does not make\nmuch sense.\n\nFixes #26056"
+  },
+  {
     "hash": "97ba52ec379e17cc0984224b756282b68bc3a53b",
     "author": "bors",
     "date": 1445367747,
@@ -586,17 +598,5 @@
     "author": "Tobias Bucher",
     "date": 1428445595,
     "message": "Make `sum` and `product` inherent methods on `Iterator`\n\nIn addition to being nicer, this also allows you to use `sum` and `product` for\niterators yielding custom types aside from the standard integers.\n\nDue to removing the `AdditiveIterator` and `MultiplicativeIterator` trait, this\nis a breaking change.\n\n[breaking-change]"
-  },
-  {
-    "hash": "82dcec7ee4a8a71fdfb8e8771ae6785261ec1d5b",
-    "author": "bors",
-    "date": 1428045231,
-    "message": "Auto merge of #23934 - lfairy:write-no-deref, r=alexcrichton\n\nThis means passing in e.g. a `Vec<u8>` or `String` will work as\r\nintended, rather than deref-ing to `&mut [u8]` or `&mut str`.\r\n\r\n[breaking-change]\r\n\r\nCloses #23768"
-  },
-  {
-    "hash": "7c3efcc5bb260234fc163340c9fd7aad3d8d780e",
-    "author": "Chris Wong",
-    "date": 1427870929,
-    "message": "Don't reborrow the target of a `write!()`\n\nThis means passing in e.g. a `Vec<u8>` or `String` will work as\nintended, rather than deref-ing to `&mut [u8]` or `&mut str`.\n\n[breaking-change]\n\nCloses #23768"
   }
 ]
