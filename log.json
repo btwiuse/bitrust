@@ -1,5 +1,11 @@
 [
   {
+    "hash": "c44316d4a1ad0fe01ae366e163993aa3980c755f",
+    "author": "bors",
+    "date": 1445848079,
+    "message": "Auto merge of #29303 - petrochenkov:unistrimp, r=eddyb\n\nAnd use `VariantData` instead of `P<VariantData>` in `Item_` and `Variant_`\r\n\r\nImprovements suggested by @eddyb in https://github.com/rust-lang/rust/pull/28816#discussion_r42483587 and https://github.com/rust-lang/rust/pull/28816#discussion_r42483648\r\n\r\nplugin-[breaking-change]\r\n\r\nr? @eddyb"
+  },
+  {
     "hash": "04e497c0056aed899cd6edbc98e7a68a9b391c5c",
     "author": "bors",
     "date": 1445689272,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1428533326,
     "message": "std: Destabilize the internals of panic!\n\nNow that we have a `#[allow_internal_unstable]` attribute for macros there's no\nneed for these two `begin_unwind` functions to be stable. Right now the `panic!`\ninterface is the only one we wish to stabilize, so remove the stability markers\nfrom these functions.\n\nWhile this is a breaking change, it is highly unlikely to break any actual code.\nIt is recommended to use the `panic!` macro instead if it breaks explicit calls\ninto `std::rt`.\n\n[breaking-change]\ncc #24208"
-  },
-  {
-    "hash": "97f24a85965c3c51a2c18be029091ae52bbd7920",
-    "author": "Tobias Bucher",
-    "date": 1428445595,
-    "message": "Make `sum` and `product` inherent methods on `Iterator`\n\nIn addition to being nicer, this also allows you to use `sum` and `product` for\niterators yielding custom types aside from the standard integers.\n\nDue to removing the `AdditiveIterator` and `MultiplicativeIterator` trait, this\nis a breaking change.\n\n[breaking-change]"
   }
 ]
