@@ -1,5 +1,11 @@
 [
   {
+    "hash": "6d43fef3aaf64b2e7df14ca676a3a39b723ed7f3",
+    "author": "bors",
+    "date": 1446385009,
+    "message": "Auto merge of #29486 - petrochenkov:multiwild, r=Manishearth\n\nMotivation:\r\n- It is not actually a pattern\r\n- It is not actually needed, except for...\r\n\r\nDrawback:\r\n- Slice patterns like `[a, _.., b]` are pretty-printed as `[a, .., b]`. Great loss :(\r\n\r\nplugin-[breaking-change], as always"
+  },
+  {
     "hash": "c44316d4a1ad0fe01ae366e163993aa3980c755f",
     "author": "bors",
     "date": 1445848079,
@@ -592,11 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1428605683,
     "message": "Rollup merge of #24212 - alexcrichton:destabilize-begin-unwind, r=huonw\n\n Now that we have a `#[allow_internal_unstable]` attribute for macros there's no\nneed for these two `begin_unwind` functions to be stable. Right now the `panic!`\ninterface is the only one we wish to stabilize, so remove the stability markers\nfrom these functions.\n\nWhile this is a breaking change, it is highly unlikely to break any actual code.\nIt is recommended to use the `panic!` macro instead if it breaks explicit calls\ninto `std::rt`.\n\n[breaking-change]\ncc #24208"
-  },
-  {
-    "hash": "65e3f0325a64d8f1affa146b3575a4b7c90458d7",
-    "author": "Alex Crichton",
-    "date": 1428533326,
-    "message": "std: Destabilize the internals of panic!\n\nNow that we have a `#[allow_internal_unstable]` attribute for macros there's no\nneed for these two `begin_unwind` functions to be stable. Right now the `panic!`\ninterface is the only one we wish to stabilize, so remove the stability markers\nfrom these functions.\n\nWhile this is a breaking change, it is highly unlikely to break any actual code.\nIt is recommended to use the `panic!` macro instead if it breaks explicit calls\ninto `std::rt`.\n\n[breaking-change]\ncc #24208"
   }
 ]
