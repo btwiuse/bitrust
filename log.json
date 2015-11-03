@@ -1,5 +1,11 @@
 [
   {
+    "hash": "749625ad6d15d0254b90e3d16f79d1cb1e260969",
+    "author": "bors",
+    "date": 1446513790,
+    "message": "Auto merge of #29500 - vadimcn:rustlib, r=alexcrichton\n\nAccording to a recent [discussion on IRC](https://botbot.me/mozilla/rust-tools/2015-10-27/?msg=52887517&page=2), there's no good reason for Windows builds to store target libraries under `bin`, when on every other platform they are under `lib`.\r\n\r\nThis might be a [breaking-change] for some users.  I am pretty sure VisualRust has that path hard-coded somewhere.\r\n\r\nr? @brson"
+  },
+  {
     "hash": "6d43fef3aaf64b2e7df14ca676a3a39b723ed7f3",
     "author": "bors",
     "date": 1446385009,
@@ -592,11 +598,5 @@
     "author": "Aaron Turon",
     "date": 1428594849,
     "message": "Improve bounds in Iterator API\n\nThis commit changes `Iterator`'s API by:\n\n* Generalizing bounds from `Iterator` to `IntoIterator` whenever\n  possible, matching the semantics and ergonomics of `for` loops.\n\n* Tightens up a few method-level bounds so that you get an error\n  earlier. For example, `rev` did not require `DoubleEndedIterator` even\n  though the result is only an `Iterator` when the original iterator was\n  double-ended.\n\nCloses #23587\n\nThe bound-tightening is technically a:\n\n[breaking-change]\n\nbut no code should break in practice."
-  },
-  {
-    "hash": "5daee19eca622030c598042d9615df17d4ad035f",
-    "author": "Manish Goregaokar",
-    "date": 1428605683,
-    "message": "Rollup merge of #24212 - alexcrichton:destabilize-begin-unwind, r=huonw\n\n Now that we have a `#[allow_internal_unstable]` attribute for macros there's no\nneed for these two `begin_unwind` functions to be stable. Right now the `panic!`\ninterface is the only one we wish to stabilize, so remove the stability markers\nfrom these functions.\n\nWhile this is a breaking change, it is highly unlikely to break any actual code.\nIt is recommended to use the `panic!` macro instead if it breaks explicit calls\ninto `std::rt`.\n\n[breaking-change]\ncc #24208"
   }
 ]
