@@ -1,5 +1,11 @@
 [
   {
+    "hash": "ad3bd1b46d52ccb339a09558064b9bf687c47a75",
+    "author": "bors",
+    "date": 1447201508,
+    "message": "Auto merge of #29726 - petrochenkov:privsan, r=alexcrichton\n\n- Check privacy sanity in all blocks, not only function bodies\n- Check all fields, not only named\n- Check all impl items, not only methods\n- Check default impls\n- Move the sanity check in the beginning of privacy checking, so others could rely on it\n\nTechnically it's a [breaking-change], but I expect no breakage because, well, it's *sane* privacy visitor, if code is broken it must be insane by definition!"
+  },
+  {
     "hash": "749625ad6d15d0254b90e3d16f79d1cb1e260969",
     "author": "bors",
     "date": 1446513790,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1428624422,
     "message": "std: Set CLOEXEC for all fds opened on unix\n\nThis commit starts to set the CLOEXEC flag for all files and sockets opened by\nthe standard library by default on all unix platforms. There are a few points of\nnote in this commit:\n\n* The implementation is not 100% satisfactory in the face of threads. File\n  descriptors only have the `F_CLOEXEC` flag set *after* they are opened,\n  allowing for a fork/exec to happen in the middle and leak the descriptor.\n  Some platforms do support atomically opening a descriptor while setting the\n  `CLOEXEC` flag, and it is left as a future extension to bind these apis as it\n  is unclear how to do so nicely at this time.\n\n* The implementation does not offer a method of opting into the old behavior of\n  not setting `CLOEXEC`. This will possibly be added in the future through\n  extensions on `OpenOptions`, for example.\n\n* This change does not yet audit any Windows APIs to see if the handles are\n  inherited by default by accident.\n\nThis is a breaking change for users who call `fork` or `exec` outside of the\nstandard library itself and expect file descriptors to be inherted. All file\ndescriptors created by the standard library will no longer be inherited.\n\n[breaking-change]"
-  },
-  {
-    "hash": "e3f324cd9d7b27eda6133c407a4751a8b0217631",
-    "author": "Aaron Turon",
-    "date": 1428594849,
-    "message": "Improve bounds in Iterator API\n\nThis commit changes `Iterator`'s API by:\n\n* Generalizing bounds from `Iterator` to `IntoIterator` whenever\n  possible, matching the semantics and ergonomics of `for` loops.\n\n* Tightens up a few method-level bounds so that you get an error\n  earlier. For example, `rev` did not require `DoubleEndedIterator` even\n  though the result is only an `Iterator` when the original iterator was\n  double-ended.\n\nCloses #23587\n\nThe bound-tightening is technically a:\n\n[breaking-change]\n\nbut no code should break in practice."
   }
 ]
