@@ -1,5 +1,11 @@
 [
   {
+    "hash": "767ee79c4c38e7909c7fefef1b33be4612112336",
+    "author": "Niko Matsakis",
+    "date": 1447892538,
+    "message": "Refactor the HIR so that items are stored in a map in the `Crate`,\nrather being stored inline. Refactor (and rename) the visitor so that\n(by default) it only visits the interior content of an item not nested\nitems.\n\nThis is a [breaking-change] for anyone who uses the HIR visitor. Besides\nchanging `visit::` to `intravisit::`, you need to refactor your visitor\nin one of two ways, depending on what it requires:\n\n1. If you just want to visit all items (most common), you should call\n   `krate.visit_all_items(&mut visitor)`.\n\n2. If you need to visit nested items in the middle of the parent items,\n   you should override `visit_nested_item` with something like:\n   `self.visit_item(self.tcx.map.expect_item(item.id))`, presuming you\n   have access to a tcx (or at least a HIR map)."
+  },
+  {
     "hash": "ad3bd1b46d52ccb339a09558064b9bf687c47a75",
     "author": "bors",
     "date": 1447201508,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1428709764,
     "message": "Auto merge of #24270 - pnkfelix:use-disr-val-for-derive-ord, r=brson\n\nUse `discriminant_value` intrinsic for `derive(PartialOrd)`\r\n\r\n[breaking-change]\r\n\r\nThis is a [breaking-change] because it can change the result of comparison operators when enum discriminants have been explicitly assigned.  Notably in a case like:\r\n```rust\r\n#[derive(PartialOrd)]\r\nenum E { A = 2, B = 1}\r\n```\r\n\r\nUnder the old deriving, `A < B` held, because `A` came before `B` in the order of declaration.  But now we use the ordering according to the provided values, and thus `A > B`.  (However, this change is very unlikely to break much, if any, code, since the orderings themselves should all remain well-defined, total, etc.)\r\n\r\nFix #15523"
-  },
-  {
-    "hash": "d6c72306c8fc2ec0fd9d6e499c32f2bf52f0b8ba",
-    "author": "Alex Crichton",
-    "date": 1428624422,
-    "message": "std: Set CLOEXEC for all fds opened on unix\n\nThis commit starts to set the CLOEXEC flag for all files and sockets opened by\nthe standard library by default on all unix platforms. There are a few points of\nnote in this commit:\n\n* The implementation is not 100% satisfactory in the face of threads. File\n  descriptors only have the `F_CLOEXEC` flag set *after* they are opened,\n  allowing for a fork/exec to happen in the middle and leak the descriptor.\n  Some platforms do support atomically opening a descriptor while setting the\n  `CLOEXEC` flag, and it is left as a future extension to bind these apis as it\n  is unclear how to do so nicely at this time.\n\n* The implementation does not offer a method of opting into the old behavior of\n  not setting `CLOEXEC`. This will possibly be added in the future through\n  extensions on `OpenOptions`, for example.\n\n* This change does not yet audit any Windows APIs to see if the handles are\n  inherited by default by accident.\n\nThis is a breaking change for users who call `fork` or `exec` outside of the\nstandard library itself and expect file descriptors to be inherted. All file\ndescriptors created by the standard library will no longer be inherited.\n\n[breaking-change]"
   }
 ]
