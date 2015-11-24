@@ -1,5 +1,11 @@
 [
   {
+    "hash": "3c0d55cc76c524c12160bfb45663d9aca73e6556",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1447959239,
+    "message": "constrained_type_params: make projections depend on their trait-ref\n\nAs this is a soundness fix, it is a [breaking-change].\n\nFixes #29861."
+  },
+  {
     "hash": "767ee79c4c38e7909c7fefef1b33be4612112336",
     "author": "Niko Matsakis",
     "date": 1447892538,
@@ -592,11 +598,5 @@
     "author": "Simonas Kazlauskas",
     "date": 1428065287,
     "message": "Introduce trans::declare\n\nWe provide tools to tell what exact symbols to emit for any fn or static, but\ndon’t quite check if that won’t cause any issues later on. Some of the issues\ninclude LLVM mangling our names again and our names pointing to wrong locations,\nus generating dumb foreign call wrappers, linker errors, extern functions\nresolving to different symbols altogether (extern {fn fail();} fail(); in some\ncases calling fail1()), etc.\n\nBefore the commit we had a function called note_unique_llvm_symbol, so it is\nclear somebody was aware of the issue at some point, but the function was barely\nused, mostly in irrelevant locations.\n\nAlong with working on it I took liberty to start refactoring trans/base into\na few smaller modules. The refactoring is incomplete and I hope I will find some\nmotivation to carry on with it.\n\nThis is possibly a [breaking-change] because it makes dumbly written code\nproperly invalid."
-  },
-  {
-    "hash": "93f7fe32d30b67baa6abf09c073c5862a978dc57",
-    "author": "bors",
-    "date": 1428709764,
-    "message": "Auto merge of #24270 - pnkfelix:use-disr-val-for-derive-ord, r=brson\n\nUse `discriminant_value` intrinsic for `derive(PartialOrd)`\r\n\r\n[breaking-change]\r\n\r\nThis is a [breaking-change] because it can change the result of comparison operators when enum discriminants have been explicitly assigned.  Notably in a case like:\r\n```rust\r\n#[derive(PartialOrd)]\r\nenum E { A = 2, B = 1}\r\n```\r\n\r\nUnder the old deriving, `A < B` held, because `A` came before `B` in the order of declaration.  But now we use the ordering according to the provided values, and thus `A > B`.  (However, this change is very unlikely to break much, if any, code, since the orderings themselves should all remain well-defined, total, etc.)\r\n\r\nFix #15523"
   }
 ]
