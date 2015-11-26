@@ -1,5 +1,17 @@
 [
   {
+    "hash": "6ef02eff89e3d2a29eab3346bff393821df6e033",
+    "author": "bors",
+    "date": 1448562058,
+    "message": "Auto merge of #30043 - arielb1:split-metadata, r=nikomatsakis\n\nThis improves bootstrap times because of better parallelism - though I need to measure how much - and allows metadata to be modified without triggering a full recompile. This also ensures that metadata handling and the rest of rustc remain decoupled, which is a first step for switching to a new metadata format.\n\nThis is a [breaking-change] to all plugin authors because of the following renames:\n * `rustc::plugin` is now `rustc_plugin`\n * `rustc::metadata` is now `rustc_metadata`\n * Most data types from `rustc::metadata`, along with `LOCAL_CRATE`, are now in `rustc::middle::cstore`.\n * The CStore methods were split between the `rustc::middle::CrateStore` trait (and trait object) and the `rustc_metadata::cstore::CStore`, with an `Rc<CrateStore>` stored in the `Session`. The inner `CStore` can be accessed via the inner `Any` bound, but this is deprecated.\n\nr? @nikomatsakis"
+  },
+  {
+    "hash": "1430a3500076ad504a0b30be77fd2ad4468ea769",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1448554959,
+    "message": "move librustc/plugin to librustc_plugin\n\nthis is a [breaking-change] to all plugin authors - sorry"
+  },
+  {
     "hash": "3c0d55cc76c524c12160bfb45663d9aca73e6556",
     "author": "Ariel Ben-Yehuda",
     "date": 1447959239,
@@ -586,17 +598,5 @@
     "author": "Chris Wong",
     "date": 1428877810,
     "message": "Remove regex module from libunicode\n\nThe regex crate keeps its own tables now (rust-lang/regex#41) so we\ndon't need them here.\n\n[breaking-change]"
-  },
-  {
-    "hash": "5afa2704a6fdee62b267a5df9ca0934350dfc3d1",
-    "author": "bors",
-    "date": 1428802013,
-    "message": "Auto merge of #23011 - nagisa:the-war-of-symbol-and-symbol, r=pnkfelix\n\nWe provide tools to tell what exact symbols to emit for any fn or static, but\r\ndon’t quite check if that won’t cause any issues later on. Some of the issues\r\ninclude LLVM mangling our names again and our names pointing to wrong locations,\r\nus generating dumb foreign call wrappers, linker errors, extern functions\r\nresolving to different symbols altogether (`extern {fn fail();} fail();` in some\r\ncases calling `fail1()`), etc.\r\n\r\nBefore the commit we had a function called `note_unique_llvm_symbol`, so it is\r\nclear somebody was aware of the issue at some point, but the function was barely\r\nused, mostly in irrelevant locations.\r\n\r\nAlong with working on it I took liberty to start refactoring trans/base into\r\na few smaller modules. The refactoring is incomplete and I hope I will find some\r\nmotivation to carry on with it.\r\n\r\nThis is possibly a [breaking-change] because it makes dumbly written code\r\nproperly invalid.\r\n\r\nThis fixes all those issues about incorrect use of #[no_mangle] being not reported/misreported/ICEd by the compiler.\r\n\r\nNB. This PR does not attempt to tackle the parallel codegen issue that was mentioned in https://github.com/rust-lang/rust/pull/22811, but I believe it should be very straightforward in a follow up PR by modifying `trans::declare::get_defined_value` to look at all the contexts.\r\n\r\ncc @alexcrichton @huonw @nrc because you commented on the original RFC issue.\r\n\r\nEDIT: wow, this became much bigger than I initially intended."
-  },
-  {
-    "hash": "f1dabed82bfed643fbbfc93203473e384c58d20a",
-    "author": "Simonas Kazlauskas",
-    "date": 1428065287,
-    "message": "Introduce trans::declare\n\nWe provide tools to tell what exact symbols to emit for any fn or static, but\ndon’t quite check if that won’t cause any issues later on. Some of the issues\ninclude LLVM mangling our names again and our names pointing to wrong locations,\nus generating dumb foreign call wrappers, linker errors, extern functions\nresolving to different symbols altogether (extern {fn fail();} fail(); in some\ncases calling fail1()), etc.\n\nBefore the commit we had a function called note_unique_llvm_symbol, so it is\nclear somebody was aware of the issue at some point, but the function was barely\nused, mostly in irrelevant locations.\n\nAlong with working on it I took liberty to start refactoring trans/base into\na few smaller modules. The refactoring is incomplete and I hope I will find some\nmotivation to carry on with it.\n\nThis is possibly a [breaking-change] because it makes dumbly written code\nproperly invalid."
   }
 ]
