@@ -1,5 +1,11 @@
 [
   {
+    "hash": "e9ac44026d2d4ac11728263726505ea4cea3c1ff",
+    "author": "bors",
+    "date": 1448671534,
+    "message": "Auto merge of #29383 - petrochenkov:empstr, r=pnkfelix\n\nFixes https://github.com/rust-lang/rust/issues/28692\nFixes https://github.com/rust-lang/rust/issues/28992\nFixes some other similar issues (see the tests)\n\n[breaking-change], needs crater run (cc @brson or @alexcrichton )\n\nThe pattern with parens `UnitVariant(..)` for unit variants seems to be popular in rustc (see the second commit), but mostly used by one person (@nikomatsakis), according to git blame. If it causes breakage on crates.io I'll add an exceptional case for it."
+  },
+  {
     "hash": "6ef02eff89e3d2a29eab3346bff393821df6e033",
     "author": "bors",
     "date": 1448562058,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1428912503,
     "message": "Auto merge of #24339 - lfairy:remove-regex-data, r=alexcrichton\n\nThe regex crate keeps its own tables now (rust-lang/regex#41) so we\r\ndon't need them here.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "5308ac939a330b74540bea5920b0086a2d954648",
-    "author": "Chris Wong",
-    "date": 1428877810,
-    "message": "Remove regex module from libunicode\n\nThe regex crate keeps its own tables now (rust-lang/regex#41) so we\ndon't need them here.\n\n[breaking-change]"
   }
 ]
