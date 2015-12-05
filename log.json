@@ -1,5 +1,11 @@
 [
   {
+    "hash": "e22a64e8d8d4da46c74f878ce1c23ad1c88982e8",
+    "author": "bors",
+    "date": 1449269522,
+    "message": "Auto merge of #30130 - tbu-:pr_array_clone, r=alexcrichton\n\n[breaking-change]"
+  },
+  {
     "hash": "e9ac44026d2d4ac11728263726505ea4cea3c1ff",
     "author": "bors",
     "date": 1448671534,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1428514419,
     "message": "std: Fix fs::read_link behavior on Windows\n\nThe current implementation of using GetFinalPathNameByHandle actually reads all\nintermediate links instead of just looking at the current link. This commit\nalters the behavior of the function to use a different API which correctly reads\nonly one level of the soft link.\n\n[breaking-change]"
-  },
-  {
-    "hash": "524547551cd6c9b33a9677e1a58e9a9d1e19c0fc",
-    "author": "bors",
-    "date": 1428912503,
-    "message": "Auto merge of #24339 - lfairy:remove-regex-data, r=alexcrichton\n\nThe regex crate keeps its own tables now (rust-lang/regex#41) so we\r\ndon't need them here.\r\n\r\n[breaking-change]"
   }
 ]
