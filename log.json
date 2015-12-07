@@ -1,5 +1,11 @@
 [
   {
+    "hash": "e819d8aa3cd2319fa57e7336e167069ef7002d6a",
+    "author": "bors",
+    "date": 1449454573,
+    "message": "Auto merge of #30247 - bluss:revert-array-clone, r=alexcrichton\n\nRevert \"PR #30130 Implement `Clone` for more arrays\"\n\nThis reverts commit e22a64e8d8d4da46c74f878ce1c23ad1c88982e8.\n\nThis caused a regression such that types like `[[u8; 256]; 4]`\nno longer implemented Clone. This previously worked due to Clone\nfor `[T; N]` (N in 0 to 32) being implemented for T: Copy.\n\nDue to fixed size arrays not implementing Clone for sizes above 32,\nthe new implementation requiring T: Clone would not allow\n`[[u8; 256]; 4]` to be Clone.\n\nFixes #30244\n\nDue to changing back, this is technically a [breaking-change],\nalbeit for a behavior that existed for a very short time."
+  },
+  {
     "hash": "e22a64e8d8d4da46c74f878ce1c23ad1c88982e8",
     "author": "bors",
     "date": 1449269522,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1428946754,
     "message": "Auto merge of #24198 - alexcrichton:windows-readlink, r=aturon\n\nThe current implementation of using GetFinalPathNameByHandle actually reads all\r\nintermediate links instead of just looking at the current link. This commit\r\nalters the behavior of the function to use a different API which correctly reads\r\nonly one level of the soft link.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "f3f99fb44eea1d7037f94259aef6cbc39837ebee",
-    "author": "Alex Crichton",
-    "date": 1428514419,
-    "message": "std: Fix fs::read_link behavior on Windows\n\nThe current implementation of using GetFinalPathNameByHandle actually reads all\nintermediate links instead of just looking at the current link. This commit\nalters the behavior of the function to use a different API which correctly reads\nonly one level of the soft link.\n\n[breaking-change]"
   }
 ]
