@@ -1,5 +1,11 @@
 [
   {
+    "hash": "672a3d93e34ad52529f3bdedfd26d52d67824ccd",
+    "author": "bors",
+    "date": 1449808073,
+    "message": "Auto merge of #30294 - jseyfried:fix_shadowed_use_visibility, r=nrc\n\nThis fixes a bug in which the visibility of a use declaration defining a name in one namespace (e.g. the value namespace) is overridden by a later use declaration defining the same name in the other namespace (e.g. the type namespace). For example,\n```rust\nfn f() {}\npub mod bar {}\n\nmod foo {\n    use f; // This import should not be visible outside `foo`,\n    pub use bar as f; // but it visible outside of `foo` because of this import.\n}\n\nfn main() { foo::f(); }\n```\nAs the example demonstrates, this is a [breaking-change], but it looks unlikely to cause breakage in practice, and any breakage can be fixed by correcting visibility modifiers."
+  },
+  {
     "hash": "e819d8aa3cd2319fa57e7336e167069ef7002d6a",
     "author": "bors",
     "date": 1449454573,
@@ -592,11 +598,5 @@
     "author": "Alex Crichton",
     "date": 1428621153,
     "message": "std: Make FromRawFd::from_raw_fd an unsafe method\n\nAs pointed out in [RFC issue 1043][rfc] it is quite useful to have the standard\nI/O types to provide the contract that they are the sole owner of the underlying\nobject they represent. This guarantee enables writing safe interfaces like the\n`MemoryMap` API sketched out in that issue.\n\n[rfc]: https://github.com/rust-lang/rfcs/issues/1043\n\nAs constructing objects from these raw handles may end up violating these\nownership gurantees, the functions for construction are now marked unsafe.\n\n[breaking-change]\nCloses rust-lang/rfcs#1043"
-  },
-  {
-    "hash": "f55e66aaed42589dcda0221a4545dbaaec68e577",
-    "author": "bors",
-    "date": 1428946754,
-    "message": "Auto merge of #24198 - alexcrichton:windows-readlink, r=aturon\n\nThe current implementation of using GetFinalPathNameByHandle actually reads all\r\nintermediate links instead of just looking at the current link. This commit\r\nalters the behavior of the function to use a different API which correctly reads\r\nonly one level of the soft link.\r\n\r\n[breaking-change]"
   }
 ]
