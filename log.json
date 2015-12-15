@@ -1,5 +1,11 @@
 [
   {
+    "hash": "ec8ea22c7f59fd898670060bceb6810cef68ca0a",
+    "author": "faineance",
+    "date": 1450127701,
+    "message": "[breaking-change] move ast_util functions to methods"
+  },
+  {
     "hash": "672a3d93e34ad52529f3bdedfd26d52d67824ccd",
     "author": "bors",
     "date": 1449808073,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1428970070,
     "message": "Auto merge of #24251 - alexcrichton:unsafe-from-raw-fd, r=aturon\n\nAs pointed out in [RFC issue 1043][rfc] it is quite useful to have the standard\r\nI/O types to provide the contract that they are the sole owner of the underlying\r\nobject they represent. This guarantee enables writing safe interfaces like the\r\n`MemoryMap` API sketched out in that issue.\r\n\r\n[rfc]: https://github.com/rust-lang/rfcs/issues/1043\r\n\r\nAs constructing objects from these raw handles may end up violating these\r\nownership gurantees, the functions for construction are now marked unsafe.\r\n\r\n[breaking-change]\r\nCloses rust-lang/rfcs#1043"
-  },
-  {
-    "hash": "2705051e2067e8f467b4cb9bc75e801a5cd4f0e7",
-    "author": "Alex Crichton",
-    "date": 1428621153,
-    "message": "std: Make FromRawFd::from_raw_fd an unsafe method\n\nAs pointed out in [RFC issue 1043][rfc] it is quite useful to have the standard\nI/O types to provide the contract that they are the sole owner of the underlying\nobject they represent. This guarantee enables writing safe interfaces like the\n`MemoryMap` API sketched out in that issue.\n\n[rfc]: https://github.com/rust-lang/rfcs/issues/1043\n\nAs constructing objects from these raw handles may end up violating these\nownership gurantees, the functions for construction are now marked unsafe.\n\n[breaking-change]\nCloses rust-lang/rfcs#1043"
   }
 ]
