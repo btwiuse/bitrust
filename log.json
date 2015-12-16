@@ -1,5 +1,11 @@
 [
   {
+    "hash": "ce7bc51933e2facb4eca029ac17b398f372f5b41",
+    "author": "bors",
+    "date": 1450260576,
+    "message": "Auto merge of #30300 - sanxiyn:syntax-ext, r=nikomatsakis\n\nThis reduces iteration time (`make rustc-stage1`) for moved syntax extensions from 11 minutes to 3 minutes on my machine.\n\nBecause of the signature change, this is a [breaking-change] for people directly calling `expand_crate`. I think it is rare: from GitHub search, only case I found is [glassful](https://github.com/kmcallister/glassful)."
+  },
+  {
     "hash": "ec8ea22c7f59fd898670060bceb6810cef68ca0a",
     "author": "faineance",
     "date": 1450127701,
@@ -592,11 +598,5 @@
     "author": "Aaron Turon",
     "date": 1428952528,
     "message": "De-stabilize `thread::scoped` and friends\n\nIssue #24292 demonstrates that the `scoped` API as currently offered can\nbe memory-unsafe: the `JoinGuard` can be moved into a context that will\nfail to execute destructors prior to the stack frame being popped (for\nexample, by creating an `Rc` cycle).\n\nThis commit reverts the APIs to `unstable` status while a long-term\nsolution is worked out.\n\n(There are several possible ways to address this issue; it's not a\nfundamental problem with the `scoped` idea, but rather an indication\nthat Rust doesn't currently provide a good way to ensure that\ndestructors are run within a particular stack frame.)\n\n[breaking-change]"
-  },
-  {
-    "hash": "e6a812402828f0f11b0de7a7e0c08c1d85a437f1",
-    "author": "bors",
-    "date": 1428970070,
-    "message": "Auto merge of #24251 - alexcrichton:unsafe-from-raw-fd, r=aturon\n\nAs pointed out in [RFC issue 1043][rfc] it is quite useful to have the standard\r\nI/O types to provide the contract that they are the sole owner of the underlying\r\nobject they represent. This guarantee enables writing safe interfaces like the\r\n`MemoryMap` API sketched out in that issue.\r\n\r\n[rfc]: https://github.com/rust-lang/rfcs/issues/1043\r\n\r\nAs constructing objects from these raw handles may end up violating these\r\nownership gurantees, the functions for construction are now marked unsafe.\r\n\r\n[breaking-change]\r\nCloses rust-lang/rfcs#1043"
   }
 ]
