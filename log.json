@@ -1,5 +1,11 @@
 [
   {
+    "hash": "ef91cdb140d7dffa4b04f42ab0bc02dc257940e3",
+    "author": "bors",
+    "date": 1450464892,
+    "message": "Auto merge of #29973 - petrochenkov:privinpub, r=nikomatsakis\n\nSome notes:\nThis patch enforces the rules from [RFC 136](https://github.com/rust-lang/rfcs/blob/master/text/0136-no-privates-in-public.md) and makes \"private in public\" a module-level concept and not crate-level. Only `pub` annotations are used by the new algorithm, crate-level exported node set produced by `EmbargoVisitor` is not used. The error messages are tweaked accordingly and don't use the word \"exported\" to avoid confusing people (https://github.com/rust-lang/rust/issues/29668).\n\nThe old algorithm tried to be extra smart with impls, but it mostly led to unpredictable behavior and bugs like https://github.com/rust-lang/rust/issues/28325.\nThe new algorithm tries to be as simple as possible - an impl is considered public iff its type is public and its trait is public (if presents).\nA type or trait is considered public if all its components are public, [complications](https://internals.rust-lang.org/t/limits-of-type-inference-smartness/2919) with private types leaking to other crates/modules through trait impls and type inference are deliberately ignored so far.\n\nThe new algorithm is not recursive and uses the nice new facility `Crate::visit_all_items`!\n\nObsolete pre-1.0 feature `visible_private_types` is removed.\n\nThis is a [breaking-change].\nThe two main vectors of breakage are type aliases (https://github.com/rust-lang/rust/issues/28450) and impls (https://github.com/rust-lang/rust/issues/28325).\nI need some statistics from a crater run (cc @alexcrichton) to decide on the breakage mitigation strategy.\nUPDATE: All the new errors are reported as warnings controlled by a lint `private_in_public` and lint group `future_incompatible`, but the intent is to make them hard errors eventually.\n\nCloses https://github.com/rust-lang/rust/issues/28325\nCloses https://github.com/rust-lang/rust/issues/28450\nCloses https://github.com/rust-lang/rust/issues/29524\nCloses https://github.com/rust-lang/rust/issues/29627\nCloses https://github.com/rust-lang/rust/issues/29668\nCloses https://github.com/rust-lang/rust/issues/30055\n\nr? @nikomatsakis"
+  },
+  {
     "hash": "ce7bc51933e2facb4eca029ac17b398f372f5b41",
     "author": "bors",
     "date": 1450260576,
@@ -592,11 +598,5 @@
     "author": "Aaron Turon",
     "date": 1428961697,
     "message": "Generalize `spawn` beyond unit closures\n\n`thread::spawn` was previously restricted to closures that return `()`,\nwhich limited the utility of joining on a spawned thread. However, there\nis no reason for this restriction, and this commit allows arbitrary\nreturn types.\n\nSince it introduces a type parameter to `JoinHandle`, it's technically\na:\n\n[breaking-change]\n\nHowever, no code is actually expected to break."
-  },
-  {
-    "hash": "6399bb425b3a82111cd554737f194c95b8f6bad5",
-    "author": "Aaron Turon",
-    "date": 1428952528,
-    "message": "De-stabilize `thread::scoped` and friends\n\nIssue #24292 demonstrates that the `scoped` API as currently offered can\nbe memory-unsafe: the `JoinGuard` can be moved into a context that will\nfail to execute destructors prior to the stack frame being popped (for\nexample, by creating an `Rc` cycle).\n\nThis commit reverts the APIs to `unstable` status while a long-term\nsolution is worked out.\n\n(There are several possible ways to address this issue; it's not a\nfundamental problem with the `scoped` idea, but rather an indication\nthat Rust doesn't currently provide a good way to ensure that\ndestructors are run within a particular stack frame.)\n\n[breaking-change]"
   }
 ]
