@@ -1,5 +1,23 @@
 [
   {
+    "hash": "d5e229057c93222afd4943a49d382c4c5d6e8c26",
+    "author": "bors",
+    "date": 1451951866,
+    "message": "Auto merge of #30681 - Toby-S:master, r=bluss\n\nMake `\".\".parse::<f32>()` and `\".\".parse::<f64>()` return Err\n\nThis fixes #30344.\n\nThis is a [breaking-change], which the libs team have classified as a\nbug fix."
+  },
+  {
+    "hash": "33f3c52d32e6f91494bc305fd25f9d5ae5a11702",
+    "author": "Toby Scrace",
+    "date": 1451931813,
+    "message": "Make float parsing \".\" return Err\n\nThis makes both of the following return Err:\n\n    \".\".parse::<f32>()\n    \".\".parse::<f64>()\n\nThis is a [breaking-change], which the libs team have classified as a\nbug fix."
+  },
+  {
+    "hash": "5e8cb3819bf62527947634ad4d5e44b4b69daecd",
+    "author": "bors",
+    "date": 1451932641,
+    "message": "Auto merge of #30523 - ubsan:wrapping_op_assign, r=eddyb\n\nAdd OpAssign to Wrapping<T>, plus fix some problems in core::num::wrapping\n\nincluding, but not limited to:\n\n* Testing Wrapping<T>\n* Pull out a lot of broken code that doesn't need to be there with the new stage0 compiler\n* Adding Rem and RemAssign to Wrapping<T>\n* Removed 3 (assumed accidental) re-exports, which is a minor [breaking-change].\n* Change shl and shr to take all integer types, instead of a usize; this is a more major [breaking-change], because of values that were inferred before, but brings us in line with the integer shifts.\n\nFixes #30524 and #30523"
+  },
+  {
     "hash": "ef91cdb140d7dffa4b04f42ab0bc02dc257940e3",
     "author": "bors",
     "date": 1450464892,
@@ -580,23 +598,5 @@
     "author": "bors",
     "date": 1429147024,
     "message": "Auto merge of #24485 - brson:is, r=alexcrichton\n\nIt was an oversight that this was not done in the great int upheaval.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "5a3a599428f5af024857d19b5d360b148e885fa2",
-    "author": "Brian Anderson",
-    "date": 1429139606,
-    "message": "Forbid is/us suffixes. Fixes #22496\n\nIt was an oversight that this was not done in the great int upheaval.\n\n[breaking-change]"
-  },
-  {
-    "hash": "07f807d01f191ced1d7f4857c73fc57fbe31f421",
-    "author": "bors",
-    "date": 1429131916,
-    "message": "Auto merge of #24330 - pnkfelix:issue-24267, r=nikomatsakis\n\nExtend rustc::middle::dataflow to allow filtering kills from flow-exits.\r\n\r\nFix borrowck analysis so that it will not treat a break that pops through an assignment\r\n```rust\r\nx = { ... break; ... }\r\n```\r\nas a kill of the \"moved-out\" bit for `x`.\r\n\r\nFix #24267.\r\n\r\n[breaking-change], but really, its only breaking code that was already buggy."
-  },
-  {
-    "hash": "6e0fb70ff6effe7b7be2c5fe951e9161613e6707",
-    "author": "Aaron Turon",
-    "date": 1428961697,
-    "message": "Generalize `spawn` beyond unit closures\n\n`thread::spawn` was previously restricted to closures that return `()`,\nwhich limited the utility of joining on a spawned thread. However, there\nis no reason for this restriction, and this commit allows arbitrary\nreturn types.\n\nSince it introduces a type parameter to `JoinHandle`, it's technically\na:\n\n[breaking-change]\n\nHowever, no code is actually expected to break."
   }
 ]
