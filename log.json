@@ -1,5 +1,17 @@
 [
   {
+    "hash": "21b025f55fa7f68982f9faf58522da11b3d91815",
+    "author": "bors",
+    "date": 1452092417,
+    "message": "Auto merge of #30733 - ubsan:wrapping_op_assign, r=eddyb\n\nFix a breaking change in #30523\n\nWhile this does fix a breaking change, it is also, technically, a\n[breaking-change] to go back to our original way"
+  },
+  {
+    "hash": "14e1e2aee812978c81d4edf23359e7dca444d678",
+    "author": "Nicholas Mazzuca",
+    "date": 1452060963,
+    "message": "Fix a breaking change in #30523\n\nWhile this does fix a breaking change, it is also, technically, a\n[breaking-change] to go back to our original way"
+  },
+  {
     "hash": "d5e229057c93222afd4943a49d382c4c5d6e8c26",
     "author": "bors",
     "date": 1451951866,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1429325633,
     "message": "Auto merge of #24133 - kballard:add-sync-to-io-error, r=alexcrichton\n\nThis allows `io::Error` values to be stored in `Arc` properly.\r\n\r\nBecause this requires `Sync` of any value passed to `io::Error::new()`\r\nand modifies the relevant `convert::From` impls, this is a\r\n\r\n[breaking-change]\r\n\r\nFixes #24049."
-  },
-  {
-    "hash": "986852911464df87088007e64780165cc538f9b9",
-    "author": "Kevin Ballard",
-    "date": 1428366023,
-    "message": "Add `Sync` to the bounds in `io::Error`\n\nThis allows `io::Error` values to be stored in `Arc` properly.\n\nBecause this requires `Sync` of any value passed to `io::Error::new()`\nand modifies the relevant `convert::From` impls, this is a\n\n[breaking-change]\n\nFixes #24049."
-  },
-  {
-    "hash": "e40449e0d545561c73a9b9b324b5971b533a87b7",
-    "author": "bors",
-    "date": 1429147024,
-    "message": "Auto merge of #24485 - brson:is, r=alexcrichton\n\nIt was an oversight that this was not done in the great int upheaval.\r\n\r\n[breaking-change]"
   }
 ]
