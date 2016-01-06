@@ -1,5 +1,23 @@
 [
   {
+    "hash": "5daa75373d870f255923aed37d99db73a661bd51",
+    "author": "bors",
+    "date": 1452112255,
+    "message": "Auto merge of #30654 - nrc:panictry, r=brson\n\nThe motivation (other than removing boilerplate) is that this is a baby step towards a parser with error recovery.\n\n[breaking-change] if you use any of the changed functions, you'll need to remove a try! or panictry!"
+  },
+  {
+    "hash": "9023c659af8a43dd5e284d7b311e5f19721c9bd8",
+    "author": "Nick Cameron",
+    "date": 1451525342,
+    "message": "Cut out a bunch of Result and panictry! boilerplate from libsyntax.\n\n[breaking-change] if you use any of the changed functions, you'll need to remove a try! or panictry!"
+  },
+  {
+    "hash": "e8c337b5ca883285e6215f1f669d5556842d1520",
+    "author": "bors",
+    "date": 1452105477,
+    "message": "Auto merge of #30532 - nikomatsakis:cross-item-dependencies, r=mw\n\nThis is roughly the same as my previous PR that created a dependency graph, but that:\n\n1. The dependency graph is only optionally constructed, though this doesn't seem to make much of a difference in terms of overhead (see measurements below).\n2. The dependency graph is simpler (I combined a lot of nodes).\n3. The dependency graph debugging facilities are much better: you can now use `RUST_DEP_GRAPH_FILTER` to filter the dep graph to just the nodes you are interested in, which is super help.\n4. The tests are somewhat more elaborate, including a few known bugs I need to fix in a second pass.\n\nThis is potentially a `[breaking-change]` for plugin authors. If you are poking about in tcx state or something like that, you probably want to add `let _ignore = tcx.dep_graph.in_ignore();`, which will cause your reads/writes to be ignored and not affect the dep-graph.\n\nAfter this, or perhaps as an add-on to this PR in some cases, what I would like to do is the following:\n\n- [x] Write-up a little guide to how to use this system, the debugging options available, and what the possible failure modes are.\n- [ ] Introduce read-only and perhaps the `Meta` node\n- [x] Replace \"memoization tasks\" with node from the map itself\n- [ ] Fix the shortcomings, obviously! Notably, the HIR map needs to register reads, and there is some state that is not yet tracked. (Maybe as a separate PR.)\n- [x] Refactor the dep-graph code so that the actual maintenance of the dep-graph occurs in a parallel thread, and the main thread simply throws things into a shared channel (probably a fixed-size channel). There is no reason for dep-graph construction to be on the main thread. (Maybe as a separate PR.)\n\nRegarding performance: adding this tracking does add some overhead, approximately 2% in my measurements (I was comparing the build times for rustdoc). Interestingly, enabling or disabling tracking doesn't seem to do very much. I want to poke at this some more and gather a bit more data -- in some tests I've seen that 2% go away, but on others it comes back. It's not entirely clear to me if that 2% is truly due to constructing the dep-graph at all.\n\nThe next big step after this is write some code to dump the dep-graph to disk and reload it.\n\nr? @michaelwoerister"
+  },
+  {
     "hash": "21b025f55fa7f68982f9faf58522da11b3d91815",
     "author": "bors",
     "date": 1452092417,
@@ -580,23 +598,5 @@
     "author": "Alex Crichton",
     "date": 1429641463,
     "message": "std: Remove deprecated/unstable num functionality\n\nThis commit removes all the old casting/generic traits from `std::num` that are\nno longer in use by the standard library. This additionally removes the old\n`strconv` module which has not seen much use in quite a long time. All generic\nfunctionality has been supplanted with traits in the `num` crate and the\n`strconv` module is supplanted with the [rust-strconv crate][rust-strconv].\n\n[rust-strconv]: https://github.com/lifthrasiir/rust-strconv\n\nThis is a breaking change due to the removal of these deprecated crates, and the\nalternative crates are listed above.\n\n[breaking-change]"
-  },
-  {
-    "hash": "98e9765d973d46faa5c80fb37a48040ca9e87b28",
-    "author": "Alex Crichton",
-    "date": 1429655286,
-    "message": "rollup merge of #24541: alexcrichton/issue-24538\n\nThis is an implementation of [RFC 1030][rfc] which adds these traits to the\nprelude and additionally removes all inherent `into_iter` methods on collections\nin favor of the trait implementation (which is now accessible by default).\n\n[rfc]: https://github.com/rust-lang/rfcs/pull/1030\n\nThis is technically a breaking change due to the prelude additions and removal\nof inherent methods, but it is expected that essentially no code breaks in\npractice.\n\n[breaking-change]\nCloses #24538"
-  },
-  {
-    "hash": "8f5b5f94dcdb9884737dfbc8efd893d1d70f0b14",
-    "author": "Alex Crichton",
-    "date": 1429313850,
-    "message": "std: Add Default/IntoIterator/ToOwned to the prelude\n\nThis is an implementation of [RFC 1030][rfc] which adds these traits to the\nprelude and additionally removes all inherent `into_iter` methods on collections\nin favor of the trait implementation (which is now accessible by default).\n\n[rfc]: https://github.com/rust-lang/rfcs/pull/1030\n\nThis is technically a breaking change due to the prelude additions and removal\nof inherent methods, but it is expected that essentially no code breaks in\npractice.\n\n[breaking-change]\nCloses #24538"
-  },
-  {
-    "hash": "efa6a46a8eceb4ab792d5ec8e28cf3baaaa96491",
-    "author": "bors",
-    "date": 1429325633,
-    "message": "Auto merge of #24133 - kballard:add-sync-to-io-error, r=alexcrichton\n\nThis allows `io::Error` values to be stored in `Arc` properly.\r\n\r\nBecause this requires `Sync` of any value passed to `io::Error::new()`\r\nand modifies the relevant `convert::From` impls, this is a\r\n\r\n[breaking-change]\r\n\r\nFixes #24049."
   }
 ]
