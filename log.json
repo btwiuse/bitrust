@@ -1,5 +1,11 @@
 [
   {
+    "hash": "91b27ec9beb8455426da3efd26dfc9155058f5bd",
+    "author": "bors",
+    "date": 1452148376,
+    "message": "Auto merge of #30724 - nikomatsakis:feature-gate-defaulted-type-parameters, r=pnkfelix\n\nIt was recently realized that we accept defaulted type parameters everywhere, without feature gate, even though the only place that we really *intended* to accept them were on types. This PR adds a lint warning unless the \"type-parameter-defaults\" feature is enabled. This should eventually become a hard error.\n\nThis is a [breaking-change] in that new feature gates are required (or simply removing the defaults, which is probably a better choice as they have little effect at this time). Results of a [crater run][crater] suggest that approximately 5-15 crates are affected. I didn't do the measurement quite right so that run cannot distinguish \"true\" regressions from \"non-root\" regressions, but even the upper bound of 15 affected crates seems relatively minimal.\n\n[crater]: https://gist.github.com/nikomatsakis/760c6a67698bd24253bf\n\ncc @rust-lang/lang\nr? @pnkfelix"
+  },
+  {
     "hash": "5daa75373d870f255923aed37d99db73a661bd51",
     "author": "bors",
     "date": 1452112255,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1429998290,
     "message": "Auto merge of #24547 - bombless:comma, r=pnkfelix\n\nCloses #20616 \r\nIt breaks code such as <https://github.com/rust-lang/rust/blob/c64feb63418fd05bd6e5adc6f9ad763aa6a594b1/src/librustc_typeck/check/method/suggest.rs#L367>, so this is a [breaking-change], you have to add missing comma after the last lifetime arguement now."
-  },
-  {
-    "hash": "eeb94886adccb3f13003f92f117115d17846ce1f",
-    "author": "Alex Crichton",
-    "date": 1429641463,
-    "message": "std: Remove deprecated/unstable num functionality\n\nThis commit removes all the old casting/generic traits from `std::num` that are\nno longer in use by the standard library. This additionally removes the old\n`strconv` module which has not seen much use in quite a long time. All generic\nfunctionality has been supplanted with traits in the `num` crate and the\n`strconv` module is supplanted with the [rust-strconv crate][rust-strconv].\n\n[rust-strconv]: https://github.com/lifthrasiir/rust-strconv\n\nThis is a breaking change due to the removal of these deprecated crates, and the\nalternative crates are listed above.\n\n[breaking-change]"
   }
 ]
