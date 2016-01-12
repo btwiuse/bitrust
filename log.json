@@ -1,5 +1,11 @@
 [
   {
+    "hash": "bac3eec67c367718c05585b72974c58a66f6abd0",
+    "author": "Oliver Schneider",
+    "date": 1452511906,
+    "message": "[breaking-change] remove negate_unsigned feature gate"
+  },
+  {
     "hash": "69e1f57dfbd32a1a342d696a3e79624da97ebe1b",
     "author": "bors",
     "date": 1452494458,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1430041948,
     "message": "Auto merge of #23085 - goffrie:interpolating-quote, r=huonw\n\nThis changes the `ToTokens` implementations for expressions, statements, etc. with almost-trivial ones that produce `Interpolated(*Nt(...))` pseudo-tokens. In this way, quasiquote now works the same way as macros do: already-parsed AST fragments are used as-is, not reparsed.\r\n\r\nThe `ToSource` trait is removed. Quasiquote no longer involves pretty-printing at all, which removes the need for the `encode_with_hygiene` hack. All associated machinery is removed.\r\n\r\nNew `Nonterminal`s are added: NtArm, NtImplItem, and NtTraitItem. These are just for quasiquote, not macros.\r\n\r\n`ToTokens` is no longer implemented for `Arg` (although this could be added again) and `Generics` (which I don't think makes sense).\r\n\r\nThis breaks any compiler extensions that relied on the ability of `ToTokens` to turn AST fragments back into inspectable token trees. For this reason, this closes #16987.\r\n\r\nAs such, this is a [breaking-change].\r\n\r\nFixes #16472.\r\nFixes #15962.\r\nFixes #17397.\r\nFixes #16617."
-  },
-  {
-    "hash": "2d9831dea598d8a45c69e8c799503e8a397aacc0",
-    "author": "Geoffry Song",
-    "date": 1430012530,
-    "message": "Interpolate AST nodes in quasiquote.\n\nThis changes the `ToTokens` implementations for expressions, statements,\netc. with almost-trivial ones that produce `Interpolated(*Nt(...))`\npseudo-tokens. In this way, quasiquote now works the same way as macros\ndo: already-parsed AST fragments are used as-is, not reparsed.\n\nThe `ToSource` trait is removed. Quasiquote no longer involves\npretty-printing at all, which removes the need for the\n`encode_with_hygiene` hack. All associated machinery is removed.\n\nA new `Nonterminal` is added, NtArm, which the parser now interpolates.\nThis is just for quasiquote, not macros (although it could be in the\nfuture).\n\n`ToTokens` is no longer implemented for `Arg` (although this could be\nadded again) and `Generics` (which I don't think makes sense).\n\nThis breaks any compiler extensions that relied on the ability of\n`ToTokens` to turn AST fragments back into inspectable token trees. For\nthis reason, this closes #16987.\n\nAs such, this is a [breaking-change].\n\nFixes #16472.\nFixes #15962.\nFixes #17397.\nFixes #16617."
   }
 ]
