@@ -1,5 +1,17 @@
 [
   {
+    "hash": "82f8e5ce84c83b02fbfa720c6841f12db1a55603",
+    "author": "Nick Cameron",
+    "date": 1452822565,
+    "message": "Address reviewer comments\n\n[breaking-change]\n\n`OptLevel` variants are no longer `pub use`ed by rust::session::config. If you are using these variants, you must change your code to prefix the variant name with `OptLevel`."
+  },
+  {
+    "hash": "b976d9e6660c16f4a1d5a28b11afa7ccb4f75da6",
+    "author": "Nick Cameron",
+    "date": 1452806652,
+    "message": "Implement JSON error emission\n\n[breaking-change]\n\nsyntax::errors::Handler::new has been renamed to with_tty_emitter\n\nMany functions which used to take a syntax::errors::ColorConfig, now take a rustc::session::config::ErrorOutputType. If you previously used ColorConfig::Auto as a default, you should now use ErrorOutputType::default()."
+  },
+  {
     "hash": "8796e012cbfa0bf63522e409edc10cbac5afaacd",
     "author": "bors",
     "date": 1452672945,
@@ -586,17 +598,5 @@
     "author": "Ulrik Sverdrup",
     "date": 1430213913,
     "message": "collections: Implement vec::drain(range) according to RFC 574\n\nOld `.drain()` on vec is performed using `.drain(..)` now.\n\n`.drain(range)` is unstable and under feature(collections_drain)\n\n[breaking-change]"
-  },
-  {
-    "hash": "441b3f0c26c2e30ddb012be968141da7ce7d9d62",
-    "author": "bors",
-    "date": 1430241156,
-    "message": "Auto merge of #24906 - pnkfelix:fsk-fix-24895, r=alexcrichton\n\ndropck: Remove `Copy` from special-cased traits\r\n\r\nFix #24895.\r\n\r\n[breaking-change]\r\n\r\nWhat does this break?  Basically, code that implements `Drop` and is\r\nusing `T:Copy` for one of its type parameters and is relying on the\r\nDrop Check rule not applying to it.\r\n\r\nHere is an example:\r\n\r\n```rust\r\n#![allow(dead_code,unused_variables,unused_assignments)]\r\nstruct D<T:Copy>(T);\r\nimpl<T:Copy> Drop for D<T> { fn drop(&mut self) { } }\r\n\r\ntrait UserT { fn c(&self) { } }\r\nimpl<T:Copy> UserT for T { }\r\nstruct E<T:UserT>(T);\r\nimpl<T:UserT> Drop for E<T> { fn drop(&mut self) { } }\r\n\r\n// This one will start breaking.\r\nfn foo() { let (d2, d1); d1 = D(34); d2 = D(&d1); }\r\n\r\n#[cfg(this_one_does_and_should_always_break)]\r\nfn bar() { let (e2, e1); e1 = E(34); e2 = E(&e1); }\r\n\r\nfn main() {\r\n    foo();\r\n}\r\n```"
-  },
-  {
-    "hash": "b892264ea4f048feb5f380d3e659d82ba463f5b7",
-    "author": "Felix S. Klock II",
-    "date": 1430236036,
-    "message": "Fix #24895.\n\n[breaking-change]\n\nWhat does this break?  Basically, code that implements `Drop` and is\nusing `T:Copy` for one of its type parameters and is relying on the\nDrop Check rule not applying to it.\n\nHere is an example:\n\n```rust\n#![allow(dead_code,unused_variables,unused_assignments)]\nstruct D<T:Copy>(T);\nimpl<T:Copy> Drop for D<T> { fn drop(&mut self) { } }\n\ntrait UserT { fn c(&self) { } }\nimpl<T:Copy> UserT for T { }\nstruct E<T:UserT>(T);\nimpl<T:UserT> Drop for E<T> { fn drop(&mut self) { } }\n\n// This one will start breaking.\nfn foo() { let (d2, d1); d1 = D(34); d2 = D(&d1); }\n\n#[cfg(this_one_does_and_should_always_break)]\nfn bar() { let (e2, e1); e1 = E(34); e2 = E(&e1); }\n\nfn main() {\n    foo();\n}\n```"
   }
 ]
