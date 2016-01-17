@@ -1,5 +1,11 @@
 [
   {
+    "hash": "88463364bfb675fdecd2bf9b70c589cc5e7cb2fb",
+    "author": "bors",
+    "date": 1453013275,
+    "message": "Auto merge of #30426 - gereeter:btree-rewrite, r=Gankro\n\nDespite being over 700 lines shorter, this implementation should use less memory than the previous one and is faster on at least insertions and iteration, the latter improving approximately 5x.\n\nTechnically a [breaking-change] due to removal of deprecated functions.\n\ncc @apasel422 @Gankro @goyox86\n\nFixes #27865.\n\n<!-- Reviewable:start -->\n[<img src=\"https://reviewable.io/review_button.png\" height=40 alt=\"Review on Reviewable\"/>](https://reviewable.io/reviews/rust-lang/rust/30426)\n<!-- Reviewable:end -->"
+  },
+  {
     "hash": "82f8e5ce84c83b02fbfa720c6841f12db1a55603",
     "author": "Nick Cameron",
     "date": 1452822565,
@@ -592,11 +598,5 @@
     "author": "Aaron Turon",
     "date": 1430443222,
     "message": "Add downcasting to std::error::Error\n\nThis commit brings the `Error` trait in line with the [Error interoperation\nRFC](https://github.com/rust-lang/rfcs/pull/201) by adding downcasting,\nwhich has long been intended. This change means that for any `Error`\ntrait objects that are `'static`, you can downcast to concrete error\ntypes.\n\nTo make this work, it is necessary for `Error` to inherit from\n`Reflect` (which is currently used to mark concrete types as \"permitted\nfor reflection, aka downcasting\"). This is a breaking change: it means\nthat impls like\n\n```rust\nimpl<T> Error for MyErrorType<T> { ... }\n```\n\nmust change to something like\n\n```rust\nimpl<T: Reflect> Error for MyErrorType<T> { ... }\n```\n\nexcept that `Reflect` is currently unstable (and should remain so for\nthe time being). For now, code can instead bound by `Any`:\n\n```rust\nimpl<T: Any> Error for MyErrorType<T> { ... }\n```\n\nwhich *is* stable and has `Reflect` as a super trait. The downside is\nthat this imposes a `'static` constraint, but that only\nconstrains *when* `Error` is implemented -- it does not actually\nconstrain the types that can implement `Error`.\n\n[breaking-change]"
-  },
-  {
-    "hash": "b475fc7d6aa1cafa91790c273908fddfb669a82e",
-    "author": "Ulrik Sverdrup",
-    "date": 1430213913,
-    "message": "collections: Implement vec::drain(range) according to RFC 574\n\nOld `.drain()` on vec is performed using `.drain(..)` now.\n\n`.drain(range)` is unstable and under feature(collections_drain)\n\n[breaking-change]"
   }
 ]
