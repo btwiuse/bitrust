@@ -1,5 +1,11 @@
 [
   {
+    "hash": "06c66d6ca23c73c60aeb0ea2c12baaf0236afe40",
+    "author": "Peter Atashian",
+    "date": 1452965694,
+    "message": "Change name when outputting staticlibs on Windows\nlibfoo.a -> foo.lib\nIn order to not cause conflicts, changes the DLL import library name\nfoo.lib -> foo.dll.lib\n\nFixes https://github.com/rust-lang/rust/issues/29508\n\nBecause this changes output filenames this is a [breaking-change]\n\nSigned-off-by: Peter Atashian <retep998@gmail.com>"
+  },
+  {
     "hash": "88463364bfb675fdecd2bf9b70c589cc5e7cb2fb",
     "author": "bors",
     "date": 1453013275,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1430454173,
     "message": "Auto merge of #24793 - aturon:io-error-any, r=alexcrichton\n\nThis commit brings the `Error` trait in line with the [Error interoperation\r\nRFC](https://github.com/rust-lang/rfcs/pull/201) by adding downcasting,\r\nwhich has long been intended. This change means that for any `Error`\r\ntrait objects that are `'static`, you can downcast to concrete error\r\ntypes.\r\n\r\nTo make this work, it is necessary for `Error` to inherit from\r\n`Reflect` (which is currently used to mark concrete types as \"permitted\r\nfor reflection, aka downcasting\"). This is a breaking change: it means\r\nthat impls like\r\n\r\n```rust\r\nimpl<T> Error for MyErrorType<T> { ... }\r\n```\r\n\r\nmust change to\r\n\r\n```rust\r\nimpl<T: Reflect> Error for MyErrorType<T> { ... }\r\n```\r\n\r\nThis commit furthermore marks `Reflect` as stable, since we are already\r\nessentially committed to it via `Any`. Note that in the future, if we\r\ndetermine that the parametricity aspects of `Reflect` are not needed, we\r\ncan deprecate the trait and provide a blanket implementation for it\r\nfor *all* types (rather than by using OIBIT), which would allow all\r\nmentions of `Reflect` to be dropped over time. So there is not a strong\r\ncommitment here.\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton"
-  },
-  {
-    "hash": "a5762625a168f195afbc5b74d674a93f8c692a8e",
-    "author": "Aaron Turon",
-    "date": 1430443222,
-    "message": "Add downcasting to std::error::Error\n\nThis commit brings the `Error` trait in line with the [Error interoperation\nRFC](https://github.com/rust-lang/rfcs/pull/201) by adding downcasting,\nwhich has long been intended. This change means that for any `Error`\ntrait objects that are `'static`, you can downcast to concrete error\ntypes.\n\nTo make this work, it is necessary for `Error` to inherit from\n`Reflect` (which is currently used to mark concrete types as \"permitted\nfor reflection, aka downcasting\"). This is a breaking change: it means\nthat impls like\n\n```rust\nimpl<T> Error for MyErrorType<T> { ... }\n```\n\nmust change to something like\n\n```rust\nimpl<T: Reflect> Error for MyErrorType<T> { ... }\n```\n\nexcept that `Reflect` is currently unstable (and should remain so for\nthe time being). For now, code can instead bound by `Any`:\n\n```rust\nimpl<T: Any> Error for MyErrorType<T> { ... }\n```\n\nwhich *is* stable and has `Reflect` as a super trait. The downside is\nthat this imposes a `'static` constraint, but that only\nconstrains *when* `Error` is implemented -- it does not actually\nconstrain the types that can implement `Error`.\n\n[breaking-change]"
   }
 ]
