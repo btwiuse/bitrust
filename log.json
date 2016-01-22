@@ -1,5 +1,11 @@
 [
   {
+    "hash": "54475e950cf3db909c4dec4a30c72f7636ab4e07",
+    "author": "bors",
+    "date": 1453416097,
+    "message": "Auto merge of #30882 - petrochenkov:varnamesp, r=nrc\n\nTuple and unit variants from other crates weren't put into type namespace.\nNow variant namespacing is aligned with struct namespacing and is not affected by the variant's crate of origin (struct -> type, tuple/unit -> type/value).\nAdditionally, struct variants from other crates are put into value namespace (struct variants from local crate were already in it). This is not a necessity, but a future proofing measure.\n\nThis fix can result in some new shadowing errors in cross-crate scenarios, crater reports [three regressions](https://github.com/rust-lang/rust/pull/30882#issuecomment-172369883).\n[breaking-change]"
+  },
+  {
     "hash": "06c66d6ca23c73c60aeb0ea2c12baaf0236afe40",
     "author": "Peter Atashian",
     "date": 1452965694,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1430520849,
     "message": "Auto merge of #25006 - alexcrichton:unstable-indexing, r=aturon\n\nThese implementations were intended to be unstable, but currently the stability\r\nattributes cannot handle a stable trait with an unstable `impl` block. This\r\ncommit also audits the rest of the standard library for explicitly-`#[unstable]`\r\nimpl blocks. No others were removed but some annotations were changed to\r\n`#[stable]` as they're defacto stable anyway.\r\n\r\nOne particularly interesting `impl` marked `#[stable]` as part of this commit\r\nis the `Add<&[T]>` impl for `Vec<T>`, which uses `push_all` and implicitly\r\nclones all elements of the vector provided.\r\n\r\nCloses #24791\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "5c710b593b429d39ea01375172a9ce968f43ab26",
-    "author": "bors",
-    "date": 1430454173,
-    "message": "Auto merge of #24793 - aturon:io-error-any, r=alexcrichton\n\nThis commit brings the `Error` trait in line with the [Error interoperation\r\nRFC](https://github.com/rust-lang/rfcs/pull/201) by adding downcasting,\r\nwhich has long been intended. This change means that for any `Error`\r\ntrait objects that are `'static`, you can downcast to concrete error\r\ntypes.\r\n\r\nTo make this work, it is necessary for `Error` to inherit from\r\n`Reflect` (which is currently used to mark concrete types as \"permitted\r\nfor reflection, aka downcasting\"). This is a breaking change: it means\r\nthat impls like\r\n\r\n```rust\r\nimpl<T> Error for MyErrorType<T> { ... }\r\n```\r\n\r\nmust change to\r\n\r\n```rust\r\nimpl<T: Reflect> Error for MyErrorType<T> { ... }\r\n```\r\n\r\nThis commit furthermore marks `Reflect` as stable, since we are already\r\nessentially committed to it via `Any`. Note that in the future, if we\r\ndetermine that the parametricity aspects of `Reflect` are not needed, we\r\ncan deprecate the trait and provide a blanket implementation for it\r\nfor *all* types (rather than by using OIBIT), which would allow all\r\nmentions of `Reflect` to be dropped over time. So there is not a strong\r\ncommitment here.\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton"
   }
 ]
