@@ -1,5 +1,17 @@
 [
   {
+    "hash": "43c1a173a874f5513db58b2f5321489a00087484",
+    "author": "bors",
+    "date": 1453807458,
+    "message": "Auto merge of #31105 - jseyfried:fix_lexical_scoping, r=nrc\n\nThis fixes #23880, a scoping bug in which items in a block are shadowed by local variables and type parameters that are in scope.\n\nAfter this PR, an item in a block will shadow any local variables or type parameters above the item in the scope hierarchy. Items in a block will continue to be shadowed by local variables in the same block (even if the item is defined after the local variable).\n\nThis is a [breaking-change]. For example, the following code breaks:\n```rust\nfn foo() {\n    let mut f = 1;\n    {\n        fn f() {}\n        f += 1; // This will resolve to the function instead of the local variable\n    }\n}"
+  },
+  {
+    "hash": "faf0852fc1d01aef18fe8098a0f2f601dbfebd9b",
+    "author": "Jeffrey Seyfried",
+    "date": 1453781818,
+    "message": "Resolve: fix #23880, a scoping bug\n\nThis fixes a bug in which items in a block are shadowed by local variables and type parameters that are in scope.\nIt is a [breaking-change]. For example, the following code breaks:\n\n```rust\nfn foo() {\n    let mut f = 1;\n    {\n        fn f() {}\n        f += 1; // This will now resolve to the function instead of the local variable\n    }\n}\n```\n\nAny breakage can be fixed by renaming the item that is no longer shadowed."
+  },
+  {
     "hash": "54475e950cf3db909c4dec4a30c72f7636ab4e07",
     "author": "bors",
     "date": 1453416097,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1430849907,
     "message": "Auto merge of #25009 - alexcrichton:less-buffered-stream, r=aturon\n\nAs pointed out in #17136 the semantics of a `BufStream` aren't always what one\r\nexpects, and it looks like other [languages like C#][c-sharp] implement a\r\nbuffered stream with only one underlying buffer. For now this commit\r\ndestabilizes the primitive in the `std::io` module to give us some more time in\r\nfiguring out what to do with it.\r\n\r\n[c-sharp]: https://msdn.microsoft.com/en-us/library/system.io.bufferedstream%28v=vs.110%29.aspx\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "db477eef72924c7b34e9617627eaae37c71bdc1c",
-    "author": "Alex Crichton",
-    "date": 1430434978,
-    "message": "std: Destabilize io::BufStream\n\nAs pointed out in #17136 the semantics of a `BufStream` aren't always what one\nexpects, and it looks like other [languages like C#][c-sharp] implement a\nbuffered stream with only one underlying buffer. For now this commit\ndestabilizes the primitive in the `std::io` module to give us some more time in\nfiguring out what to do with it.\n\n[c-sharp]: https://msdn.microsoft.com/en-us/library/system.io.bufferedstream%28v=vs.110%29.aspx\n\n[breaking-change]"
-  },
-  {
-    "hash": "f6574c5b0404f55c4dd4056be47d37eff33684b5",
-    "author": "bors",
-    "date": 1430520849,
-    "message": "Auto merge of #25006 - alexcrichton:unstable-indexing, r=aturon\n\nThese implementations were intended to be unstable, but currently the stability\r\nattributes cannot handle a stable trait with an unstable `impl` block. This\r\ncommit also audits the rest of the standard library for explicitly-`#[unstable]`\r\nimpl blocks. No others were removed but some annotations were changed to\r\n`#[stable]` as they're defacto stable anyway.\r\n\r\nOne particularly interesting `impl` marked `#[stable]` as part of this commit\r\nis the `Add<&[T]>` impl for `Vec<T>`, which uses `push_all` and implicitly\r\nclones all elements of the vector provided.\r\n\r\nCloses #24791\r\n\r\n[breaking-change]"
   }
 ]
