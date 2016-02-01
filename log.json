@@ -1,5 +1,11 @@
 [
   {
+    "hash": "654f68dd50b72d1d812b0760f1b71d7c366f6f55",
+    "author": "bors",
+    "date": 1454302332,
+    "message": "Auto merge of #30866 - jseyfried:fix_shadowed_use_visibility, r=nrc\n\nThis reverts PR #30324, fixing bug #30159 in which a public a glob import makes public any preceding imports that share a name with an item in the module being glob imported from.\n\nFor example,\n```rust\npub fn f() {}\npub mod foo {\n    fn f() {}\n}\n\nmod bar {\n    use f;\n    use f as g;\n    pub use foo::*; // This makes the first import public but does not affect the second import.\n}\n```\n\nThis is a [breaking-change]."
+  },
+  {
     "hash": "43c1a173a874f5513db58b2f5321489a00087484",
     "author": "bors",
     "date": 1453807458,
@@ -592,11 +598,5 @@
     "author": "Sean McArthur",
     "date": 1430889983,
     "message": "lint: deny transmuting from immutable to mutable, since it's undefined behavior\n\n[breaking-change] Technically breaking, since code that had been using\nthese transmutes before will no longer compile. However, it was\nundefined behavior, so really, it's a good thing. Fixing your code would\nrequire some re-working to use an UnsafeCell instead.\n\nCloses #13146"
-  },
-  {
-    "hash": "eae692e375cec222803efb7175c79fedc228eea9",
-    "author": "bors",
-    "date": 1430849907,
-    "message": "Auto merge of #25009 - alexcrichton:less-buffered-stream, r=aturon\n\nAs pointed out in #17136 the semantics of a `BufStream` aren't always what one\r\nexpects, and it looks like other [languages like C#][c-sharp] implement a\r\nbuffered stream with only one underlying buffer. For now this commit\r\ndestabilizes the primitive in the `std::io` module to give us some more time in\r\nfiguring out what to do with it.\r\n\r\n[c-sharp]: https://msdn.microsoft.com/en-us/library/system.io.bufferedstream%28v=vs.110%29.aspx\r\n\r\n[breaking-change]"
   }
 ]
