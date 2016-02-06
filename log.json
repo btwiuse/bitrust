@@ -1,5 +1,17 @@
 [
   {
+    "hash": "35635aebab321ff2a4708aeb172351356ad63cf7",
+    "author": "bors",
+    "date": 1454750644,
+    "message": "Auto merge of #31333 - lambda:31273-abort-on-stack-overflow, r=brson\n\nAbort on stack overflow instead of re-raising SIGSEGV\n\nWe use guard pages that cause the process to abort to protect against\nundefined behavior in the event of stack overflow.  We have a handler\nthat catches segfaults, prints out an error message if the segfault was\ndue to a stack overflow, then unregisters itself and returns to allow\nthe signal to be re-raised and kill the process.\n\nThis caused some confusion, as it was unexpected that safe code would be\nable to cause a segfault, while it's easy to overflow the stack in safe\ncode.  To avoid this confusion, when we detect a segfault in the guard\npage, abort instead of the previous behavior of re-raising SIGSEGV.\n\nTo test this, we need to adapt the tests for segfault to actually check\nthe exit status.  Doing so revealed that the existing test for segfault\nbehavior was actually invalid; LLVM optimizes the explicit null pointer\nreference down to an illegal instruction, so the program aborts with\nSIGILL instead of SIGSEGV and the test didn't actually trigger the\nsignal handler at all.  Use a C helper function to get a null pointer\nthat LLVM can't optimize away, so we get our segfault instead.\n\nThis is a [breaking-change] if anyone is relying on the exact signal\nraised to kill a process on stack overflow.\n\nCloses #31273"
+  },
+  {
+    "hash": "ee79bfa18affe95959a5f9a036c17bbd77979e21",
+    "author": "Brian Campbell",
+    "date": 1454722878,
+    "message": "Abort on stack overflow instead of re-raising SIGSEGV\n\nWe use guard pages that cause the process to abort to protect against\nundefined behavior in the event of stack overflow.  We have a handler\nthat catches segfaults, prints out an error message if the segfault was\ndue to a stack overflow, then unregisters itself and returns to allow\nthe signal to be re-raised and kill the process.\n\nThis caused some confusion, as it was unexpected that safe code would be\nable to cause a segfault, while it's easy to overflow the stack in safe\ncode.  To avoid this confusion, when we detect a segfault in the guard\npage, abort instead of the previous behavior of re-raising the SIGSEGV.\n\nTo test this, we need to adapt the tests for segfault to actually check\nthe exit status.  Doing so revealed that the existing test for segfault\nbehavior was actually invalid; LLVM optimizes the explicit null pointer\nreference down to an illegal instruction, so the program aborts with\nSIGILL instead of SIGSEGV and the test didn't actually trigger the\nsignal handler at all.  Use a C helper function to get a null pointer\nthat LLVM can't optimize away, so we get our segfault instead.\n\nThis is a [breaking-change] if anyone is relying on the exact signal\nraised to kill a process on stack overflow.\n\nCloses #31273"
+  },
+  {
     "hash": "654f68dd50b72d1d812b0760f1b71d7c366f6f55",
     "author": "bors",
     "date": 1454302332,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1431035111,
     "message": "Auto merge of #25157 - alexcrichton:remove-vec-add, r=aturon\n\nIdeally this trait implementation would be unstable, requiring crates to opt-in\r\nif they would like the functionality, but that's not currently how stability\r\nworks so the implementation needs to be removed entirely.\r\n\r\nThis may come back at a future date, but for now the conservative option is to\r\nremove it.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "8d3f84e235b22688dd1592cfb86f31459a79ac5f",
-    "author": "Alex Crichton",
-    "date": 1430934754,
-    "message": "std: Remove addition on vectors for now\n\nIdeally this trait implementation would be unstable, requiring crates to opt-in\nif they would like the functionality, but that's not currently how stability\nworks so the implementation needs to be removed entirely.\n\nThis may come back at a future date, but for now the conservative option is to\nremove it.\n\n[breaking-change]"
-  },
-  {
-    "hash": "d131f335579b8c080a2416a65ca703169fae560b",
-    "author": "Sean McArthur",
-    "date": 1430889983,
-    "message": "lint: deny transmuting from immutable to mutable, since it's undefined behavior\n\n[breaking-change] Technically breaking, since code that had been using\nthese transmutes before will no longer compile. However, it was\nundefined behavior, so really, it's a good thing. Fixing your code would\nrequire some re-working to use an UnsafeCell instead.\n\nCloses #13146"
   }
 ]
