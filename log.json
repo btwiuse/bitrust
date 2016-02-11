@@ -1,5 +1,167 @@
 [
   {
+    "hash": "2b816b0d6a9bc8210ca314a020a247f8632b4f38",
+    "author": "Oliver 'ker' Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::PathListItem_ variants"
+  },
+  {
+    "hash": "8b3856b1bc1c23969e5d8983f25cf85698a5c2b1",
+    "author": "Oliver 'ker' Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::StrStyle variants"
+  },
+  {
+    "hash": "d844bfb1967b780ff6cc6e81644bf4b529dc0738",
+    "author": "Oliver 'ker' Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::Visibility variants"
+  },
+  {
+    "hash": "dfe35da6b83f64bb7553b19649839512a3c301ce",
+    "author": "Oliver 'ker' Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::TraitItemKind variants"
+  },
+  {
+    "hash": "73fa9b2da2ee82c91a5c8d605b91f22f19e4d74b",
+    "author": "Oliver 'ker' Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::Mutablity variants"
+  },
+  {
+    "hash": "14e09ad4686bb20a98acfd7d930386f6330d2b4d",
+    "author": "Oliver 'ker' Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::MetaItem_"
+  },
+  {
+    "hash": "e797e1961df00ec7725c47225dcf9b5a0e9fce64",
+    "author": "Oliver 'ker' Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::MacStmtStyle"
+  },
+  {
+    "hash": "798974cae58639c174010fd4a6411dcdc860e404",
+    "author": "Oliver 'ker' Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::KleeneOp variants"
+  },
+  {
+    "hash": "019614f03d106324ab50a37746b556c41e66c099",
+    "author": "Oliver 'ker' Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::Item_ variants"
+  },
+  {
+    "hash": "0d6ddd190355650a6d851c3aae12cf79339665af",
+    "author": "Oliver 'ker' Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::ForeignItem_ variants"
+  },
+  {
+    "hash": "8290c950a8b4cdc70038736abcf29f41dede6e0c",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't pub export ast::Stmt_ variants"
+  },
+  {
+    "hash": "498a2e416e693fa22042d3ae81c5c969fc87fe5c",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't pub export ast::IntLitType variants"
+  },
+  {
+    "hash": "69072c4f5d18d7a1762fbfb007b0ba3d6b59ad33",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't pub export ast::Lit_ variants"
+  },
+  {
+    "hash": "05d4cefd630cd9ae104555e69ceb3b1566298a6a",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't pub export ast::Ty_ variants"
+  },
+  {
+    "hash": "ec61e632c0a00ccc2ca0494d5d3c8a0848c574f2",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] remove unused enum ast::PrimTy"
+  },
+  {
+    "hash": "bfa66bb389ce1c7ce4aff09d1842b3428015bd4d",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] remove the sign from integer literals in the ast"
+  },
+  {
+    "hash": "625e78b7001c6e20f29928a5da8c9d21e9aed6c5",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::{UintTy, IntTy} variants"
+  },
+  {
+    "hash": "ccf48bcd4054ecb4e205a18b1ac582ef3ac3a905",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::FloatTy variants"
+  },
+  {
+    "hash": "80bf9ae18a133571d694aa866b824dcaea875d32",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::Expr_ variants"
+  },
+  {
+    "hash": "1c4d43715843a5ff5af4657c798b5d5cc85ca523",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::ExplicitSelf_ variants"
+  },
+  {
+    "hash": "79fa657abc6b8885ceb4023099b4e0026c5ef28f",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::Decl_ variants"
+  },
+  {
+    "hash": "8516ba367d1f51318ce373fe9b60650c82ded1e9",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::CaptureClause variants"
+  },
+  {
+    "hash": "243a30c9319b56e1be2b9ff2f9ed9e0d7583e2d1",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob import/export syntax::abi enum variants"
+  },
+  {
+    "hash": "47b0784ba8e62a2e1b877750baeae10d16555fff",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::BlockCheckMode variants"
+  },
+  {
+    "hash": "3b57d40fe5a813ac957667ac04938753e3100f55",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob import ast::FunctionRetTy variants"
+  },
+  {
+    "hash": "05e25de4f0add7ae3cd0e8f66cd4558c5bfa42aa",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::BinOp_"
+  },
+  {
+    "hash": "f875f4c4c24e8a14c04bbe4eedd230c4aa3c1431",
+    "author": "Oliver Schneider",
+    "date": 1455190488,
+    "message": "[breaking-change] don't glob export ast::UnOp variants"
+  },
+  {
     "hash": "1de70d33f7baf12978cfb3de861e61b2a5d6fca7",
     "author": "bors",
     "date": 1455164833,
@@ -436,167 +598,5 @@
     "author": "Ariel Ben-Yehuda",
     "date": 1437770777,
     "message": "handle all type variants correctly in dropck\n\nThis fixes a few soundness bugs in dropck, so to anyone who relied on them,\nthis is a\n[breaking-change]\n\nFixes #24086.\nFixes #25389.\nFixes #25598.\nFixes #25750.\nFixes #26641.\nFixes #26657.\nFixes #27240.\nFixes #27241."
-  },
-  {
-    "hash": "55ede7ed8e4f3752c371f7d04da4695ba9aa1c26",
-    "author": "bors",
-    "date": 1438118068,
-    "message": "Auto merge of #27234 - oli-obk:move_get_name_get_ident_to_impl, r=eddyb\n\nthis has quite some fallout. but also made lots of stuff more readable imo\r\n\r\n[breaking-change] for plugin authors"
-  },
-  {
-    "hash": "661a5ad38e79f336976b529aa717871d177ab7ed",
-    "author": "bors",
-    "date": 1438096500,
-    "message": "Auto merge of #26173 - pnkfelix:fsk-trans-nzmove-take3, r=nikomatsakis\n\nAdd dropflag hints (stack-local booleans) for unfragmented paths in trans.  Part of #5016.\r\n\r\nAdded code to maintain these hints at runtime, and to conditionalize drop-filling and calls to destructors.\r\n\r\nIn this early stage of my incremental implementation strategy, we are using hints, so we are always free to leave out a flag for a path -- then we just pass `None` as the dropflag hint in the corresponding schedule cleanup call. But, once a path has a hint, we must at least maintain it: i.e. if the hint exists, we must ensure it is never set to \"moved\" if the data in question might actually have been initialized. It remains sound to conservatively set the hint to \"initialized\" as long as the true drop-flag embedded in the value itself is up-to-date.\r\n\r\nI hope the commit series has been broken up to be readable; most of the commits in the series should build (though I did not always check this).\r\n\r\n----\r\n\r\nOh, I think this technically qualifies as a:\r\n[breaking-change]\r\nbecause it removes drop-filling in some cases where one could previously observe it. That should only affect `unsafe` code; no safe code should be able to inspect whether the drop-fill was present or not. For an example of code that needed to change to account for this, see commit a81c24ae0216ab47df59acd724f8a33124fb6d97 (a unit test of the `move_val_init` intrinsic).  I have not encountered actual code that needed to be updated to account for the change, since this should only be skipping the drop-filling on *moved* values, not on dropped one, and so even types that use `unsafe_no_drop_flag` should be unchanged by this particular PR. (Their time will come later.)"
-  },
-  {
-    "hash": "18557500cb91596f3614d4cf65439f8c5f47b2e0",
-    "author": "bors",
-    "date": 1437410313,
-    "message": "Auto merge of #27026 - nagisa:overflowing-unsigned, r=pnkfelix\n\nThis commit fixes the negate_unsigned feature gate to appropriately\r\naccount for inferred variables.\r\n\r\nThis is technically a [breaking-change], but I’d consider it a bug fix.\r\n\r\ncc @brson for your relnotes.\r\n\r\nFixes https://github.com/rust-lang/rust/issues/24676\r\nFixes #26840 \r\nFixes https://github.com/rust-lang/rust/issues/25206"
-  },
-  {
-    "hash": "0c9e3dc75cf2b2d122af0596225594240ed254eb",
-    "author": "Simonas Kazlauskas",
-    "date": 1436899723,
-    "message": "Fix negate_unsigned feature gate check\n\nThis commit fixes the negate_unsigned feature gate to appropriately\naccount for infered variables.\n\nThis is technically a [breaking-change]."
-  },
-  {
-    "hash": "e05ac3938bcbdd616930bb010a3bbfa35f22850e",
-    "author": "bors",
-    "date": 1437158150,
-    "message": "Auto merge of #27045 - nikomatsakis:better-object-defaults-error, r=pnkfelix\n\nTransition to the new object lifetime defaults, replacing the old defaults completely.\r\n\r\nr? @pnkfelix \r\n\r\nThis is a [breaking-change] as specified by [RFC 1156][1156] (though all cases that would break should have been receiving warnings starting in Rust 1.2). Types like `&'a Box<Trait>` (or `&'a Rc<Trait>`, etc) will change from being interpreted as `&'a Box<Trait+'a>` to `&'a Box<Trait+'static>`. To restore the old behavior, write the `+'a` explicitly. For example, the function:\r\n\r\n\r\n```rust\r\ntrait Trait { }\r\nfn foo(x: &Box<Trait>) { ... }\r\n```\r\n\r\nwould be rewritten as:\r\n\r\n```rust\r\ntrait Trait { }\r\nfn foo(x: &'a Box<Trait+'a>) { ... }\r\n```\r\n\r\nif one wanted to preserve the current typing.\r\n\r\n[1156]: https://github.com/rust-lang/rfcs/blob/master/text/1156-adjust-default-object-bounds.md"
-  },
-  {
-    "hash": "6b27005f2f8b20834838828588233b877a29d509",
-    "author": "Ariel Ben-Yehuda",
-    "date": 1436008166,
-    "message": "require reimplementations of all items when a defaulted associated type is overriden\n\nThis is a\n[breaking-change]\nbut it follows the RFC (not sure whether it will be accepted)."
-  },
-  {
-    "hash": "f027bdc1c8a133693651f333624b756abe21960f",
-    "author": "bors",
-    "date": 1435959106,
-    "message": "Auto merge of #26378 - arielb1:unused-mut, r=pnkfelix\n\nThis makes it somewhat more aggressive, so this is kind-of a [breaking-change] for these compiling with `#[deny(unused_mut)]`.\r\n\r\nr? @pnkfelix"
-  },
-  {
-    "hash": "31d9aee68499cba8d1a5332b841eca5c67991001",
-    "author": "bors",
-    "date": 1434931860,
-    "message": "Auto merge of #26394 - arielb1:implement-rfc401-part2, r=nrc\n\nThis makes them compliant with the new version of RFC 401 (i.e.\r\n    RFC 1052).\r\n\r\nFixes #26391. I *hope* the tests I have are enough.\r\n\r\nThis is a [breaking-change]\r\n\r\nr? @nrc"
-  },
-  {
-    "hash": "ea7637ebc0e5d325ccf0537a8013316c2ed78108",
-    "author": "Ariel Ben-Yehuda",
-    "date": 1434631866,
-    "message": "Prohibit casts between fat pointers to different traits\n\nThis makes them compliant with the new version of RFC 401 (i.e.\n    RFC 1052).\n\nFixes #26391. I *hope* the tests I have are enough.\n\nThis is a [breaking-change]"
-  },
-  {
-    "hash": "713d9176adc5072afdf0934dc95b868995e867c0",
-    "author": "bors",
-    "date": 1434581417,
-    "message": "Auto merge of #26326 - nikomatsakis:optimize-fulfillment-cache-in-tcx, r=pcwalton\n\nWhen we successfully resolve a trait reference with no type/lifetime parameters, like `i32: Foo` or `Box<u32>: Sized`, this is in fact globally true. This patch adds a simple global to the tcx to cache such cases. The main advantage of this is really about caching things like `Box<Vec<Foo>>: Sized`. It also points to the need to revamp our caching infrastructure -- the current caches make selection cost cheaper, but we still wind up paying a high cost in the confirmation process, and in particular unrolling out dependent obligations. Moreover, we should probably do caching more uniformly and with a key that takes the where-clauses into account. But that's for later.\r\n\r\nFor me, this shows up as a reasonably nice win (20%) on Servo's script crate (when built in dev mode). This is not as big as my initial measurements suggested, I think because I was building my rustc with more debugging enabled at the time. I've not yet done follow-up profiling and so forth to see where the new hot spots are. Bootstrap times seem to be largely unaffected.\r\n\r\ncc @pcwalton \r\n\r\nThis is technically a [breaking-change] in that functions with unsatisfiable where-clauses may now yield errors where before they may have been accepted. Even before, these functions could never have been *called* by actual code. In the future, such functions will probably become illegal altogether, but in this commit they are still accepted, so long as they do not rely on the unsatisfiable where-clauses. As before, the functions still cannot be called in any case."
-  },
-  {
-    "hash": "73fb19c04ac227fe2aad2c618f76b6eb05dd7ec9",
-    "author": "bors",
-    "date": 1434397935,
-    "message": "Auto merge of #26275 - arielb1:unconstrained-projection, r=nikomatsakis\n\nFixes #26262\r\n\r\nBecause this rejects code that previously compiled, this is a [breaking-change]\r\n\r\nr? @nikomatsakis"
-  },
-  {
-    "hash": "7517ecf4fc9cfe2adff8a38ecc2ef660692a4b5b",
-    "author": "bors",
-    "date": 1434350682,
-    "message": "Auto merge of #26168 - sfackler:stdout-panic, r=alexcrichton\n\nCloses #25977\r\n\r\nThe various `stdfoo_raw` methods in std::io now return `io::Result`s,\r\nsince they may not exist on Windows. They will always return `Ok` on\r\nUnix-like platforms.\r\n\r\n[breaking-change]"
-  },
-  {
-    "hash": "a7bbd7da4eb98127104fdfd415ad6c746f7e2a12",
-    "author": "Steven Fackler",
-    "date": 1434338226,
-    "message": "Implement RFC 1014\n\nCloses #25977\n\nThe various `stdfoo_raw` methods in std::io now return `io::Result`s,\nsince they may not exist on Windows. They will always return `Ok` on\nUnix-like platforms.\n\n[breaking-change]"
-  },
-  {
-    "hash": "7648776503040b302fe0589311fb27afe7c1e6cc",
-    "author": "bors",
-    "date": 1434067227,
-    "message": "Auto merge of #26225 - arielb1:raw-self, r=eddyb\n\nThis can't be made to work with the current setup.\r\n\r\nTechnically a [breaking-change], but a simple bug fix.\r\n\r\nFixes #26194."
-  },
-  {
-    "hash": "b70f49b86fa4d8780f46e869880e84e1c24c2f19",
-    "author": "bors",
-    "date": 1433355669,
-    "message": "Auto merge of #24910 - steveklabnik:remove_static_assert, r=alexcrichton\n\nThis was always a weird feature, and isn't being used in the compiler.\r\nStatic assertions should be done better than this.\r\n\r\nFixes #13951\r\nFixes #23008\r\nFixes #6676\r\n\r\nThis is behind a feature gate, but that's still a\r\n\r\n[breaking-change]\r\n\r\n(It's not entirely clear to me that this should or shouldn't have an RFC, but if it does, I'm fine blocking on such a thing.)"
-  },
-  {
-    "hash": "5235065d740cad78ab55a89299fc1f5d32bf8f46",
-    "author": "Steve Klabnik",
-    "date": 1433338693,
-    "message": "Remove #[static_assert]\n\nThis was always a weird feature, and isn't being used in the compiler.\nStatic assertions should be done better than this.\n\nThis implements RFC #1096.\n\nFixes #13951\nFixes #23008\nFixes #6676\n\nThis is behind a feature gate, but that's still a\n\n[breaking-change]"
-  },
-  {
-    "hash": "32211e1d27c258c62cafb6ba357e67db932367bf",
-    "author": "Ulrik Sverdrup",
-    "date": 1433016940,
-    "message": "Mark Arc function get_mut and method make_unique unsafe\n\nThis is a temporary mitigation for issue #24880 which points out that\nthese functions are racy in a particular situation where weak pointers\nexist.\n\nTo mitigate this, mark the functions unsafe until this can be fixed or\nanother decision is made.\n\nThis is a breaking change to unstable API, because the new version\nrequires an `unsafe` block. Review carefully if weak pointers may race\nfor any uses of this API and consider abandoning it.\n\n[breaking-change]"
-  },
-  {
-    "hash": "bd85983d059151c9ef07dbd11a35f1d16463eb94",
-    "author": "Steven Fackler",
-    "date": 1431909209,
-    "message": "Make debug builders take &mut self, add entries method\n\n[breaking-change]"
-  },
-  {
-    "hash": "c23a9d42ea082830593a73d25821842baf9ccf33",
-    "author": "bors",
-    "date": 1431821134,
-    "message": "Auto merge of #25387 - eddyb:syn-file-loader, r=nikomatsakis\n\nThis allows compiling entire crates from memory or preprocessing source files before they are tokenized.\r\n\r\nMinor API refactoring included, which is a [breaking-change] for libsyntax users:\r\n* `ParseSess::{next_node_id, reserve_node_ids}` moved to rustc's `Session`\r\n* `new_parse_sess` -> `ParseSess::new`\r\n* `new_parse_sess_special_handler` -> `ParseSess::with_span_handler`\r\n* `mk_span_handler` -> `SpanHandler::new`\r\n* `default_handler` -> `Handler::new`\r\n* `mk_handler` -> `Handler::with_emitter`\r\n* `string_to_filemap(sess source, path)` -> `sess.codemap().new_filemap(path, source)`"
-  },
-  {
-    "hash": "2e07b0d6be3d2ffcfb154b5cbbe02bc166014172",
-    "author": "Adolfo Ochagavía",
-    "date": 1422700727,
-    "message": "Deprecate SyntaxExtension::Modifier\n\nReplaced by SyntaxExtension::MultiModifier\n\n[breaking-change]"
-  },
-  {
-    "hash": "6f233aaa0c743cc6ca7e42d7dcd4b7d92ef4ad9a",
-    "author": "Adolfo Ochagavía",
-    "date": 1422700727,
-    "message": "Deprecate SyntaxExtension::Decorator\n\nIt has been replaced by SyntaxExtension::MultiDecorator\n\n[breaking-change]"
-  },
-  {
-    "hash": "57690399a2ab6dd579ea1f97e9866b213f8b14d4",
-    "author": "Adolfo Ochagavía",
-    "date": 1422700725,
-    "message": "Deprecate ItemDecorator in favor of MultiItemDecorator\n\n[breaking-change]"
-  },
-  {
-    "hash": "53579e6d866eea41f2d3d8d0ddff42c73e75cea1",
-    "author": "Adolfo Ochagavía",
-    "date": 1422700724,
-    "message": "Deprecate ItemModifier in favor of MultiItemModifier\n\n[breaking-change]"
-  },
-  {
-    "hash": "67ba6dcf68860d8a20891faad88a33b35ed58df5",
-    "author": "bors",
-    "date": 1431183416,
-    "message": "Auto merge of #24612 - lifthrasiir:flt2dec, r=pnkfelix\n\nThis is a direct port of my prior work on the float formatting. The detailed description is available [here](https://github.com/lifthrasiir/rust-strconv#flt2dec). In brief,\r\n\r\n* This adds a new hidden module `core::num::flt2dec` for testing from `libcoretest`. Why is it in `core::num` instead of `core::fmt`? Because I envision that the table used by `flt2dec` is directly applicable to `dec2flt` (cf. #24557) as well, which exceeds the realm of \"formatting\".\r\n* This contains both Dragon4 algorithm (exact, complete but slow) and Grisu3 algorithm (exact, fast but incomplete).\r\n* The code is accompanied with a large amount of self-tests and some exhaustive tests. In particular, `libcoretest` gets a new dependency on `librand`. For the external interface it relies on the existing test suite.\r\n* It is known that, in the best case, the entire formatting code has about 30 KBs of binary overhead (judged from strconv experiments). Not too bad but there might be a potential room for improvements.\r\n\r\nThis is rather large code. I did my best to comment and annotate the code, but you have been warned.\r\n\r\nFor the maximal availability the original code was licensed in CC0, but I've also dual-licensed it in MIT/Apache as well so there should be no licensing concern.\r\n\r\nThis is [breaking-change] as it changes the float output slightly (and it also affects the casing of `inf` and `nan`). I hope this is not a big deal though :)\r\n\r\nFixes #7030, #18038 and #24556. Also related to #6220 and #20870.\r\n\r\n## Known Issues\r\n\r\n- [x] I've yet to finish `make check-stage1`. It does pass main test suites including `run-pass` but there might be some unknown edges on the doctests.\r\n- [ ] Figure out how this PR affects rustc.\r\n- [ ] Determine which internal routine is mapped to the formatting specifier. Depending on the decision, some internal routine can be safely removed (for instance, currently `to_shortest_str` is unused)."
-  },
-  {
-    "hash": "5aa9f38285b47e2eadaaac0e343da90b922994f1",
-    "author": "Kang Seonghoon",
-    "date": 1430889701,
-    "message": "core: made the core formatter to use a new flt2dec.\n\nAs a side effect `core::fmt::float` is gone now. This also slightly\nchanges the float output, so this is:\n\n[breaking-change]"
-  },
-  {
-    "hash": "3906edf41e8faa0610daea954ffbda39841fbc0d",
-    "author": "bors",
-    "date": 1431163243,
-    "message": "Auto merge of #25212 - pnkfelix:dropck-box-trait, r=nikomatsakis\n\ndropck: must assume `Box<Trait + 'a>` has a destructor of interest.\r\n\r\nFix #25199.\r\n\r\nThis detail was documented in [RFC 769]; the implementation was just missing.\r\n\r\n[breaking-change]\r\n\r\nThe breakage here falls into both obvious and non-obvious cases.\r\n\r\nThe obvious case: if you were relying on the unsoundness this exposes (namely being able to reference dead storage from a destructor, by doing it via a boxed trait object bounded by the lifetime of the dead storage), then this change disallows that.\r\n\r\nThe non-obvious cases: The way dropck works, it causes lifetimes to be extended to longer extents than they covered before. I.e.  lifetimes that are attached as trait-bounds may become longer than they were previously.\r\n\r\n* This includes lifetimes that are only *implicitly* attached as trait-bounds (due to [RFC 599]). So you may have code that was e.g. taking a parameter of type `&'a Box<Trait>` (which expands to `&'a Box<Trait+'a>`), that now may need to be assigned type `&'a Box<Trait+'static>` to ensure that `'a` is not inadvertantly inferred to a region that is actually too long.  (See commit ee06263 for an example of this.)\r\n\r\n[RFC 769]: https://github.com/rust-lang/rfcs/blob/master/text/0769-sound-generic-drop.md#the-drop-check-rule\r\n\r\n[RFC 599]: https://github.com/rust-lang/rfcs/blob/master/text/0599-default-object-bound.md"
-  },
-  {
-    "hash": "b5b5a177588c0e8dfc6b9e79540bcbd1eeb9ef91",
-    "author": "Felix S. Klock II",
-    "date": 1431090376,
-    "message": "dropck: must assume `Box<Trait + 'a>` has a destructor of interest.\n\nImplements this (previously overlooked) note from [RFC 769]:\n\n> (Note: When encountering a D of the form `Box<Trait+'b>`, we\n> conservatively assume that such a type has a Drop implementation\n> parametric in 'b.)\n\nFix #25199.\n\n[breaking-change]\n\nThe breakage here falls into both obvious and non-obvious cases.\n\nThe obvious case: if you were relying on the unsoundness this exposes\n(namely being able to reference dead storage from a destructor, by\ndoing it via a boxed trait object bounded by the lifetime of the dead\nstorage), then this change disallows that.\n\nThe non-obvious cases: The way dropck works, it causes lifetimes to be\nextended to longer extents than they covered before. I.e.  lifetimes\nthat are attached as trait-bounds may become longer than they were\npreviously.\n\n* This includes lifetimes that are only *implicitly* attached as\n  trait-bounds (due to [RFC 599]). So you may have code that was\n  e.g. taking a parameter of type `&'a Box<Trait>` (which expands to\n  `&'a Box<Trait+'a>`), that now may need to be assigned type `&'a\n  Box<Trait+'static>` to ensure that `'a` is not inadvertantly\n  inferred to a region that is actually too long.  (See earlier commit\n  in this PR for an example of this.)\n\n[RFC 769]: https://github.com/rust-lang/rfcs/blob/master/text/0769-sound-generic-drop.md#the-drop-check-rule\n\n[RFC 599]: https://github.com/rust-lang/rfcs/blob/master/text/0599-default-object-bound.md"
   }
 ]
