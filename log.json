@@ -1,5 +1,11 @@
 [
   {
+    "hash": "1de70d33f7baf12978cfb3de861e61b2a5d6fca7",
+    "author": "bors",
+    "date": 1455164833,
+    "message": "Auto merge of #31461 - jseyfried:remove_import_resolutions, r=nrc\n\nThis PR adds to `NameBinding` so it can more fully represent bindings from imports as well from items, refactors away `Target`, generalizes `ImportResolution` to a simpler type `NameResolution`, and uses a single `NameResolution`-valued map in place the existing maps `children` and `import_resolutions` (of `NameBinding`s and `ImportResolution`s, respectively), simplifying duplicate checking and name resolution.\n\nIt also unifies the `resolve_name_in_module` in `lib.rs` with its namesake in `resolve_imports.rs`, clarifying and improving the core logic (fixes #31403 and fixes #31404) while maintaining clear future-comparability with shadowable globs (i.e., never reporting that a resolution is a `Success` or is `Failing` unless this would also be knowable with shadowable globs).\n\nSince it fixes #31403, this is technically a [breaking-change], but it is exceedingly unlikely to cause breakage in practice. The following is an example of code that would break:\n```rust\nmod foo {\n    pub mod bar {} // This defines bar in the type namespace\n    pub use alpha::bar; // This defines bar in the value namespace\n\n    // This should define baz in both namespaces, but it only defines baz in the type namespace.\n    pub use self::bar as baz;\n    pub fn baz() {} // This should collide with baz, but now it does not.\n}\n\npub fn f() {}\nmod alpha {\n    pub use self::f as bar; // Changing this to `pub fn bar() {}` causes the collision right now.\n    pub use super::*;\n}\n```\n\nr? @nrc"
+  },
+  {
     "hash": "35635aebab321ff2a4708aeb172351356ad63cf7",
     "author": "bors",
     "date": 1454750644,
@@ -592,11 +598,5 @@
     "author": "Felix S. Klock II",
     "date": 1431090376,
     "message": "dropck: must assume `Box<Trait + 'a>` has a destructor of interest.\n\nImplements this (previously overlooked) note from [RFC 769]:\n\n> (Note: When encountering a D of the form `Box<Trait+'b>`, we\n> conservatively assume that such a type has a Drop implementation\n> parametric in 'b.)\n\nFix #25199.\n\n[breaking-change]\n\nThe breakage here falls into both obvious and non-obvious cases.\n\nThe obvious case: if you were relying on the unsoundness this exposes\n(namely being able to reference dead storage from a destructor, by\ndoing it via a boxed trait object bounded by the lifetime of the dead\nstorage), then this change disallows that.\n\nThe non-obvious cases: The way dropck works, it causes lifetimes to be\nextended to longer extents than they covered before. I.e.  lifetimes\nthat are attached as trait-bounds may become longer than they were\npreviously.\n\n* This includes lifetimes that are only *implicitly* attached as\n  trait-bounds (due to [RFC 599]). So you may have code that was\n  e.g. taking a parameter of type `&'a Box<Trait>` (which expands to\n  `&'a Box<Trait+'a>`), that now may need to be assigned type `&'a\n  Box<Trait+'static>` to ensure that `'a` is not inadvertantly\n  inferred to a region that is actually too long.  (See earlier commit\n  in this PR for an example of this.)\n\n[RFC 769]: https://github.com/rust-lang/rfcs/blob/master/text/0769-sound-generic-drop.md#the-drop-check-rule\n\n[RFC 599]: https://github.com/rust-lang/rfcs/blob/master/text/0599-default-object-bound.md"
-  },
-  {
-    "hash": "5ae026e8923d71d16a4d2b9a592bbcab92d8723a",
-    "author": "bors",
-    "date": 1431035111,
-    "message": "Auto merge of #25157 - alexcrichton:remove-vec-add, r=aturon\n\nIdeally this trait implementation would be unstable, requiring crates to opt-in\r\nif they would like the functionality, but that's not currently how stability\r\nworks so the implementation needs to be removed entirely.\r\n\r\nThis may come back at a future date, but for now the conservative option is to\r\nremove it.\r\n\r\n[breaking-change]"
   }
 ]
