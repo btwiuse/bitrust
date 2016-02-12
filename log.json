@@ -1,5 +1,11 @@
 [
   {
+    "hash": "c7640aa2aaad857bbc9f9a1002f8e1aaf520752e",
+    "author": "bors",
+    "date": 1455288980,
+    "message": "Auto merge of #31583 - petrochenkov:indi_ast, r=Manishearth\n\ncc #31487\nplugin-[breaking-change]\n\nThe AST part of https://github.com/rust-lang/rust/pull/30087\n\nr? @Manishearth"
+  },
+  {
     "hash": "2b816b0d6a9bc8210ca314a020a247f8632b4f38",
     "author": "Oliver 'ker' Schneider",
     "date": 1455190488,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1438152475,
     "message": "Auto merge of #27261 - arielb1:drop-sanity-check, r=pnkfelix\n\nThis fixes multiple bugs, and as several of these are soundness issue, is a [breaking-change].\r\n\r\nr? @pnkfelix"
-  },
-  {
-    "hash": "bfbc7bc45d66ba7be8ab2ba60316cb1e303f4544",
-    "author": "Ariel Ben-Yehuda",
-    "date": 1437770777,
-    "message": "handle all type variants correctly in dropck\n\nThis fixes a few soundness bugs in dropck, so to anyone who relied on them,\nthis is a\n[breaking-change]\n\nFixes #24086.\nFixes #25389.\nFixes #25598.\nFixes #25750.\nFixes #26641.\nFixes #26657.\nFixes #27240.\nFixes #27241."
   }
 ]
