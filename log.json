@@ -1,5 +1,11 @@
 [
   {
+    "hash": "9d98390765bbe61ce2a39b40c99ae1a68bb6d1cc",
+    "author": "bors",
+    "date": 1455430690,
+    "message": "Auto merge of #31581 - petrochenkov:patrefact, r=Manishearth\n\ncc https://github.com/rust-lang/rust/pull/31487#issuecomment-182945101\nplugin-[breaking-change]\n\nThe first commit renames `ast::Pat_` to `ast::PatKind` and uses its variants in enum qualified form. I've also taken the opportunity and renamed `PatKind::Region` into `PatKind::Ref`.\n\nThe second commit splits `PatKind::Enum` into `PatKind::TupleStruct` and `PatKind::UnitStruct`.\nSo, pattern kinds now correspond to their struct/variant kinds - `Struct`, `TupleStruct` and `UnitStruct`.\n@nikomatsakis @nrc @arielb1 Are you okay with this naming scheme?\nAn alternative possible naming scheme is `PatKind::StructVariant`, `PatKind::TupleVariant`, `PatKind::UnitVariant` (it's probably closer to the common use, but I like it less).\n\nI intend to apply these changes to HIR later, they should not necessarily go in the same nightly with https://github.com/rust-lang/rust/pull/31487\nr? @Manishearth"
+  },
+  {
     "hash": "c7640aa2aaad857bbc9f9a1002f8e1aaf520752e",
     "author": "bors",
     "date": 1455288980,
@@ -592,11 +598,5 @@
     "author": "Ariel Ben-Yehuda",
     "date": 1438102268,
     "message": "prohibit the lhs of an @-pattern being a constant\n\nas this breaks code that worked under some conditions, this is a\n[breaking-change]\n\nFixes #27033\nFixes #27077"
-  },
-  {
-    "hash": "d576ef3d7be3efe28f902bbb3b2197f4553db412",
-    "author": "bors",
-    "date": 1438152475,
-    "message": "Auto merge of #27261 - arielb1:drop-sanity-check, r=pnkfelix\n\nThis fixes multiple bugs, and as several of these are soundness issue, is a [breaking-change].\r\n\r\nr? @pnkfelix"
   }
 ]
