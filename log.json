@@ -1,5 +1,11 @@
 [
   {
+    "hash": "9658645407c784105bb361297d5316cadc9ff2bd",
+    "author": "bors",
+    "date": 1455651297,
+    "message": "Auto merge of #31534 - jseyfried:restrict_noninline_mod, r=nikomatsakis\n\nThis PR disallows non-inline modules without path annotations that are either in a block or in an inline module whose containing file is not a directory owner (fixes #29765).\nThis is a [breaking-change].\nr? @nikomatsakis"
+  },
+  {
     "hash": "9d98390765bbe61ce2a39b40c99ae1a68bb6d1cc",
     "author": "bors",
     "date": 1455430690,
@@ -592,11 +598,5 @@
     "author": "Alexis Beingessner",
     "date": 1438220581,
     "message": "implement Clone for Box<str>, closes #27323\n\nThis is a minor [breaking-change], as it changes what\n`boxed_str.to_owned()` does (previously it would deref to `&str` and\ncall `to_owned` on that to get a `String`). However `Box<str>` is such an\nexceptionally rare type that this is not expected to be a serious\nconcern. Also a `Box<str>` can be freely converted to a `String` to\nobtain the previous behaviour anyway."
-  },
-  {
-    "hash": "757b0c176fa185fda59283efaf0d8079b702ca69",
-    "author": "Ariel Ben-Yehuda",
-    "date": 1438102268,
-    "message": "prohibit the lhs of an @-pattern being a constant\n\nas this breaks code that worked under some conditions, this is a\n[breaking-change]\n\nFixes #27033\nFixes #27077"
   }
 ]
