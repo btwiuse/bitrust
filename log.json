@@ -1,5 +1,17 @@
 [
   {
+    "hash": "acea6fc1cb5edf5211ade6ad4a79b119879eab82",
+    "author": "Manish Goregaokar",
+    "date": 1456486422,
+    "message": "Rollup merge of #31904 - bluss:writer-formatter-error, r=alexcrichton\n\nMake sure formatter errors are emitted by the default Write::write_fmt\n\nPreviously, if an error was returned from the formatter that did not\noriginate in an underlying writer error, Write::write_fmt would return\nsuccessfully even if the formatting did not complete (was interrupted by\nan `fmt::Error` return).\n\nNow we choose to emit an io::Error with kind Other for formatter errors.\n\nSince this may reveal error returns from `write!()` and similar that\npreviously passed silently, it's a kind of a [breaking-change].\n\nFixes #31879"
+  },
+  {
+    "hash": "6cfafad3c56736a62e1043a8d01f7f2c74384008",
+    "author": "Ulrik Sverdrup",
+    "date": 1456451965,
+    "message": "Make sure formatter errors are emitted by the default Write::write_fmt\n\nPreviously, if an error was returned from the formatter that did not\noriginate in an underlying writer error, Write::write_fmt would return\nsuccessfully even if the formatting did not complete (was interrupted by\nan `fmt::Error` return).\n\nNow we choose to emit an io::Error with kind Other for formatter errors.\n\nSince this may reveal error returns from `write!()` and similar that\npreviously passed silently, it's a kind of a [breaking-change]."
+  },
+  {
     "hash": "9c6a0088fbdae5a6554c39f8db9207c1b878eb05",
     "author": "bors",
     "date": 1456461508,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1439264836,
     "message": "Auto merge of #26818 - sfackler:duration-stabilization, r=aturon\n\nThis commit stabilizes the `std::time` module and the `Duration` type.\r\n`Duration::span` remains unstable, and the `Display` implementation for\r\n`Duration` has been removed as it is still being reworked and all trait\r\nimplementations for stable types are de facto stable.\r\n\r\nThis is a [breaking-change] to those using `Duration`'s `Display`\r\nimplementation.\r\n\r\nI'm opening this PR as a platform for discussion - there may be some method renaming to do as part of the stabilization process."
-  },
-  {
-    "hash": "999bdeca88a06938ac1e1c608091d3afe4d7e173",
-    "author": "Steven Fackler",
-    "date": 1439251458,
-    "message": "Stabilize the Duration API\n\nThis commit stabilizes the `std::time` module and the `Duration` type.\n`Duration::span` remains unstable, and the `Display` implementation for\n`Duration` has been removed as it is still being reworked and all trait\nimplementations for stable types are de facto stable.\n\nThis is a [breaking-change] to those using `Duration`'s `Display`\nimplementation."
-  },
-  {
-    "hash": "87055a68c3194db212456f99ece080728a5fc2f8",
-    "author": "bors",
-    "date": 1438251923,
-    "message": "Auto merge of #27371 - Gankro:str-clone, r=alexcrichton\n\nThis is a minor [breaking-change], as it changes what\r\n`boxed_str.to_owned()` does (previously it would deref to `&str` and\r\ncall `to_owned` on that to get a `String`). However `Box<str>` is such an\r\nexceptionally rare type that this is not expected to be a serious\r\nconcern. Also a `Box<str>` can be freely converted to a `String` to\r\nobtain the previous result anyway."
   }
 ]
