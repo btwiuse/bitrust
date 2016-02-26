@@ -1,5 +1,11 @@
 [
   {
+    "hash": "9c6a0088fbdae5a6554c39f8db9207c1b878eb05",
+    "author": "bors",
+    "date": 1456461508,
+    "message": "Auto merge of #31857 - jseyfried:fix_scoping, r=nikomatsakis\n\nThis fixes a bug (#31845) introduced in #31105 in which lexical scopes contain items from all anonymous module ancestors, even if the path to the anonymous module includes a normal module:\n```rust\nfn f() {\n    fn g() {}\n    mod foo {\n        fn h() {\n           g(); // This erroneously resolves on nightly\n        }\n    }\n}\n```\n\nThis is a [breaking-change] on nightly but not on stable or beta.\nr? @nikomatsakis"
+  },
+  {
     "hash": "9658645407c784105bb361297d5316cadc9ff2bd",
     "author": "bors",
     "date": 1455651297,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1438251923,
     "message": "Auto merge of #27371 - Gankro:str-clone, r=alexcrichton\n\nThis is a minor [breaking-change], as it changes what\r\n`boxed_str.to_owned()` does (previously it would deref to `&str` and\r\ncall `to_owned` on that to get a `String`). However `Box<str>` is such an\r\nexceptionally rare type that this is not expected to be a serious\r\nconcern. Also a `Box<str>` can be freely converted to a `String` to\r\nobtain the previous result anyway."
-  },
-  {
-    "hash": "3e954a8cb2fd094d79713059d83d37b2daa7b396",
-    "author": "Alexis Beingessner",
-    "date": 1438220581,
-    "message": "implement Clone for Box<str>, closes #27323\n\nThis is a minor [breaking-change], as it changes what\n`boxed_str.to_owned()` does (previously it would deref to `&str` and\ncall `to_owned` on that to get a `String`). However `Box<str>` is such an\nexceptionally rare type that this is not expected to be a serious\nconcern. Also a `Box<str>` can be freely converted to a `String` to\nobtain the previous behaviour anyway."
   }
 ]
