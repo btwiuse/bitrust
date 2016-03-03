@@ -1,5 +1,11 @@
 [
   {
+    "hash": "7cee8b9ffb6a2dac7e2f729988c2324e2f8ac10f",
+    "author": "bors",
+    "date": 1456971688,
+    "message": "Auto merge of #31824 - jseyfried:privacy_in_resolve, r=nikomatsakis\n\nThis PR privacy checks paths as they are resolved instead of in `librustc_privacy` (fixes #12334 and fixes #31779). This removes the need for the `LastPrivate` system introduced in PR #9735, the limitations of which cause #31779.\n\nThis PR also reports privacy violations in paths to intra- and inter-crate items the same way -- it always reports the first inaccessible segment of the path.\n\nSince it fixes #31779, this is a [breaking-change]. For example, the following code would break:\n```rust\nmod foo {\n    pub use foo::bar::S;\n    mod bar { // `bar` should be private to `foo`\n        pub struct S;\n    }\n}\n\nimpl foo::S {\n    fn f() {}\n}\n\nfn main() {\n    foo::bar::S::f(); // This is now a privacy error\n}\n```\n\nr? @alexcrichton"
+  },
+  {
     "hash": "acea6fc1cb5edf5211ade6ad4a79b119879eab82",
     "author": "Manish Goregaokar",
     "date": 1456486422,
@@ -592,11 +598,5 @@
     "author": "Robin Kruppe",
     "date": 1439046931,
     "message": "Accurate decimal-to-float parsing routines.\n\nThis commit primarily adds implementations of the algorithms from William\nClinger's paper \"How to Read Floating Point Numbers Accurately\". It also\nincludes a lot of infrastructure necessary for those algorithms, and some\nunit tests.\n\nSince these algorithms reject a few (extreme) inputs that were previously\naccepted, this could be seen as a [breaking-change]"
-  },
-  {
-    "hash": "50141d7e1e5b1b539d45240dff709fa68e7472c2",
-    "author": "bors",
-    "date": 1439264836,
-    "message": "Auto merge of #26818 - sfackler:duration-stabilization, r=aturon\n\nThis commit stabilizes the `std::time` module and the `Duration` type.\r\n`Duration::span` remains unstable, and the `Display` implementation for\r\n`Duration` has been removed as it is still being reworked and all trait\r\nimplementations for stable types are de facto stable.\r\n\r\nThis is a [breaking-change] to those using `Duration`'s `Display`\r\nimplementation.\r\n\r\nI'm opening this PR as a platform for discussion - there may be some method renaming to do as part of the stabilization process."
   }
 ]
