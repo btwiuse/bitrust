@@ -1,5 +1,17 @@
 [
   {
+    "hash": "bcda58f49133921abd091d7f800732fe2c4e5a98",
+    "author": "bors",
+    "date": 1457583380,
+    "message": "Auto merge of #31710 - eddyb:reify, r=nikomatsakis\n\nDistinguish fn item types to allow reification from nothing to fn pointers.\n\nThe first commit is a rebase of #26284, except for files that have moved since.\n\nThis is a [breaking-change], due to:\n* each FFI function has a distinct type, like all other functions currently do\n* all generic parameters on functions are recorded in their item types, e.g.:\n`size_of::<u8>` & `size_of::<i8>`'s types differ despite their identical signature.\n* function items are zero-sized, which will stop transmutes from working on them\n\nThe first two cases are handled in most cases with the new coerce-unify logic,\nwhich will combine incompatible function item types into function pointers,\nat the outer-most level of if-else chains, match arms and array literals.\n\nThe last case is specially handled during type-checking such that transmutes\nfrom a function item type to a pointer or integer type will continue to work for\nanother release cycle, but are being linted against. To get rid of warnings and\nensure your code will continue to compile, cast to a pointer before transmuting."
+  },
+  {
+    "hash": "3a872782d396e9ed3827a515a54d1f0a634c0b77",
+    "author": "Jonas Schievink",
+    "date": 1455625960,
+    "message": "Move more uses of `panictry!` out of libsyntax\n\n[breaking-change] for syntax extensions"
+  },
+  {
     "hash": "c5d58de665819f7330b3d64bdd084d25a412830a",
     "author": "Alex Burka",
     "date": 1456556501,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1440225053,
     "message": "Auto merge of #27826 - sfackler:wait-timeout-enum, r=alexcrichton\n\nReturning a primitive bool results in a somewhat confusing API - does\r\n`true` indicate success - i.e. no timeout, or that a timeout has\r\noccurred? An explicitly named enum makes it clearer.\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton"
-  },
-  {
-    "hash": "42a386fcf89a40e6c3a8806ccf381514c2a77c10",
-    "author": "Steven Fackler",
-    "date": 1440028815,
-    "message": "Make Condvar::wait_timeout return an enum instead of a bool\n\nReturning a primitive bool results in a somewhat confusing API - does\n`true` indicate success - i.e. no timeout, or that a timeout has\noccurred? An explicitly named enum makes it clearer.\n\n[breaking-change]"
-  },
-  {
-    "hash": "c66554cab3518a9f5c36eafd622ca4c8a3fda631",
-    "author": "Huon Wilson",
-    "date": 1439847697,
-    "message": "switch core::simd to repr(simd) and deprecate it.\n\nThis functionality will be available out of tree in the `simd` crate on\ncrates.io.\n\n[breaking-change]"
   }
 ]
