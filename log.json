@@ -1,5 +1,11 @@
 [
   {
+    "hash": "5807fbbfde3ad04820f6fa0269711c81538057ec",
+    "author": "bors",
+    "date": 1457717207,
+    "message": "Auto merge of #32134 - jseyfried:forbid_type_alias_as_module, r=nikomatsakis\n\nForbid glob-importing from a type alias\n\nThis PR forbids glob-importing from a type alias or trait (fixes #30560):\n```rust\ntype Alias = ();\nuse Alias::*; // This is currently allowed but shouldn't be\n```\n\nThis is a [breaking-change]. Since the disallowed glob imports don't actually import anything, any breakage can be fixed by removing the offending glob import.\n\nr? @alexcrichton"
+  },
+  {
     "hash": "bcda58f49133921abd091d7f800732fe2c4e5a98",
     "author": "bors",
     "date": 1457583380,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1440410628,
     "message": "Auto merge of #27856 - nikomatsakis:move-def-id-to-rustc, r=eddyb\n\nIt doesn't really make sense for DefId to be in libsyntax -- it is concerned with a single crate only. It is the compiler that understands the idea of many crates. (At some point, there might be a useful intermediate point here.) This is a refactoring in support of incr. compilation, which will be adjusting the notion of a DefId to make it more durable across compilations.\r\n\r\nThis will probably be a [breaking-change] for every plugin ever. You need to adjust things as follows:\r\n\r\n    use rustc::middle::def_id::{DefId, LOCAL_CRATE}; // two most common definitions\r\n    ast_util::is_local(def_id) => def_id.is_local()\r\n    ast_util::local_def(node_id) => DefId::local(node_id)"
-  },
-  {
-    "hash": "983d2b3d1a97846c90ea8f689774be8353b340be",
-    "author": "bors",
-    "date": 1440225053,
-    "message": "Auto merge of #27826 - sfackler:wait-timeout-enum, r=alexcrichton\n\nReturning a primitive bool results in a somewhat confusing API - does\r\n`true` indicate success - i.e. no timeout, or that a timeout has\r\noccurred? An explicitly named enum makes it clearer.\r\n\r\n[breaking-change]\r\n\r\nr? @alexcrichton"
   }
 ]
