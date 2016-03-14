@@ -1,5 +1,11 @@
 [
   {
+    "hash": "06074ac004701bff42c625247c4764b2ae6fca6c",
+    "author": "bors",
+    "date": 1457848514,
+    "message": "Auto merge of #32141 - jseyfried:fix_resolution_in_lexical_scopes, r=nikomatsakis\n\nFix name resolution in lexical scopes\n\nCurrently, `resolve_item_in_lexical_scope` does not check the \"ribs\" (type parameters and local variables). This can allow items that should be shadowed by type parameters to be named.\n\nFor example,\n```rust\nstruct T { i: i32 }\nfn f<T>() {\n    let t = T { i: 0 }; // This use of `T` resolves to the struct, not the type parameter\n}\n\nmod Foo {\n    pub fn f() {}\n}\nfn g<Foo>() {\n    Foo::f(); // This use of `Foo` resolves to the module, not the type parameter\n}\n```\n\nThis PR changes `resolve_item_in_lexical_scope` so that it fails when the item is shadowed by a rib (fixes #32120).\nThis is a [breaking-change], but it looks unlikely to cause breakage in practice.\n\nr? @nikomatsakis"
+  },
+  {
     "hash": "5807fbbfde3ad04820f6fa0269711c81538057ec",
     "author": "bors",
     "date": 1457717207,
@@ -592,11 +598,5 @@
     "author": "Tobias Bucher",
     "date": 1440923045,
     "message": "Atomically set CLOEXEC on duplicated sockets\n\nFor Bitrig, NetBSD and OpenBSD the constant was incorrectly in posix01, when\nit's actually posix08, so we move it. This is a [breaking-change], but we\nalready had one in #27930.\n\nFix NetBSD's F_DUPFD_CLOEXEC constant.\n\nFor a similar feature detection, see this musl thread:\nhttp://comments.gmane.org/gmane.linux.lib.musl.general/2963\n\nThis assumes that an int literal has type `c_int` for varidic functions."
-  },
-  {
-    "hash": "db67cbe43dfce043c664c53d709b91252d5afc9e",
-    "author": "bors",
-    "date": 1440410628,
-    "message": "Auto merge of #27856 - nikomatsakis:move-def-id-to-rustc, r=eddyb\n\nIt doesn't really make sense for DefId to be in libsyntax -- it is concerned with a single crate only. It is the compiler that understands the idea of many crates. (At some point, there might be a useful intermediate point here.) This is a refactoring in support of incr. compilation, which will be adjusting the notion of a DefId to make it more durable across compilations.\r\n\r\nThis will probably be a [breaking-change] for every plugin ever. You need to adjust things as follows:\r\n\r\n    use rustc::middle::def_id::{DefId, LOCAL_CRATE}; // two most common definitions\r\n    ast_util::is_local(def_id) => def_id.is_local()\r\n    ast_util::local_def(node_id) => DefId::local(node_id)"
   }
 ]
