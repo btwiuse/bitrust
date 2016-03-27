@@ -1,5 +1,23 @@
 [
   {
+    "hash": "128b2ad8298f33984c64b98cfb354bb932b740ef",
+    "author": "Manish Goregaokar",
+    "date": 1458963441,
+    "message": "Rollup merge of #32199 - nikomatsakis:limiting-constants-in-patterns-2, r=pnkfelix\n\nRestrict constants in patterns\n\nThis implements [RFC 1445](https://github.com/rust-lang/rfcs/blob/master/text/1445-restrict-constants-in-patterns.md). The primary change is to limit the types of constants used in patterns to those that *derive* `Eq` (note that implementing `Eq` is not sufficient). This has two main effects:\n\n1. Floating point constants are linted, and will eventually be disallowed. This is because floating point constants do not implement `Eq` but only `PartialEq`. This check replaces the existing special case code that aimed to detect the use of `NaN`.\n2. Structs and enums must derive `Eq` to be usable within a match.\n\nThis is a [breaking-change]: if you encounter a problem, you are most likely using a constant in an expression where the type of the constant is some struct that does not currently implement\n`Eq`. Something like the following:\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nThe easiest and most future compatible fix is to annotate the type in question with `#[derive(Eq)]` (note that merely *implementing* `Eq` is not enough, it must be *derived*):\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nAnother good option is to rewrite the match arm to use an `if` condition (this is also particularly good for floating point types, which implement `PartialEq` but not `Eq`):\n\n```rust\nmatch foo {\n    c if c == SOME_CONST => ...\n}\n```\n\nFinally, a third alternative is to tag the type with `#[structural_match]`; but this is not recommended, as the attribute is never expected to be stabilized. Please see RFC #1445 for more details.\n\ncc https://github.com/rust-lang/rust/issues/31434\n\nr? @pnkfelix"
+  },
+  {
+    "hash": "f69eb8efbe5dbc373426bf0ff021b49f37db41cb",
+    "author": "Niko Matsakis",
+    "date": 1458902742,
+    "message": "issue a future-compat lint for constants of invalid type\n\nThis is a [breaking-change]: according to RFC #1445, constants used as\npatterns must be of a type that *derives* `Eq`. If you encounter a\nproblem, you are most likely using a constant in an expression where the\ntype of the constant is some struct that does not currently implement\n`Eq`. Something like the following:\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nThe easiest and most future compatible fix is to annotate the type in\nquestion with `#[derive(Eq)]` (note that merely *implementing* `Eq` is\nnot enough, it must be *derived*):\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nAnother good option is to rewrite the match arm to use an `if`\ncondition (this is also particularly good for floating point types,\nwhich implement `PartialEq` but not `Eq`):\n\n```rust\nmatch foo {\n    c if c == SOME_CONST => ...\n}\n```\n\nFinally, a third alternative is to tag the type with\n`#[structural_match]`; but this is not recommended, as the attribute is\nnever expected to be stabilized. Please see RFC #1445 for more details."
+  },
+  {
+    "hash": "64a13a46601bb47a470264936b623b4adf706128",
+    "author": "bors",
+    "date": 1458907393,
+    "message": "Auto merge of #31908 - jseyfried:disallow_shadowed_traits, r=nikomatsakis\n\nDisallow methods from traits that are not in scope\n\nThis PR only allows a trait method to be used if the trait is in scope (fixes #31379).\nThis is a [breaking-change]. For example, the following would break:\n```rust\nmod foo {\n    pub trait T { fn f(&self) {} }\n    impl T for () {}\n}\n\nmod bar { pub use foo::T; }\n\nfn main() {\n    pub use bar::*;\n    struct T; // This shadows the trait `T`,\n    ().f() // making this an error.\n}\n```\nr? @nikomatsakis"
+  },
+  {
     "hash": "06074ac004701bff42c625247c4764b2ae6fca6c",
     "author": "bors",
     "date": 1457848514,
@@ -580,23 +598,5 @@
     "author": "Ariel Ben-Yehuda",
     "date": 1442177261,
     "message": "ensure projections are prohibited when type parameters are\n\nTechnically a [breaking-change], but the broken code is useless,\nlike `i32<Param=()>`.\n\nFixes #24682"
-  },
-  {
-    "hash": "ae75ef9e62b7df8c46865cfb907c56cab1f29f81",
-    "author": "bors",
-    "date": 1441098772,
-    "message": "Auto merge of #28137 - nrc:remove-non-multi, r=huonw\n\nThis is a [breaking-change] for syntax extension authors. The fix is to use MultiModifier or MultiDecorator, which have the same functionality but are more flexible. Users of syntax extensions are unaffected."
-  },
-  {
-    "hash": "20e1ea2dd84d5b29414059a4e07ce7327d1bef19",
-    "author": "Nick Cameron",
-    "date": 1441070163,
-    "message": "Remove the Modifier and Decorator kinds of syntax extensions.\n\nThis is a [breaking-change] for syntax extension authors. The fix is to use MultiModifier or MultiDecorator, which have the same functionality but are more flexible. Users of syntax extensions are unaffected."
-  },
-  {
-    "hash": "1f81ef4d0f2547cacc316b01ad03603ad772e38e",
-    "author": "Tobias Bucher",
-    "date": 1440923045,
-    "message": "Atomically set CLOEXEC on duplicated sockets\n\nFor Bitrig, NetBSD and OpenBSD the constant was incorrectly in posix01, when\nit's actually posix08, so we move it. This is a [breaking-change], but we\nalready had one in #27930.\n\nFix NetBSD's F_DUPFD_CLOEXEC constant.\n\nFor a similar feature detection, see this musl thread:\nhttp://comments.gmane.org/gmane.linux.lib.musl.general/2963\n\nThis assumes that an int literal has type `c_int` for varidic functions."
   }
 ]
