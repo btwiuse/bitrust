@@ -1,5 +1,11 @@
 [
   {
+    "hash": "a11129701c873d96fe0816e4c8b55510efebe96e",
+    "author": "bors",
+    "date": 1459223442,
+    "message": "Auto merge of #32479 - eddyb:eof-not-even-twice, r=nikomatsakis\n\nPrevent bumping the parser past the EOF.\n\nMakes `Parser::bump` after EOF into an ICE, forcing callers to avoid repeated EOF bumps.\nThis ICE is intended to break infinite loops where EOF wasn't stopping the loop.\n\nFor example, the handling of EOF in `parse_trait_items`' recovery loop fixes #32446.\nBut even without this specific fix, the ICE is triggered, which helps diagnosis and UX.\n\nThis is a `[breaking-change]` for plugins authors who eagerly eat multiple EOFs.\nSee https://github.com/docopt/docopt.rs/pull/171 for such an example and the necessary fix."
+  },
+  {
     "hash": "128b2ad8298f33984c64b98cfb354bb932b740ef",
     "author": "Manish Goregaokar",
     "date": 1458963441,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1442213478,
     "message": "Auto merge of #28396 - arielb1:misplaced-binding, r=eddyb\n\nTechnically a [breaking-change], but the broken code is useless,\r\nlike `i32<Param=()>`.\r\n\r\nFixes #24682\r\n\r\nr? @eddyb"
-  },
-  {
-    "hash": "5d4455510afe3b7f74e04d3125ef8536a63d9e60",
-    "author": "Ariel Ben-Yehuda",
-    "date": 1442177261,
-    "message": "ensure projections are prohibited when type parameters are\n\nTechnically a [breaking-change], but the broken code is useless,\nlike `i32<Param=()>`.\n\nFixes #24682"
   }
 ]
