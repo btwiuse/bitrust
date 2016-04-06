@@ -1,5 +1,11 @@
 [
   {
+    "hash": "772c600d4d6f39daa6d07d1a60ee0df3d3426978",
+    "author": "bors",
+    "date": 1459907904,
+    "message": "Auto merge of #32688 - jseyfried:ast_groundwork_for_1422, r=pnkfelix\n\n[breaking-batch] Add support for `pub(restricted)` syntax in the AST\n\nThis PR allows the AST to represent the `pub(restricted)` syntax from RFC 1422 (cc #32409).\n\nMore specifically, it makes `ast::Visibility` non-`Copy` and adds two new variants, `Visibility::Crate` for `pub(crate)` and `Visitibility::Restricted { path: P<Path>, id: NodeId }` for `pub(path)`.\n\nplugin-[breaking-change] cc #31645\nr? @pnkfelix"
+  },
+  {
     "hash": "a11129701c873d96fe0816e4c8b55510efebe96e",
     "author": "bors",
     "date": 1459223442,
@@ -592,11 +598,5 @@
     "author": "Nick Cameron",
     "date": 1442357826,
     "message": "Use ast attributes every where (remove HIR attributes).\n\nThis could be a [breaking-change] if your lint or syntax extension (is that even possible?) uses HIR attributes or literals."
-  },
-  {
-    "hash": "4d6dc7f9ba9fe61e38d737b29bfe490e835f6921",
-    "author": "bors",
-    "date": 1442213478,
-    "message": "Auto merge of #28396 - arielb1:misplaced-binding, r=eddyb\n\nTechnically a [breaking-change], but the broken code is useless,\r\nlike `i32<Param=()>`.\r\n\r\nFixes #24682\r\n\r\nr? @eddyb"
   }
 ]
