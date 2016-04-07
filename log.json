@@ -1,5 +1,11 @@
 [
   {
+    "hash": "af7b00b68fc7960e98fb914be52d9a6a16fe2224",
+    "author": "Manish Goregaokar",
+    "date": 1459943131,
+    "message": "Rollup merge of #32682 - petrochenkov:field3, r=Manishearth\n\n The AST part of https://github.com/rust-lang/rust/pull/31937\n\nUnlike HIR, AST still uses `Option` for field names because parser can't know field indexes reliably due to constructions like\n```\nstruct S(#[cfg(false)] u8, u8); // The index of the second field changes from 1 during parsing to 0 after expansion.\n```\nand I wouldn't like to put the burden of renaming fields on expansion passes and syntax extensions.\n\nplugin-[breaking-change] cc https://github.com/rust-lang/rust/issues/31645\nr? @Manishearth"
+  },
+  {
     "hash": "772c600d4d6f39daa6d07d1a60ee0df3d3426978",
     "author": "bors",
     "date": 1459907904,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1442363724,
     "message": "Auto merge of #28399 - nrc:attrs, r=nikomatsakis\n\nThis could be a [breaking-change] if your lint or syntax extension (is that even possible?) uses HIR attributes or literals."
-  },
-  {
-    "hash": "e9f1b063295c48c97e239ce479b08f192a3eece4",
-    "author": "Nick Cameron",
-    "date": 1442357826,
-    "message": "Use ast attributes every where (remove HIR attributes).\n\nThis could be a [breaking-change] if your lint or syntax extension (is that even possible?) uses HIR attributes or literals."
   }
 ]
