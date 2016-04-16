@@ -1,5 +1,11 @@
 [
   {
+    "hash": "6a0cfbcac294faab2b8bcd95a04cda042101a2d8",
+    "author": "Manish Goregaokar",
+    "date": 1460749603,
+    "message": "Rollup merge of #32923 - jseyfried:fix_hygiene, r=nrc\n\nFix macro hygiene bug\n\nThis fixes #32922 (EDIT: and fixes #31856), macro hygiene bugs.\nIt is a [breaking-change]. For example, the following would break:\n```rust\nfn main() {\n    let x = true;\n    macro_rules! foo { () => {\n        let x = 0;\n        macro_rules! bar { () => {x} }\n        let _: bool = bar!();\n        //^ `bar!()` used to resolve the first `x` (a bool),\n        //| but will now resolve to the second x (an i32).\n    }}\n    foo! {};\n}\n```\n\nr? @nrc"
+  },
+  {
     "hash": "af7b00b68fc7960e98fb914be52d9a6a16fe2224",
     "author": "Manish Goregaokar",
     "date": 1459943131,
@@ -592,11 +598,5 @@
     "author": "Nick Cameron",
     "date": 1442449006,
     "message": "Add an early lint pass for lints that operate on the AST\n\nThere is a minor [breaking-change] for lint authors - some functions which were previously defined on `lint::Context` have moved to a trait - `LintContext`, you may need to import that trait to avoid name resolution errors."
-  },
-  {
-    "hash": "fc4d566b432d48933e27dd65a973c936b564d6e9",
-    "author": "bors",
-    "date": 1442363724,
-    "message": "Auto merge of #28399 - nrc:attrs, r=nikomatsakis\n\nThis could be a [breaking-change] if your lint or syntax extension (is that even possible?) uses HIR attributes or literals."
   }
 ]
