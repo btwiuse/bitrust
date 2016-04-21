@@ -1,5 +1,11 @@
 [
   {
+    "hash": "6ece1447f02b2310e5f4c7ef1efd1312476cae80",
+    "author": "bors",
+    "date": 1461162479,
+    "message": "Auto merge of #32939 - eddyb:layout, r=nikomatsakis\n\nCompute LLVM-agnostic type layouts in rustc.\n\nLayout for monomorphic types, and some polymorphic ones (e.g. `&T` where `T: Sized`),\ncan now be computed by rustc without involving LLVM in the actual process.\n\nThis gives rustc the ability to evaluate `size_of` or `align_of`, as well as obtain field offsets.\nMIR-based CTFE will eventually make use of these layouts, as will MIR trans, shortly.\n\nLayout computation also comes with a `[breaking-change]`, or two:\n* `\"data-layout\"` is now mandatory in custom target specifications, reverting the decision from #27076.\nThis string is needed because it describes endianness, pointer size and alignments for various types.\nWe have the first two and we could allow tweaking alignments in target specifications.\nOr we could also extract the data layout from LLVM and feed it back into rustc.\nHowever, that can vary with the LLVM version, which is fragile and undermines stability.\nFor built-in targets, I've added a check that the hardcoded data-layout matches LLVM defaults.\n* `transmute` calls are checked in a stricter fashion, which fixes #32377\n\nTo expand on `transmute`, there are only 2 allowed patterns: between types with statically known sizes and between pointers with the same potentially-unsized \"tail\" (which determines the type of unsized metadata they use, if any).\nIf you're affected, my suggestions are:\n* try to use casts (and raw pointer deref) instead of transmutes\n* *really* try to avoid `transmute` where possible\n* if you have a structure, try working on individual fields and unpack/repack the structure instead of transmuting it whole, e.g. `transmute::<RefCell<Box<T>>, RefCell<*mut T>>(x)` doesn't work, but `RefCell::new(Box::into_raw(x.into_inner()))` does (and `Box::into_raw` is just a `transmute`)"
+  },
+  {
     "hash": "6a0cfbcac294faab2b8bcd95a04cda042101a2d8",
     "author": "Manish Goregaokar",
     "date": 1460749603,
@@ -592,11 +598,5 @@
     "author": "Nick Cameron",
     "date": 1442449006,
     "message": "Change to a multi-trait approach\n\n[breaking-change] for lint authors\n\nYou must now implement LateLintPass or EarlyLintPass as well as LintPass and use either register_late_lint_pass or register_early_lint_pass, rather than register_lint_pass."
-  },
-  {
-    "hash": "76856e19ff3c7c699931d0acee8e61bc0dfec512",
-    "author": "Nick Cameron",
-    "date": 1442449006,
-    "message": "Add an early lint pass for lints that operate on the AST\n\nThere is a minor [breaking-change] for lint authors - some functions which were previously defined on `lint::Context` have moved to a trait - `LintContext`, you may need to import that trait to avoid name resolution errors."
   }
 ]
