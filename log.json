@@ -1,5 +1,17 @@
 [
   {
+    "hash": "23ccaddaa7d1cb71e49ef1b1f423b3245fa3a879",
+    "author": "bors",
+    "date": 1461447606,
+    "message": "Auto merge of #33124 - sfackler:kill-ipv6-only, r=alexcrichton\n\nRemove IPV6_V6ONLY functionality\n\nThese settings can only be adjusted before bind time, which doesn't make\nsense in the current set of functionality. These methods are stable, but\nhaven't hit a stable release yet.\n\nCloses #33052\n\n[breaking-change]\n\nr? @alexcrichton\n\nWill also need a backport to the beta."
+  },
+  {
+    "hash": "c6480e8b6b13401030c52f3c2b4fcc4e80c14481",
+    "author": "Steven Fackler",
+    "date": 1461213739,
+    "message": "Remove IPV6_V6ONLY functionality\n\nThese settings can only be adjusted before bind time, which doesn't make\nsense in the current set of functionality. These methods are stable, but\nhaven't hit a stable release yet.\n\nCloses #33052\n\n[breaking-change]"
+  },
+  {
     "hash": "6ece1447f02b2310e5f4c7ef1efd1312476cae80",
     "author": "bors",
     "date": 1461162479,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1443120900,
     "message": "Auto merge of #28538 - alevy:make_fixedsizearray_unsafe, r=alexcrichton\n\n[breaking-change]\r\n\r\n`FixedSizeArray` is meant to be implemented for arrays of fixed size only, but can be implemented for anything at the moment. Marking the trait unsafe would make it more reasonable to write unsafe code which operates on fixed size arrays of any size.\r\n\r\nFor example, using `uninitialized` to create a fixed size array and immediately filling it with a fixed value is externally safe:\r\n\r\n```\r\npub fn init_with_nones<T, A: FixedSizeArray<Option<T>>>() -> A {\r\n    let mut res = unsafe { mem::uninitialized() };\r\n    for elm in res.as_mut_slice().iter_mut() {\r\n        *elm = None;\r\n    }\r\n    res\r\n}\r\n```\r\n\r\nBut the same code is not safe if `FixedSizeArray` is implemented for other types:\r\n\r\n```\r\nstruct Foo { foo: usize }\r\nimpl FixedSizeArray<Option<usize>> for Foo {\r\n    fn as_slice(&self) -> &[usize] { &[] }\r\n    fn as_mut_slice(&self) -> &mut [usize] { &mut [] }\r\n}\r\n```\r\n\r\nnow `init_with_nones() : Foo` returns a `Foo` with an undefined value for the field `foo`."
-  },
-  {
-    "hash": "920f32becd5d54864a966900963a376d74d09922",
-    "author": "Sebastian Wicki",
-    "date": 1442874820,
-    "message": "Add `no_default_libraries` target linker option\n\nIf set to false, `-nodefaultlibs` is not passed to the linker. This\nwas the default behavior on Windows, but it should be configurable\nper target.\n\nThis is a [breaking-change] for target specifications that have\nthe `is_like_windows` option set to true. Such targets need to\nset `no_default_libraries` to false in order to restore the old\nbehavior."
-  },
-  {
-    "hash": "a642d853aa29f8ec8486e736be551cf77f34e219",
-    "author": "Nick Cameron",
-    "date": 1442449006,
-    "message": "Change to a multi-trait approach\n\n[breaking-change] for lint authors\n\nYou must now implement LateLintPass or EarlyLintPass as well as LintPass and use either register_late_lint_pass or register_early_lint_pass, rather than register_lint_pass."
   }
 ]
