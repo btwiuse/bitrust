@@ -1,5 +1,11 @@
 [
   {
+    "hash": "c1c6e99bfd3296954a192d9fe3151a222dd9045c",
+    "author": "Nick Cameron",
+    "date": 1462230909,
+    "message": "rebasing\n\nNote that this whole PR is a [breaking-change] for clients of the Compiler API."
+  },
+  {
     "hash": "a31658de51444d1b5193ac203a1bd7ace5621f93",
     "author": "Manish Goregaokar",
     "date": 1461525464,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1443673744,
     "message": "Auto merge of #28605 - alexcrichton:link-native-first, r=brson\n\nThis commit swaps the order of linking local native libraries and upstream\r\nnative libraries on the linker command line. Detail of bugs this can cause can\r\nbe found in #28595, and this change also invalidates the test case that was\r\nadded for #12446 which is now considered a bug because the downstream dependency\r\nwould need to declare that it depends on the native library somehow.\r\n\r\nCloses #28595\r\n[breaking-change]"
-  },
-  {
-    "hash": "5ca60d94316bd56f412ef4c13292237e206babf1",
-    "author": "bors",
-    "date": 1443127376,
-    "message": "Auto merge of #28608 - eddyb:no-place-for-an-old-box, r=pnkfelix\n\nWhile this is technically a [breaking-change], there is no excuse for touching `HEAP`.\r\nr? @pnkfelix"
   }
 ]
