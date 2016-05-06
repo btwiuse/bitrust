@@ -1,5 +1,17 @@
 [
   {
+    "hash": "2f8f256cef42350af2f0376891fd020b6b1c37de",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1462289410,
+    "message": "require the existential bounds of an object type to be object-safe\n\nThis is required, as Copy and Sized are object-unsafe.\n\nAs a soundness fix, this is a [breaking-change]\n\nFixes #32963"
+  },
+  {
+    "hash": "0a6dfc51777eb388b6e795399bf1d3f8aac57db8",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1462289410,
+    "message": "require the non-last elements of a tuple to be Sized\n\nThis requirement appears to be missing from RFC1214, but is clearly\nnecessary for translation. The last field of a tuple/enum remains in\na state of limbo, compiling but causing an ICE when it is used - we\nshould eventually fix that somehow.\n\nthis is a [breaking-change] - a soundness fix - and requires a\ncrater run."
+  },
+  {
     "hash": "c1c6e99bfd3296954a192d9fe3151a222dd9045c",
     "author": "Nick Cameron",
     "date": 1462230909,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1443813399,
     "message": "Auto merge of #28650 - sanxiyn:attr-usage, r=nrc\n\nThis is technically a [breaking-change].\r\n\r\nFix #2809.\r\nFix #22746."
-  },
-  {
-    "hash": "e82faeb65594302897223b2ca4ee6927fb54625f",
-    "author": "bors",
-    "date": 1443716788,
-    "message": "Auto merge of #28742 - nikomatsakis:def-id-encapsulate, r=eddyb\n\nAs described in https://github.com/rust-lang/rfcs/pull/1298, the idea here is to make DefIds independent of changes to the content of other items. They are also *mostly* independent from ordering, so e.g. reordering two functions will change the defids, but it will not change the paths that they expand into (but this is not the case for some things, such as impls).\r\n\r\nThis is a major refactoring, so I did it in slices. The final commit is in some sense The Big One where most of the work is done. The earlier commits just pave the way by gradually refactoring accesses to the `node` field.\r\n\r\nThis is a [breaking-change] for plugin authors. The things you need to do to migrate your code are as follows:\r\n\r\n1. For local def-ids, rather than do `def_id.node`, call `tcx.map.as_local_node_id(def_id)`.\r\n2. To construct a local def-id, call `tcx.map.local_def_id(node_id)`.\r\n3. Note that you cannot make def-ids for any node, but only for \"definitions\" -- which include all items, as well as a number of other things, but not e.g. arbitrary expressions.\r\n4. You can get the path to a def-id by calling `tcx.def_path(def_id)`.\r\n\r\nOne thing that is NOT part of this PR, but which I plan do in a follow-up, is converting uses of the existing `with_path` API to use `def_path`, which is basically the same.\r\n\r\nr? @eddyb (or @nrc)"
-  },
-  {
-    "hash": "587be42d0bd318d6c2f41fe4716e040366dc8951",
-    "author": "bors",
-    "date": 1443673744,
-    "message": "Auto merge of #28605 - alexcrichton:link-native-first, r=brson\n\nThis commit swaps the order of linking local native libraries and upstream\r\nnative libraries on the linker command line. Detail of bugs this can cause can\r\nbe found in #28595, and this change also invalidates the test case that was\r\nadded for #12446 which is now considered a bug because the downstream dependency\r\nwould need to declare that it depends on the native library somehow.\r\n\r\nCloses #28595\r\n[breaking-change]"
   }
 ]
