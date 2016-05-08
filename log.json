@@ -1,5 +1,11 @@
 [
   {
+    "hash": "1ec22171e6053c640293067418ea1901cb1c7df1",
+    "author": "bors",
+    "date": 1462692700,
+    "message": "Auto merge of #33130 - eddyb:mir-const, r=nikomatsakis\n\nImplement constant support in MIR.\n\nAll of the intended features in `trans::consts` are now supported by `mir::constant`.\nThe implementation is considered a temporary measure until `miri` replaces it.\n\nA `-Z orbit` bootstrap build will only translate LLVM IR from AST for `#[rustc_no_mir]` functions.\n\nFurthermore, almost all checks of constant expressions have been moved to MIR.\nIn non-`const` functions, trees of temporaries are promoted, as per RFC 1414 (rvalue promotion).\nPromotion before MIR borrowck would allow reasoning about promoted values' lifetimes.\n\nThe improved checking comes at the cost of four `[breaking-change]`s:\n* repeat counts must contain a constant expression, e.g.:\n`let arr = [0; { println!(\"foo\"); 5 }];` used to be allowed (it behaved like `let arr = [0; 5];`)\n* dereference of a reference to a `static` cannot be used in another `static`, e.g.:\n`static X: [u8; 1] = [1]; static Y: u8 = (&X)[0];` was unintentionally allowed before\n* the type of a `static` *must* be `Sync`, irrespective of the initializer, e.g.\n`static FOO: *const T = &BAR;` worked as `&T` is `Sync`, but it shouldn't because `*const T` isn't\n* a `static` cannot wrap `UnsafeCell` around a type that *may* need drop, e.g.\n`static X: MakeSync<UnsafeCell<Option<String>>> = MakeSync(UnsafeCell::new(None));`\nwas previously allowed based on the fact `None` alone doesn't need drop, but in `UnsafeCell`\nit can be later changed to `Some(String)` which *does* need dropping\n\nThe drop restrictions are relaxed by RFC 1440 (#33156), which is implemented, but feature-gated.\nHowever, creating `UnsafeCell` from constants is unstable, so users can just enable the feature gate."
+  },
+  {
     "hash": "2f8f256cef42350af2f0376891fd020b6b1c37de",
     "author": "Ariel Ben-Yehuda",
     "date": 1462289410,
@@ -592,11 +598,5 @@
     "author": "Ariel Ben-Yehuda",
     "date": 1443818410,
     "message": "ensure that the types of methods are well-formed\n\nBy RFC1214:\nBefore calling a fn, we check that its argument and return types are WF. This check takes place after all higher-ranked lifetimes have been instantiated. Checking the argument types ensures that the implied bounds due to argument types are correct. Checking the return type ensures that the resulting type of the call is WF.\n\nThe previous code only checked the trait-ref, which was not enough\nin several cases.\n\nAs this is a soundness fix, it is a [breaking-change].\n\nFixes #28609"
-  },
-  {
-    "hash": "ef07d7dd40e33d7af95c7b00717503730ce69c11",
-    "author": "bors",
-    "date": 1443813399,
-    "message": "Auto merge of #28650 - sanxiyn:attr-usage, r=nrc\n\nThis is technically a [breaking-change].\r\n\r\nFix #2809.\r\nFix #22746."
   }
 ]
