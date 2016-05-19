@@ -1,5 +1,17 @@
 [
   {
+    "hash": "b711734a5f7280cc3ceb99e09551a7b7691c7d0b",
+    "author": "Niko Matsakis",
+    "date": 1463580645,
+    "message": "thread the DepGraph to session/crate-store\n\nThis is a [breaking-change] for plugin authors.\nYou must now create a dep-graph earlier."
+  },
+  {
+    "hash": "2237e899084f16f61e4a74c191a74c7bb2fd3727",
+    "author": "Niko Matsakis",
+    "date": 1463580645,
+    "message": "remove the `Any` bound from `CrateStore`\n\nThis is a [breaking-change] for plugins, which\nought by now to have stopped relying on downcasting."
+  },
+  {
     "hash": "1ec22171e6053c640293067418ea1901cb1c7df1",
     "author": "bors",
     "date": 1462692700,
@@ -586,17 +598,5 @@
     "author": "Andrew Paseltiner",
     "date": 1445034931,
     "message": "Add `Shared` pointer and have `{Arc, Rc}` use it\n\nThis change has two consequences:\n\n1. It makes `Arc<T>` and `Rc<T>` covariant in `T`.\n\n2. It causes the compiler to reject code that was unsound with respect\nto dropck. See compile-fail/issue-29106.rs for an example of code that\nno longer compiles. Because of this, this is a [breaking-change].\n\nFixes #29037.\nFixes #29106."
-  },
-  {
-    "hash": "130851e03046db41d555a401a08c87f187fd911a",
-    "author": "bors",
-    "date": 1443910057,
-    "message": "Auto merge of #28669 - arielb1:well-formed-methods, r=nikomatsakis\n\nBy RFC1214:\r\n>    Before calling a fn, we check that its argument and return types are WF.\r\n    \r\nThe previous code only checked the trait-ref, which was not enough\r\nin several cases.\r\n    \r\nAs this is a soundness fix, it is a [breaking-change]. Some new annotations are needed, which I think are because of #18653 and the imperfection of `projection_must_outlive` (that can probably be worked around by moving the wf obligation later).\r\n    \r\nFixes #28609\r\n\r\nr? @nikomatsakis"
-  },
-  {
-    "hash": "603a75c8eaa8ee168e4333e4fba5eb782ed7192b",
-    "author": "Ariel Ben-Yehuda",
-    "date": 1443818410,
-    "message": "ensure that the types of methods are well-formed\n\nBy RFC1214:\nBefore calling a fn, we check that its argument and return types are WF. This check takes place after all higher-ranked lifetimes have been instantiated. Checking the argument types ensures that the implied bounds due to argument types are correct. Checking the return type ensures that the resulting type of the call is WF.\n\nThe previous code only checked the trait-ref, which was not enough\nin several cases.\n\nAs this is a soundness fix, it is a [breaking-change].\n\nFixes #28609"
   }
 ]
