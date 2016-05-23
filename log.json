@@ -1,5 +1,17 @@
 [
   {
+    "hash": "6e455640950c4e8cb8bff919edb4854fcf7773ca",
+    "author": "bors",
+    "date": 1463984051,
+    "message": "Auto merge of #31457 - lambda:rtabort-use-libc-abort, r=alexcrichton\n\nUse libc::abort, not intrinsics::abort, in rtabort!\n\nintrinsics::abort compiles down to an illegal instruction, which on\nUnix-like platforms causes the process to be killed with SIGILL.  A more\nappropriate way to kill the process would be SIGABRT; this indicates\nbetter that the runtime has explicitly aborted, rather than some kind of\ncompiler bug or architecture mismatch that SIGILL might indicate.\n\nFor rtassert!, replace this with libc::abort.  libc::abort raises\nSIGABRT, but is defined to do so in such a way that it will terminate\nthe process even if SIGABRT is currently masked or caught by a signal\nhandler that returns.\n\nOn non-Unix platforms, retain the existing behavior.  On Windows we\nprefer to avoid depending on the C runtime, and we need a fallback for\nany other platforms that may be defined.  An alternative on Windows\nwould be to call TerminateProcess, but this seems less essential than\nswitching to using SIGABRT on Unix-like platforms, where it is common\nfor the process-killing signal to be printed out or logged.\n\nThis is a [breaking-change] for any code that depends on the exact\nsignal raised to abort a process via rtabort!\n\ncc #31273\ncc #31333"
+  },
+  {
+    "hash": "cfc386583291c8868d093d07431a57a20e69c944",
+    "author": "Brian Campbell",
+    "date": 1463977361,
+    "message": "Use libc::abort, not intrinsics::abort, in rtabort!\n\nintrinsics::abort compiles down to an illegal instruction, which on\nUnix-like platforms causes the process to be killed with SIGILL.  A more\nappropriate way to kill the process would be SIGABRT; this indicates\nbetter that the runtime has explicitly aborted, rather than some kind of\ncompiler bug or architecture mismatch that SIGILL might indicate.\n\nFor rtassert!, replace this with libc::abort.  libc::abort raises\nSIGABRT, but is defined to do so in such a way that it will terminate\nthe process even if SIGABRT is currently masked or caught by a signal\nhandler that returns.\n\nOn non-Unix platforms, retain the existing behavior.  On Windows we\nprefer to avoid depending on the C runtime, and we need a fallback for\nany other platforms that may be defined.  An alternative on Windows\nwould be to call TerminateProcess, but this seems less essential than\nswitching to using SIGABRT on Unix-like platforms, where it is common\nfor the process-killing signal to be printed out or logged.\n\nThis is a [breaking-change] for any code that depends on the exact\nsignal raised to abort a process via rtabort!\n\ncc #31273\ncc #31333"
+  },
+  {
     "hash": "b711734a5f7280cc3ceb99e09551a7b7691c7d0b",
     "author": "Niko Matsakis",
     "date": 1463580645,
@@ -586,17 +598,5 @@
     "author": "Ariel Ben-Yehuda",
     "date": 1445635349,
     "message": "object_safety: check whether a supertrait contains Self even without being it\n\nThis is a [breaking-change]:lang, but the broken code does not make\nmuch sense.\n\nFixes #26056"
-  },
-  {
-    "hash": "97ba52ec379e17cc0984224b756282b68bc3a53b",
-    "author": "bors",
-    "date": 1445367747,
-    "message": "Auto merge of #29148 - petrochenkov:noshow, r=alexcrichton\n\nCloses https://github.com/rust-lang/rust/issues/29145\r\n\r\n[breaking-change], needs a crater run."
-  },
-  {
-    "hash": "d6bd8d8491e89277edbfc9a4e0f8953847abbdd6",
-    "author": "Andrew Paseltiner",
-    "date": 1445034931,
-    "message": "Add `Shared` pointer and have `{Arc, Rc}` use it\n\nThis change has two consequences:\n\n1. It makes `Arc<T>` and `Rc<T>` covariant in `T`.\n\n2. It causes the compiler to reject code that was unsound with respect\nto dropck. See compile-fail/issue-29106.rs for an example of code that\nno longer compiles. Because of this, this is a [breaking-change].\n\nFixes #29037.\nFixes #29106."
   }
 ]
