@@ -1,5 +1,17 @@
 [
   {
+    "hash": "7905452f083ab5ac3008dfe6727048e70bbeb142",
+    "author": "Manish Goregaokar",
+    "date": 1464323231,
+    "message": "Rollup merge of #33644 - petrochenkov:selfast, r=nrc\n\n The AST part of https://github.com/rust-lang/rust/pull/33505.\nhttps://github.com/rust-lang/rust/pull/33505 isn't landed yet, so this PR is based on top of it.\n\nr? @nrc\n\nplugin-[breaking-change] cc #31645 @Manishearth"
+  },
+  {
+    "hash": "35785712cd5e1acbfebd168c045b2e184ae979cc",
+    "author": "Manish Goregaokar",
+    "date": 1464323220,
+    "message": "Rollup merge of #33639 - petrochenkov:dotdot, r=nmatsakis\n\n cc https://github.com/rust-lang/rust/issues/33627\nr? @nikomatsakis\n\nplugin-[breaking-change] cc https://github.com/rust-lang/rust/issues/31645 @Manishearth"
+  },
+  {
     "hash": "6e455640950c4e8cb8bff919edb4854fcf7773ca",
     "author": "bors",
     "date": 1463984051,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1445848079,
     "message": "Auto merge of #29303 - petrochenkov:unistrimp, r=eddyb\n\nAnd use `VariantData` instead of `P<VariantData>` in `Item_` and `Variant_`\r\n\r\nImprovements suggested by @eddyb in https://github.com/rust-lang/rust/pull/28816#discussion_r42483587 and https://github.com/rust-lang/rust/pull/28816#discussion_r42483648\r\n\r\nplugin-[breaking-change]\r\n\r\nr? @eddyb"
-  },
-  {
-    "hash": "04e497c0056aed899cd6edbc98e7a68a9b391c5c",
-    "author": "bors",
-    "date": 1445689272,
-    "message": "Auto merge of #29259 - arielb1:supertrait-self-2, r=eddyb\n\n…being it\r\n\r\nThis is a [breaking-change]:lang, but the broken code does not make\r\nmuch sense.\r\n\r\nFixes #26056\r\n\r\nr? @eddyb"
-  },
-  {
-    "hash": "5d6d26c241b785daef873a0c6b9a0553c3a9451d",
-    "author": "Ariel Ben-Yehuda",
-    "date": 1445635349,
-    "message": "object_safety: check whether a supertrait contains Self even without being it\n\nThis is a [breaking-change]:lang, but the broken code does not make\nmuch sense.\n\nFixes #26056"
   }
 ]
