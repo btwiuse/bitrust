@@ -1,5 +1,11 @@
 [
   {
+    "hash": "8b012ed142f03c9082773f5091c58c82d47cae79",
+    "author": "bors",
+    "date": 1464396374,
+    "message": "Auto merge of #33706 - jseyfried:refactor_cfg, r=nrc\n\nPerform `cfg` attribute processing during macro expansion and fix bugs\n\nThis PR refactors `cfg` attribute processing and fixes bugs. More specifically:\n - It merges gated feature checking for stmt/expr attributes, `cfg_attr` processing, and `cfg` processing into a single fold.\n  - This allows feature gated `cfg` variables to be used in `cfg_attr` on unconfigured items. All other feature gated attributes can already be used on unconfigured items.\n - It performs `cfg` attribute processing during macro expansion instead of after expansion so that macro-expanded items are configured the same as ordinary items. In particular, to match their non-expanded counterparts,\n  - macro-expanded unconfigured macro invocations are no longer expanded,\n  - macro-expanded unconfigured macro definitions are no longer usable, and\n  - feature gated `cfg` variables on macro-expanded macro definitions/invocations are now errors.\n\nThis is a [breaking-change]. For example, the following would break:\n```rust\nmacro_rules! m {\n    () => {\n        #[cfg(attr)]\n        macro_rules! foo { () => {} }\n        foo!(); // This will be an error\n\n        macro_rules! bar { () => { fn f() {} } }\n        #[cfg(attr)] bar!(); // This will no longer be expanded ...\n        fn g() { f(); } // ... so that `f` will be unresolved.\n\n        #[cfg(target_thread_local)] // This will be a gated feature error\n        macro_rules! baz { () => {} }\n    }\n}\n\nm!();\n```\n\nr? @nrc"
+  },
+  {
     "hash": "7905452f083ab5ac3008dfe6727048e70bbeb142",
     "author": "Manish Goregaokar",
     "date": 1464323231,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1446385009,
     "message": "Auto merge of #29486 - petrochenkov:multiwild, r=Manishearth\n\nMotivation:\r\n- It is not actually a pattern\r\n- It is not actually needed, except for...\r\n\r\nDrawback:\r\n- Slice patterns like `[a, _.., b]` are pretty-printed as `[a, .., b]`. Great loss :(\r\n\r\nplugin-[breaking-change], as always"
-  },
-  {
-    "hash": "c44316d4a1ad0fe01ae366e163993aa3980c755f",
-    "author": "bors",
-    "date": 1445848079,
-    "message": "Auto merge of #29303 - petrochenkov:unistrimp, r=eddyb\n\nAnd use `VariantData` instead of `P<VariantData>` in `Item_` and `Variant_`\r\n\r\nImprovements suggested by @eddyb in https://github.com/rust-lang/rust/pull/28816#discussion_r42483587 and https://github.com/rust-lang/rust/pull/28816#discussion_r42483648\r\n\r\nplugin-[breaking-change]\r\n\r\nr? @eddyb"
   }
 ]
