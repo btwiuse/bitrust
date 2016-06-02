@@ -1,5 +1,17 @@
 [
   {
+    "hash": "12d16599d84c25899f02a6e53110d1e70cdcbd8a",
+    "author": "bors",
+    "date": 1464801715,
+    "message": "Auto merge of #33814 - lambda:rtabort-use-platform-abort, r=alexcrichton\n\nOpen code the __fastfail intrinsic for rtabort! on windows\n\nAs described https://msdn.microsoft.com/en-us/library/dn774154.aspx\n\nThis is a Windows 8+ mechanism for terminating the process quickly,\nwhich degrades to either an access violation or bugcheck in older versions.\n\nI'm not sure this is better the the current mechanism of terminating\nwith an illegal instruction, but we recently converted unix to\nterminate more correctly with SIGABORT, and this *seems* more correct\nfor windows.\n\n[breaking-change]"
+  },
+  {
+    "hash": "696a570a00db2528b7934be32da7d8334738a997",
+    "author": "Brian Anderson",
+    "date": 1464094563,
+    "message": "Open code the __fastfail intrinsic for rtabort! on windows\n\nAs described https://msdn.microsoft.com/en-us/library/dn774154.aspx\n\nThis is a Windows 8+ mechanism for terminating the process quickly,\nwhich degrades to either an access violation or bugcheck in older versions.\n\nI'm not sure this is better the the current mechanism of terminating\nwith an illegal instruction, but we recently converted unix to\nterminate more correctly with SIGABORT, and this *seems* more correct\nfor windows.\n\n[breaking-change]"
+  },
+  {
     "hash": "c2cab1fd58d6373582da189bd2c20ed3f6a7042a",
     "author": "bors",
     "date": 1464787313,
@@ -586,17 +598,5 @@
     "author": "Niko Matsakis",
     "date": 1447892538,
     "message": "Refactor the HIR so that items are stored in a map in the `Crate`,\nrather being stored inline. Refactor (and rename) the visitor so that\n(by default) it only visits the interior content of an item not nested\nitems.\n\nThis is a [breaking-change] for anyone who uses the HIR visitor. Besides\nchanging `visit::` to `intravisit::`, you need to refactor your visitor\nin one of two ways, depending on what it requires:\n\n1. If you just want to visit all items (most common), you should call\n   `krate.visit_all_items(&mut visitor)`.\n\n2. If you need to visit nested items in the middle of the parent items,\n   you should override `visit_nested_item` with something like:\n   `self.visit_item(self.tcx.map.expect_item(item.id))`, presuming you\n   have access to a tcx (or at least a HIR map)."
-  },
-  {
-    "hash": "ad3bd1b46d52ccb339a09558064b9bf687c47a75",
-    "author": "bors",
-    "date": 1447201508,
-    "message": "Auto merge of #29726 - petrochenkov:privsan, r=alexcrichton\n\n- Check privacy sanity in all blocks, not only function bodies\n- Check all fields, not only named\n- Check all impl items, not only methods\n- Check default impls\n- Move the sanity check in the beginning of privacy checking, so others could rely on it\n\nTechnically it's a [breaking-change], but I expect no breakage because, well, it's *sane* privacy visitor, if code is broken it must be insane by definition!"
-  },
-  {
-    "hash": "749625ad6d15d0254b90e3d16f79d1cb1e260969",
-    "author": "bors",
-    "date": 1446513790,
-    "message": "Auto merge of #29500 - vadimcn:rustlib, r=alexcrichton\n\nAccording to a recent [discussion on IRC](https://botbot.me/mozilla/rust-tools/2015-10-27/?msg=52887517&page=2), there's no good reason for Windows builds to store target libraries under `bin`, when on every other platform they are under `lib`.\r\n\r\nThis might be a [breaking-change] for some users.  I am pretty sure VisualRust has that path hard-coded somewhere.\r\n\r\nr? @brson"
   }
 ]
