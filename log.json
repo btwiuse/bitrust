@@ -1,5 +1,17 @@
 [
   {
+    "hash": "814f685df21439ab6eab83f421d4b60cab026a0b",
+    "author": "Steve Klabnik",
+    "date": 1465310638,
+    "message": "Rollup merge of #34124 - jonas-schievink:remove-useless-optns, r=sanxiyn\n\nRemove old -Z options that do nothing\n\nTechnically, this is a [breaking-change], but I'm not sure what the policy for -Z flags is (especially unused ones)."
+  },
+  {
+    "hash": "6e2f966f729821ebc85fdca6a426493d6d2178ce",
+    "author": "Jonas Schievink",
+    "date": 1465249424,
+    "message": "Remove old -Z options that do nothing\n\nTechnically, this is a [breaking-change], but I'm not sure what the\npolicy for -Z flags is (especially unused ones)."
+  },
+  {
     "hash": "12d16599d84c25899f02a6e53110d1e70cdcbd8a",
     "author": "bors",
     "date": 1464801715,
@@ -586,17 +598,5 @@
     "author": "Ariel Ben-Yehuda",
     "date": 1448554959,
     "message": "move librustc/plugin to librustc_plugin\n\nthis is a [breaking-change] to all plugin authors - sorry"
-  },
-  {
-    "hash": "3c0d55cc76c524c12160bfb45663d9aca73e6556",
-    "author": "Ariel Ben-Yehuda",
-    "date": 1447959239,
-    "message": "constrained_type_params: make projections depend on their trait-ref\n\nAs this is a soundness fix, it is a [breaking-change].\n\nFixes #29861."
-  },
-  {
-    "hash": "767ee79c4c38e7909c7fefef1b33be4612112336",
-    "author": "Niko Matsakis",
-    "date": 1447892538,
-    "message": "Refactor the HIR so that items are stored in a map in the `Crate`,\nrather being stored inline. Refactor (and rename) the visitor so that\n(by default) it only visits the interior content of an item not nested\nitems.\n\nThis is a [breaking-change] for anyone who uses the HIR visitor. Besides\nchanging `visit::` to `intravisit::`, you need to refactor your visitor\nin one of two ways, depending on what it requires:\n\n1. If you just want to visit all items (most common), you should call\n   `krate.visit_all_items(&mut visitor)`.\n\n2. If you need to visit nested items in the middle of the parent items,\n   you should override `visit_nested_item` with something like:\n   `self.visit_item(self.tcx.map.expect_item(item.id))`, presuming you\n   have access to a tcx (or at least a HIR map)."
   }
 ]
