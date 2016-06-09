@@ -1,5 +1,23 @@
 [
   {
+    "hash": "dc77c5ebe80d8e8fe08b9ba05859c04f4dbb99cf",
+    "author": "bors",
+    "date": 1465451135,
+    "message": "Auto merge of #34032 - jseyfried:load_macros_in_expansion, r=nrc\n\nSupport `#[macro_use]` on macro-expanded crates\n\nThis PR loads macros from `#[macro_use]` crates during expansion so that\n - macro-expanded `#[macro_use]` crates work (fixes #33936, fixes #28071), and\n - macros imported from crates have the same scope as macros imported from modules.\n\nThis is a [breaking-change]. For example, this will break:\n```rust\nmacro_rules! m {\n    () => { #[macro_use(foo)] extern crate core; } //~ ERROR imported macro not found\n}\nm!();\n```\nAlso, this will break:\n```rust\nmacro_rules! try { () => {} }\n// #[macro_use] mod bar { macro_rules! try { ... } } //< ... just like this would ...\nfn main() { try!(); } //< ... making this an error\n```\n\nr? @nrc"
+  },
+  {
+    "hash": "bb4b3fb7f97924919f072ec9a360bdf943218dbf",
+    "author": "bors",
+    "date": 1465439433,
+    "message": "Auto merge of #32202 - arielb1:slice-patterns, r=nikomatsakis\n\nImplement RFC495 semantics for slice patterns\n\nnon-MIR translation is still not supported for these and will happily ICE.\n\nThis is a [breaking-change] for many uses of slice_patterns.\n\n[RFC 495 text](https://github.com/rust-lang/rfcs/blob/master/text/0495-array-pattern-changes.md)"
+  },
+  {
+    "hash": "5c717a6fc21594569d9e64968cdcf2e88e372a07",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1465421918,
+    "message": "implement RFC495 semantics for slice patterns\n\nnon-MIR translation is still not supported for these and will happily ICE.\n\nThis is a [breaking-change] for many uses of slice_patterns."
+  },
+  {
     "hash": "814f685df21439ab6eab83f421d4b60cab026a0b",
     "author": "Steve Klabnik",
     "date": 1465310638,
@@ -580,23 +598,5 @@
     "author": "bors",
     "date": 1449269522,
     "message": "Auto merge of #30130 - tbu-:pr_array_clone, r=alexcrichton\n\n[breaking-change]"
-  },
-  {
-    "hash": "e9ac44026d2d4ac11728263726505ea4cea3c1ff",
-    "author": "bors",
-    "date": 1448671534,
-    "message": "Auto merge of #29383 - petrochenkov:empstr, r=pnkfelix\n\nFixes https://github.com/rust-lang/rust/issues/28692\nFixes https://github.com/rust-lang/rust/issues/28992\nFixes some other similar issues (see the tests)\n\n[breaking-change], needs crater run (cc @brson or @alexcrichton )\n\nThe pattern with parens `UnitVariant(..)` for unit variants seems to be popular in rustc (see the second commit), but mostly used by one person (@nikomatsakis), according to git blame. If it causes breakage on crates.io I'll add an exceptional case for it."
-  },
-  {
-    "hash": "6ef02eff89e3d2a29eab3346bff393821df6e033",
-    "author": "bors",
-    "date": 1448562058,
-    "message": "Auto merge of #30043 - arielb1:split-metadata, r=nikomatsakis\n\nThis improves bootstrap times because of better parallelism - though I need to measure how much - and allows metadata to be modified without triggering a full recompile. This also ensures that metadata handling and the rest of rustc remain decoupled, which is a first step for switching to a new metadata format.\n\nThis is a [breaking-change] to all plugin authors because of the following renames:\n * `rustc::plugin` is now `rustc_plugin`\n * `rustc::metadata` is now `rustc_metadata`\n * Most data types from `rustc::metadata`, along with `LOCAL_CRATE`, are now in `rustc::middle::cstore`.\n * The CStore methods were split between the `rustc::middle::CrateStore` trait (and trait object) and the `rustc_metadata::cstore::CStore`, with an `Rc<CrateStore>` stored in the `Session`. The inner `CStore` can be accessed via the inner `Any` bound, but this is deprecated.\n\nr? @nikomatsakis"
-  },
-  {
-    "hash": "1430a3500076ad504a0b30be77fd2ad4468ea769",
-    "author": "Ariel Ben-Yehuda",
-    "date": 1448554959,
-    "message": "move librustc/plugin to librustc_plugin\n\nthis is a [breaking-change] to all plugin authors - sorry"
   }
 ]
