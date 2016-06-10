@@ -1,5 +1,11 @@
 [
   {
+    "hash": "7d2f75a953b5645d3a336b2978b48b60d310bf54",
+    "author": "bors",
+    "date": 1465512517,
+    "message": "Auto merge of #34095 - petrochenkov:pathir2, r=jseyfried\n\nImprovements to pattern resolution + some refactoring\n\nContinuation of https://github.com/rust-lang/rust/pull/33929\nFirst commit is a careful rewrite of `resolve_pattern`, pattern path resolution and new binding creation logic is factored out in separate functions, some minor bugs are fixed. Also, `resolve_possibly_assoc_item` doesn't swallow modules now.\nLater commits are refactorings, see the comment descriptions.\n\nI intend to continue this work later with better support for `Def::Err` in patterns in post-resolve stages and cleanup of pattern resolution code in type checker.\n\nFixes https://github.com/rust-lang/rust/issues/32086\nFixes https://github.com/rust-lang/rust/issues/34047 ([breaking-change])\nFixes https://github.com/rust-lang/rust/issues/34074\n\ncc @jseyfried\nr? @eddyb"
+  },
+  {
     "hash": "dc77c5ebe80d8e8fe08b9ba05859c04f4dbb99cf",
     "author": "bors",
     "date": 1465451135,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1449454573,
     "message": "Auto merge of #30247 - bluss:revert-array-clone, r=alexcrichton\n\nRevert \"PR #30130 Implement `Clone` for more arrays\"\n\nThis reverts commit e22a64e8d8d4da46c74f878ce1c23ad1c88982e8.\n\nThis caused a regression such that types like `[[u8; 256]; 4]`\nno longer implemented Clone. This previously worked due to Clone\nfor `[T; N]` (N in 0 to 32) being implemented for T: Copy.\n\nDue to fixed size arrays not implementing Clone for sizes above 32,\nthe new implementation requiring T: Clone would not allow\n`[[u8; 256]; 4]` to be Clone.\n\nFixes #30244\n\nDue to changing back, this is technically a [breaking-change],\nalbeit for a behavior that existed for a very short time."
-  },
-  {
-    "hash": "e22a64e8d8d4da46c74f878ce1c23ad1c88982e8",
-    "author": "bors",
-    "date": 1449269522,
-    "message": "Auto merge of #30130 - tbu-:pr_array_clone, r=alexcrichton\n\n[breaking-change]"
   }
 ]
