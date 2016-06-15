@@ -1,5 +1,17 @@
 [
   {
+    "hash": "a94881563c18e4ffca2e24aed4bd8f5de583cc91",
+    "author": "bors",
+    "date": 1465991309,
+    "message": "Auto merge of #34180 - durka:patch-24, r=brson\n\nderive Hash (and not Copy) for ranges\n\nFixes #34170.\n\nAlso, `RangeInclusive` was `Copy` by mistake -- fix that, which is a [breaking-change] to that unstable type."
+  },
+  {
+    "hash": "9e78cd73b5c4254efda9fe57be56b8b374383812",
+    "author": "Alex Burka",
+    "date": 1465493162,
+    "message": "make RangeInclusive Hash and !Copy\n\n[breaking-change] due to the removal of Copy which shouldn't have been there in the first place, as per policy set forth in #27186."
+  },
+  {
     "hash": "7d2f75a953b5645d3a336b2978b48b60d310bf54",
     "author": "bors",
     "date": 1465512517,
@@ -586,17 +598,5 @@
     "author": "faineance",
     "date": 1450127701,
     "message": "[breaking-change] move ast_util functions to methods"
-  },
-  {
-    "hash": "672a3d93e34ad52529f3bdedfd26d52d67824ccd",
-    "author": "bors",
-    "date": 1449808073,
-    "message": "Auto merge of #30294 - jseyfried:fix_shadowed_use_visibility, r=nrc\n\nThis fixes a bug in which the visibility of a use declaration defining a name in one namespace (e.g. the value namespace) is overridden by a later use declaration defining the same name in the other namespace (e.g. the type namespace). For example,\n```rust\nfn f() {}\npub mod bar {}\n\nmod foo {\n    use f; // This import should not be visible outside `foo`,\n    pub use bar as f; // but it visible outside of `foo` because of this import.\n}\n\nfn main() { foo::f(); }\n```\nAs the example demonstrates, this is a [breaking-change], but it looks unlikely to cause breakage in practice, and any breakage can be fixed by correcting visibility modifiers."
-  },
-  {
-    "hash": "e819d8aa3cd2319fa57e7336e167069ef7002d6a",
-    "author": "bors",
-    "date": 1449454573,
-    "message": "Auto merge of #30247 - bluss:revert-array-clone, r=alexcrichton\n\nRevert \"PR #30130 Implement `Clone` for more arrays\"\n\nThis reverts commit e22a64e8d8d4da46c74f878ce1c23ad1c88982e8.\n\nThis caused a regression such that types like `[[u8; 256]; 4]`\nno longer implemented Clone. This previously worked due to Clone\nfor `[T; N]` (N in 0 to 32) being implemented for T: Copy.\n\nDue to fixed size arrays not implementing Clone for sizes above 32,\nthe new implementation requiring T: Clone would not allow\n`[[u8; 256]; 4]` to be Clone.\n\nFixes #30244\n\nDue to changing back, this is technically a [breaking-change],\nalbeit for a behavior that existed for a very short time."
   }
 ]
