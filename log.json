@@ -1,5 +1,11 @@
 [
   {
+    "hash": "6edea2cfda2818f0a76f4bac2d18a30feb54c137",
+    "author": "bors",
+    "date": 1466074195,
+    "message": "Auto merge of #34216 - jseyfried:nested_cfg_attr, r=nrc\n\nSupport nested `cfg_attr` attributes\n\nSupport arbitrarily deeply nested `cfg_attr` attributes (e.g. `#[cfg_attr(foo, cfg_attr(bar, baz))]`).\nThis makes configuration idempotent.\n\nCurrently, the nighties do not support any `cfg_attr` nesting. Stable and beta support just one level of `cfg_attr` nesting (expect for attributes on macro-expanded nodes, where no nesting is supported).\n\nThis is a [breaking-change]. For example, the following would break:\n```rust\nmacro_rules! m { () => {\n    #[cfg_attr(all(), cfg_attr(all(), cfg(foo)))]\n    fn f() {}\n} }\nm!();\n\nfn main() { f() } //~ ERROR unresolved name `f`\n```\nr? @nrc"
+  },
+  {
     "hash": "a94881563c18e4ffca2e24aed4bd8f5de583cc91",
     "author": "bors",
     "date": 1465991309,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1450260576,
     "message": "Auto merge of #30300 - sanxiyn:syntax-ext, r=nikomatsakis\n\nThis reduces iteration time (`make rustc-stage1`) for moved syntax extensions from 11 minutes to 3 minutes on my machine.\n\nBecause of the signature change, this is a [breaking-change] for people directly calling `expand_crate`. I think it is rare: from GitHub search, only case I found is [glassful](https://github.com/kmcallister/glassful)."
-  },
-  {
-    "hash": "ec8ea22c7f59fd898670060bceb6810cef68ca0a",
-    "author": "faineance",
-    "date": 1450127701,
-    "message": "[breaking-change] move ast_util functions to methods"
   }
 ]
