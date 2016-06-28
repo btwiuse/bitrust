@@ -1,5 +1,29 @@
 [
   {
+    "hash": "ea0dc9297283daff6486807f43e190b4eb561412",
+    "author": "bors",
+    "date": 1467070923,
+    "message": "Auto merge of #34424 - jseyfried:breaking_batch, r=Manishearth\n\nBatch up libsyntax breaking changes\n\nBatch of the following syntax-[breaking-change] changes:\n - #34213: Add a variant `Macro` to `TraitItemKind`\n - #34368: Merge the variant `QPath` of `PatKind` into the variant `PatKind::Path`\n - #34385: Move `syntax::ast::TokenTree` into a new module `syntax::tokenstream`\n - #33943:\n  - Remove the type parameter from `visit::Visitor`\n  - Remove `attr::WithAttrs` -- use `attr::HasAttrs` instead.\n  - Change `fold_tt`/`fold_tts` to take token trees by value and avoid wrapping token trees in `Rc`.\n  - Remove the field `ctxt` of `ast::Mac_`\n  - Remove inherent method `attrs()` of types -- use the method `attrs` of `HasAttrs` instead.\n - #34316:\n  - Remove `ast::Decl`/`ast::DeclKind` and add variants `Local` and `Item` to `StmtKind`.\n  - Move the node id for statements from the `StmtKind` variants to a field of `Stmt` (making `Stmt` a struct instead of an alias for `Spanned<StmtKind>`)\n  - Rename `ast::ExprKind::Again` to `Continue`.\n - #34339: Generalize and abstract `ThinAttributes` to `ThinVec<Attribute>`\n  - Use `.into()` in convert between `Vec<Attribute>` and `ThinVec<Attribute>`\n  - Use autoderef instead of `.as_attr_slice()`\n - #34436: Remove the optional expression from `ast::Block` and instead use a `StmtKind::Expr` at the end of the statement list.\n - #34403: Move errors into a separate crate (unlikely to cause breakage)"
+  },
+  {
+    "hash": "82a15a6a0af724e71004c735f8a99ec5f2a03920",
+    "author": "Jeffrey Seyfried",
+    "date": 1466907119,
+    "message": "Rollup merge of #34385 - cgswords:tstream, r=nrc\n\nsyntax-[breaking-change] cc #31645\n(Only breaking because ast::TokenTree is now tokenstream::TokenTree.)\n\nThis pull request refactors TokenTrees into their own file as src/libsyntax/tokenstream.rs, moving them out of src/libsyntax/ast.rs, in order to prepare for an accompanying TokenStream implementation (per RFC 1566)."
+  },
+  {
+    "hash": "4e2e31c11837f244e5039165b777ddedde5dc44d",
+    "author": "Jeffrey Seyfried",
+    "date": 1466894106,
+    "message": "Rollup merge of #34368 - petrochenkov:astqpath, r=Manishearth\n\nThe AST part of https://github.com/rust-lang/rust/pull/34365\n\nplugin-[breaking-change] cc https://github.com/rust-lang/rust/issues/31645"
+  },
+  {
+    "hash": "f0310e061b9d0a7d8dc515390fa68dfb6318df4b",
+    "author": "Jeffrey Seyfried",
+    "date": 1466894101,
+    "message": "Rollup merge of #34213 - josephDunne:trait_item_macros, r=jseyfried\n\n**syntax-[breaking-change]** cc #31645\nNew `TraitItemKind::Macro` variant\n\nThis change adds support for macro expansion inside trait items by adding the new `TraitItemKind::Macro` and associated parsing code."
+  },
+  {
     "hash": "af2fe634bfa770e7da675210aa661a96cde51275",
     "author": "bors",
     "date": 1466992932,
@@ -574,29 +598,5 @@
     "author": "Nicholas Mazzuca",
     "date": 1452060963,
     "message": "Fix a breaking change in #30523\n\nWhile this does fix a breaking change, it is also, technically, a\n[breaking-change] to go back to our original way"
-  },
-  {
-    "hash": "d5e229057c93222afd4943a49d382c4c5d6e8c26",
-    "author": "bors",
-    "date": 1451951866,
-    "message": "Auto merge of #30681 - Toby-S:master, r=bluss\n\nMake `\".\".parse::<f32>()` and `\".\".parse::<f64>()` return Err\n\nThis fixes #30344.\n\nThis is a [breaking-change], which the libs team have classified as a\nbug fix."
-  },
-  {
-    "hash": "33f3c52d32e6f91494bc305fd25f9d5ae5a11702",
-    "author": "Toby Scrace",
-    "date": 1451931813,
-    "message": "Make float parsing \".\" return Err\n\nThis makes both of the following return Err:\n\n    \".\".parse::<f32>()\n    \".\".parse::<f64>()\n\nThis is a [breaking-change], which the libs team have classified as a\nbug fix."
-  },
-  {
-    "hash": "5e8cb3819bf62527947634ad4d5e44b4b69daecd",
-    "author": "bors",
-    "date": 1451932641,
-    "message": "Auto merge of #30523 - ubsan:wrapping_op_assign, r=eddyb\n\nAdd OpAssign to Wrapping<T>, plus fix some problems in core::num::wrapping\n\nincluding, but not limited to:\n\n* Testing Wrapping<T>\n* Pull out a lot of broken code that doesn't need to be there with the new stage0 compiler\n* Adding Rem and RemAssign to Wrapping<T>\n* Removed 3 (assumed accidental) re-exports, which is a minor [breaking-change].\n* Change shl and shr to take all integer types, instead of a usize; this is a more major [breaking-change], because of values that were inferred before, but brings us in line with the integer shifts.\n\nFixes #30524 and #30523"
-  },
-  {
-    "hash": "ef91cdb140d7dffa4b04f42ab0bc02dc257940e3",
-    "author": "bors",
-    "date": 1450464892,
-    "message": "Auto merge of #29973 - petrochenkov:privinpub, r=nikomatsakis\n\nSome notes:\nThis patch enforces the rules from [RFC 136](https://github.com/rust-lang/rfcs/blob/master/text/0136-no-privates-in-public.md) and makes \"private in public\" a module-level concept and not crate-level. Only `pub` annotations are used by the new algorithm, crate-level exported node set produced by `EmbargoVisitor` is not used. The error messages are tweaked accordingly and don't use the word \"exported\" to avoid confusing people (https://github.com/rust-lang/rust/issues/29668).\n\nThe old algorithm tried to be extra smart with impls, but it mostly led to unpredictable behavior and bugs like https://github.com/rust-lang/rust/issues/28325.\nThe new algorithm tries to be as simple as possible - an impl is considered public iff its type is public and its trait is public (if presents).\nA type or trait is considered public if all its components are public, [complications](https://internals.rust-lang.org/t/limits-of-type-inference-smartness/2919) with private types leaking to other crates/modules through trait impls and type inference are deliberately ignored so far.\n\nThe new algorithm is not recursive and uses the nice new facility `Crate::visit_all_items`!\n\nObsolete pre-1.0 feature `visible_private_types` is removed.\n\nThis is a [breaking-change].\nThe two main vectors of breakage are type aliases (https://github.com/rust-lang/rust/issues/28450) and impls (https://github.com/rust-lang/rust/issues/28325).\nI need some statistics from a crater run (cc @alexcrichton) to decide on the breakage mitigation strategy.\nUPDATE: All the new errors are reported as warnings controlled by a lint `private_in_public` and lint group `future_incompatible`, but the intent is to make them hard errors eventually.\n\nCloses https://github.com/rust-lang/rust/issues/28325\nCloses https://github.com/rust-lang/rust/issues/28450\nCloses https://github.com/rust-lang/rust/issues/29524\nCloses https://github.com/rust-lang/rust/issues/29627\nCloses https://github.com/rust-lang/rust/issues/29668\nCloses https://github.com/rust-lang/rust/issues/30055\n\nr? @nikomatsakis"
   }
 ]
