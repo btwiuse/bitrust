@@ -1,5 +1,11 @@
 [
   {
+    "hash": "8886818a9ab3e6c52651038d4e22e2d51b932bb9",
+    "author": "Manish Goregaokar",
+    "date": 1467215482,
+    "message": "Rollup merge of #34495 - jseyfried:only_ident_macro_invocations, r=eddyb\n\nForbid type parameters and global paths in macro invocations\n\nFixes #28558.\nThis is a [breaking-change]. For example, the following would break:\n```rust\nmacro_rules! m { () => { () } }\nfn main() {\n    m::<T>!(); // Type parameters are no longer allowed in macro invocations\n    ::m!(); // Global paths are no longer allowed in macro invocations\n}\n```\nAny breakage can be fixed by removing the type parameters or the leading `::` (respectively).\n\nr? @eddyb"
+  },
+  {
     "hash": "ea0dc9297283daff6486807f43e190b4eb561412",
     "author": "bors",
     "date": 1467070923,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1452092417,
     "message": "Auto merge of #30733 - ubsan:wrapping_op_assign, r=eddyb\n\nFix a breaking change in #30523\n\nWhile this does fix a breaking change, it is also, technically, a\n[breaking-change] to go back to our original way"
-  },
-  {
-    "hash": "14e1e2aee812978c81d4edf23359e7dca444d678",
-    "author": "Nicholas Mazzuca",
-    "date": 1452060963,
-    "message": "Fix a breaking change in #30523\n\nWhile this does fix a breaking change, it is also, technically, a\n[breaking-change] to go back to our original way"
   }
 ]
