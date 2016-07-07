@@ -1,5 +1,11 @@
 [
   {
+    "hash": "de78655bca47cac8e783dbb563e7e5c25c1fae40",
+    "author": "bors",
+    "date": 1467860651,
+    "message": "Auto merge of #34652 - jseyfried:fix_expansion_perf, r=nrc\n\nFix expansion performance regression\n\n**syntax-[breaking-change] cc #31645**\n\nThis fixes #34630 by reverting commit 5bf7970 of PR #33943, which landed in #34424.\n\nBy removing the `Rc<_>` wrapping around `Delimited` and `SequenceRepetition` in `TokenTree`, 5bf7970 made cloning `TokenTree`s more expensive. While this had no measurable performance impact on the compiler's crates, it caused an order of magnitude performance regression on some macro-heavy code in the wild. I believe this is due to clones of `TokenTree`s in `macro_parser.rs` and/or `macro_rules.rs`.\n\nr? @nrc"
+  },
+  {
     "hash": "47380768e7debc2ee6b66e491733b89534e80988",
     "author": "bors",
     "date": 1467790491,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1452112255,
     "message": "Auto merge of #30654 - nrc:panictry, r=brson\n\nThe motivation (other than removing boilerplate) is that this is a baby step towards a parser with error recovery.\n\n[breaking-change] if you use any of the changed functions, you'll need to remove a try! or panictry!"
-  },
-  {
-    "hash": "9023c659af8a43dd5e284d7b311e5f19721c9bd8",
-    "author": "Nick Cameron",
-    "date": 1451525342,
-    "message": "Cut out a bunch of Result and panictry! boilerplate from libsyntax.\n\n[breaking-change] if you use any of the changed functions, you'll need to remove a try! or panictry!"
   }
 ]
