@@ -1,5 +1,11 @@
 [
   {
+    "hash": "2ab18ce6f7e147a71e953b9a01ed09aff6b95972",
+    "author": "bors",
+    "date": 1468399027,
+    "message": "Auto merge of #34660 - jseyfried:fix_parse_stmt, r=nrc\n\nFix bugs in macro-expanded statement parsing\n\nFixes #34543.\n\nThis is a [breaking-change]. For example, the following would break:\n```rust\nmacro_rules! m { () => {\n    println!(\"\") println!(\"\")\n    //^ Semicolons are now required on macro-expanded non-braced macro invocations\n    //| in statement positions.\n    let x = 0\n    //^ Semicolons are now required on macro-expanded `let` statements\n    //| that are followed by more statements, so this would break.\n    let y = 0 //< (this would still be allowed to reduce breakage in the wild)\n}\nfn main() { m!() }\n```\n\nr? @eddyb"
+  },
+  {
     "hash": "f93aaf84cb50dfaaba44b08c05bd51320263f592",
     "author": "bors",
     "date": 1468102581,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1452494458,
     "message": "Auto merge of #30295 - jseyfried:fix_extern_crate_duplicate, r=nrc\n\nFix a bug allowing an item and an external crate to collide so long as the external crate is declared after the item. For example,\n```rust\nmod core { pub fn f() {} } // This would be an error if it followed the `extern crate`\nextern crate core; // This declaration is shadowed by the preceding module\n\nfn main() { core::f(); }\n```\nThis is a [breaking-change], but it looks unlikely to cause breakage in practice, and any breakage can be fixed by removing colliding `extern crate` declarations, which are shadowed and hence unused."
-  },
-  {
-    "hash": "91b27ec9beb8455426da3efd26dfc9155058f5bd",
-    "author": "bors",
-    "date": 1452148376,
-    "message": "Auto merge of #30724 - nikomatsakis:feature-gate-defaulted-type-parameters, r=pnkfelix\n\nIt was recently realized that we accept defaulted type parameters everywhere, without feature gate, even though the only place that we really *intended* to accept them were on types. This PR adds a lint warning unless the \"type-parameter-defaults\" feature is enabled. This should eventually become a hard error.\n\nThis is a [breaking-change] in that new feature gates are required (or simply removing the defaults, which is probably a better choice as they have little effect at this time). Results of a [crater run][crater] suggest that approximately 5-15 crates are affected. I didn't do the measurement quite right so that run cannot distinguish \"true\" regressions from \"non-root\" regressions, but even the upper bound of 15 affected crates seems relatively minimal.\n\n[crater]: https://gist.github.com/nikomatsakis/760c6a67698bd24253bf\n\ncc @rust-lang/lang\nr? @pnkfelix"
   }
 ]
