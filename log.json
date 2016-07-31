@@ -1,5 +1,11 @@
 [
   {
+    "hash": "1225e122fda8cfbe3a5da6007e912f204b97f8c4",
+    "author": "bors",
+    "date": 1469919500,
+    "message": "Auto merge of #34904 - petrochenkov:rustcall, r=nikomatsakis\n\nProperly feature gate all unstable ABIs\n\nFixes https://github.com/rust-lang/rust/issues/34900\n[breaking-change]\nr? @pnkfelix\n\n---\nFunction-visiting machinery for AST/HIR is surprisingly error-prone, it's *very* easy to miss some cases or visit something twice while writing a visitor. This is the true problem behind https://github.com/rust-lang/rust/issues/34900. I'll try to restructure these visitors a bit and send one more PR later."
+  },
+  {
     "hash": "2ab18ce6f7e147a71e953b9a01ed09aff6b95972",
     "author": "bors",
     "date": 1468399027,
@@ -592,11 +598,5 @@
     "author": "Oliver Schneider",
     "date": 1452511906,
     "message": "[breaking-change] remove negate_unsigned feature gate"
-  },
-  {
-    "hash": "69e1f57dfbd32a1a342d696a3e79624da97ebe1b",
-    "author": "bors",
-    "date": 1452494458,
-    "message": "Auto merge of #30295 - jseyfried:fix_extern_crate_duplicate, r=nrc\n\nFix a bug allowing an item and an external crate to collide so long as the external crate is declared after the item. For example,\n```rust\nmod core { pub fn f() {} } // This would be an error if it followed the `extern crate`\nextern crate core; // This declaration is shadowed by the preceding module\n\nfn main() { core::f(); }\n```\nThis is a [breaking-change], but it looks unlikely to cause breakage in practice, and any breakage can be fixed by removing colliding `extern crate` declarations, which are shadowed and hence unused."
   }
 ]
