@@ -1,5 +1,11 @@
 [
   {
+    "hash": "7333c4ac25648e831fb2033ee77fbbdc62ae492a",
+    "author": "bors",
+    "date": 1470001318,
+    "message": "Auto merge of #35143 - arielb1:rfc447-regions, r=eddyb\n\ntypeck: use a TypeVisitor in ctp\n\nUse a TypeVisitor in ctp instead of `ty::walk`\n\nThis fixes a few cases where a region could be projected out of a trait while not being constrained by the type parameters, violating rust-lang/rfcs#447 and breaking soundness. As such, this is a [breaking-change].\n\nFixes #35139\n\nr? @eddyb"
+  },
+  {
     "hash": "1225e122fda8cfbe3a5da6007e912f204b97f8c4",
     "author": "bors",
     "date": 1469919500,
@@ -592,11 +598,5 @@
     "author": "William Throwe",
     "date": 1449544113,
     "message": "Let str::replace take a pattern\n\nIt appears this was left out of RFC #528 because it might be useful to\nalso generalize the second argument in some way.  That doesn't seem to\nprevent generalizing the first argument now, however.\n\nThis is a [breaking-change] because it could cause type-inference to\nfail where it previously succeeded."
-  },
-  {
-    "hash": "bac3eec67c367718c05585b72974c58a66f6abd0",
-    "author": "Oliver Schneider",
-    "date": 1452511906,
-    "message": "[breaking-change] remove negate_unsigned feature gate"
   }
 ]
