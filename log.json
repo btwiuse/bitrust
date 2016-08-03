@@ -1,5 +1,11 @@
 [
   {
+    "hash": "81df89fc2d6ba1b55ab20b0615b8523a6e90963f",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1470226127,
+    "message": "remove the ExecutionEngine binding\n\nthe code has no tests and will just bitrot by itself.\n\nthis is a [breaking-change]"
+  },
+  {
     "hash": "7333c4ac25648e831fb2033ee77fbbdc62ae492a",
     "author": "bors",
     "date": 1470001318,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1452672945,
     "message": "Auto merge of #29498 - wthrowe:replace-pattern, r=alexcrichton\n\nIt appears this was left out of RFC rust-lang/rfcs#528 because it might be useful to\nalso generalize the second argument in some way.  That doesn't seem to\nprevent generalizing the first argument now, however.\n\nThis is a [breaking-change] because it could cause type-inference to\nfail where it previously succeeded.\n\nAlso update docs for a few other methods that still referred to `&str` instead of patterns."
-  },
-  {
-    "hash": "e7f3d6eddd28a917c9a0f7cd73a489048ca7f4cd",
-    "author": "William Throwe",
-    "date": 1449544113,
-    "message": "Let str::replace take a pattern\n\nIt appears this was left out of RFC #528 because it might be useful to\nalso generalize the second argument in some way.  That doesn't seem to\nprevent generalizing the first argument now, however.\n\nThis is a [breaking-change] because it could cause type-inference to\nfail where it previously succeeded."
   }
 ]
