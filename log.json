@@ -1,5 +1,11 @@
 [
   {
+    "hash": "271d048523b6c1b0e773d9e5cc76bbb997cc180c",
+    "author": "bors",
+    "date": 1470290193,
+    "message": "Auto merge of #35015 - petrochenkov:forearg, r=nikomatsakis\n\nProperly enforce the \"patterns aren't allowed in foreign functions\" rule\n\nCases like `arg @ PATTERN` or `mut arg` were missing.\nApply the same rule to function pointer types.\n\nCloses https://github.com/rust-lang/rust/issues/35203\n[breaking-change], no breakage in sane code is expected though\nr? @nikomatsakis\n\nThis is somewhat related to https://github.com/rust-lang/rfcs/pull/1685 (cc @matklad).\nThe goal is to eventually support full pattern syntax where it makes sense (function body may present) and to support *only* the following forms - `TYPE`, `ident: TYPE`, `_: TYPE` - where patterns don't make sense (function body doesn't present), i.e. in foreign functions and function pointer types."
+  },
+  {
     "hash": "81df89fc2d6ba1b55ab20b0615b8523a6e90963f",
     "author": "Ariel Ben-Yehuda",
     "date": 1470226127,
@@ -592,11 +598,5 @@
     "author": "Nick Cameron",
     "date": 1452806652,
     "message": "Implement JSON error emission\n\n[breaking-change]\n\nsyntax::errors::Handler::new has been renamed to with_tty_emitter\n\nMany functions which used to take a syntax::errors::ColorConfig, now take a rustc::session::config::ErrorOutputType. If you previously used ColorConfig::Auto as a default, you should now use ErrorOutputType::default()."
-  },
-  {
-    "hash": "8796e012cbfa0bf63522e409edc10cbac5afaacd",
-    "author": "bors",
-    "date": 1452672945,
-    "message": "Auto merge of #29498 - wthrowe:replace-pattern, r=alexcrichton\n\nIt appears this was left out of RFC rust-lang/rfcs#528 because it might be useful to\nalso generalize the second argument in some way.  That doesn't seem to\nprevent generalizing the first argument now, however.\n\nThis is a [breaking-change] because it could cause type-inference to\nfail where it previously succeeded.\n\nAlso update docs for a few other methods that still referred to `&str` instead of patterns."
   }
 ]
