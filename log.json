@@ -1,5 +1,11 @@
 [
   {
+    "hash": "71bdeea561355ba5adbc9a1f44f4f866a75a15c4",
+    "author": "bors",
+    "date": 1472149710,
+    "message": "Auto merge of #34923 - eddyb:deny-fn-item-transmute, r=nikomatsakis\n\nDeny (by default) transmuting from fn item types to pointer-sized types.\n\nThis sets the #19925 lint (transmute from zero-sized fn item type) to `deny` by default.\nTechnically a `[breaking-change]`, but will not affect dependent crates because of `--cap-lints`."
+  },
+  {
     "hash": "e9bc1bac8c7664fb1b487879b3fbd56221f6a721",
     "author": "bors",
     "date": 1472075854,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1453013275,
     "message": "Auto merge of #30426 - gereeter:btree-rewrite, r=Gankro\n\nDespite being over 700 lines shorter, this implementation should use less memory than the previous one and is faster on at least insertions and iteration, the latter improving approximately 5x.\n\nTechnically a [breaking-change] due to removal of deprecated functions.\n\ncc @apasel422 @Gankro @goyox86\n\nFixes #27865.\n\n<!-- Reviewable:start -->\n[<img src=\"https://reviewable.io/review_button.png\" height=40 alt=\"Review on Reviewable\"/>](https://reviewable.io/reviews/rust-lang/rust/30426)\n<!-- Reviewable:end -->"
-  },
-  {
-    "hash": "82f8e5ce84c83b02fbfa720c6841f12db1a55603",
-    "author": "Nick Cameron",
-    "date": 1452822565,
-    "message": "Address reviewer comments\n\n[breaking-change]\n\n`OptLevel` variants are no longer `pub use`ed by rust::session::config. If you are using these variants, you must change your code to prefix the variant name with `OptLevel`."
   }
 ]
