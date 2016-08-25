@@ -1,5 +1,11 @@
 [
   {
+    "hash": "e9bc1bac8c7664fb1b487879b3fbd56221f6a721",
+    "author": "bors",
+    "date": 1472075854,
+    "message": "Auto merge of #35764 - eddyb:byegone, r=nikomatsakis\n\nRemove the old AST-based backend from rustc_trans.\n\nStarting with Rust 1.13, `--disable-orbit` , `-Z orbit=off` and `#[rustc_no_mir]` have been removed.\nOnly the new MIR backend is left in the compiler, and only early const_eval uses ASTs from other crates.\n\nFilling drop (previously \"zeroing drop\"), `#[unsafe_no_drop_flag]` and associated unstable APIs are gone.\nImplementing `Drop` doesn't add a flag anymore to the type, all of the dynamic drop is function local.\nThis is a [breaking-change], please use `Option::None` and/or `mem::forget` if you are unsure about your ability to prevent/control the drop of a value. In the future, `union` will be usable in some such cases.\n\n**NOTE**: DO NOT MERGE before we get the new beta as the stage0, there's some cruft to remove.\n\nAll of this will massively simplify any efforts to implement (and as such it blocks) features such as `union`s, safe use of `#[packed]` or new type layout optimizations, not to mention many other experiments."
+  },
+  {
     "hash": "271d048523b6c1b0e773d9e5cc76bbb997cc180c",
     "author": "bors",
     "date": 1470290193,
@@ -592,11 +598,5 @@
     "author": "Nick Cameron",
     "date": 1452822565,
     "message": "Address reviewer comments\n\n[breaking-change]\n\n`OptLevel` variants are no longer `pub use`ed by rust::session::config. If you are using these variants, you must change your code to prefix the variant name with `OptLevel`."
-  },
-  {
-    "hash": "b976d9e6660c16f4a1d5a28b11afa7ccb4f75da6",
-    "author": "Nick Cameron",
-    "date": 1452806652,
-    "message": "Implement JSON error emission\n\n[breaking-change]\n\nsyntax::errors::Handler::new has been renamed to with_tty_emitter\n\nMany functions which used to take a syntax::errors::ColorConfig, now take a rustc::session::config::ErrorOutputType. If you previously used ColorConfig::Auto as a default, you should now use ErrorOutputType::default()."
   }
 ]
