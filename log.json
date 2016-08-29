@@ -1,5 +1,11 @@
 [
   {
+    "hash": "312734ca4295f6fa95c70d190ef297f926657155",
+    "author": "bors",
+    "date": 1472415407,
+    "message": "Auto merge of #36029 - KiChjang:issue-12033, r=arielb1\n\nFix lifetime rules for 'if' conditions\n\nFixes #12033.\n\nChanges the temporary scope rules to make the condition of an if-then-else a terminating scope. This is a [breaking-change]."
+  },
+  {
     "hash": "71bdeea561355ba5adbc9a1f44f4f866a75a15c4",
     "author": "bors",
     "date": 1472149710,
@@ -592,11 +598,5 @@
     "author": "Peter Atashian",
     "date": 1452965694,
     "message": "Change name when outputting staticlibs on Windows\nlibfoo.a -> foo.lib\nIn order to not cause conflicts, changes the DLL import library name\nfoo.lib -> foo.dll.lib\n\nFixes https://github.com/rust-lang/rust/issues/29508\n\nBecause this changes output filenames this is a [breaking-change]\n\nSigned-off-by: Peter Atashian <retep998@gmail.com>"
-  },
-  {
-    "hash": "88463364bfb675fdecd2bf9b70c589cc5e7cb2fb",
-    "author": "bors",
-    "date": 1453013275,
-    "message": "Auto merge of #30426 - gereeter:btree-rewrite, r=Gankro\n\nDespite being over 700 lines shorter, this implementation should use less memory than the previous one and is faster on at least insertions and iteration, the latter improving approximately 5x.\n\nTechnically a [breaking-change] due to removal of deprecated functions.\n\ncc @apasel422 @Gankro @goyox86\n\nFixes #27865.\n\n<!-- Reviewable:start -->\n[<img src=\"https://reviewable.io/review_button.png\" height=40 alt=\"Review on Reviewable\"/>](https://reviewable.io/reviews/rust-lang/rust/30426)\n<!-- Reviewable:end -->"
   }
 ]
