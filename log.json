@@ -1,5 +1,11 @@
 [
   {
+    "hash": "71ee82a8aa0c02fc2c73e84f40bdb55512d10938",
+    "author": "bors",
+    "date": 1472542579,
+    "message": "Auto merge of #36066 - jseyfried:rollup, r=Manishearth\n\nBatch up libsyntax breaking changes\n\nBatch of the following syntax-[breaking-change] changes:\n - #35591: Add a field `span: Span` to `ast::Generics`.\n - #35618: Remove variant `Mod` of `ast::PathListItemKind` and refactor the remaining variant `ast::PathListKind::Ident` to a struct `ast::PathListKind_`.\n - #35480: Change uses of `Constness` in the AST to `Spanned<Constness>`.\n  - c.f. `MethodSig`, `ItemKind`\n - #35728: Refactor `cx.pat_enum()` into `cx.pat_tuple_struct()` and `cx.pat_path()`.\n - #35850: Generalize the elements of lists in attributes from `MetaItem` to a new type `NestedMetaItem` that can represent a `MetaItem` or a literal.\n - #35917: Remove traits `AttrMetaMethods`, `AttributeMethods`, and `AttrNestedMetaItemMethods`.\n  - Besides removing imports of these traits, this won't cause fallout.\n - Add a variant `Union` to `ItemKind` to future proof for `union` (c.f. #36016).\n - Remove inherent methods `attrs` and `fold_attrs` of `Annotatable`.\n  - Use methods `attrs` and `map_attrs` of `HasAttrs` instead.\n\nr? @Manishearth"
+  },
+  {
     "hash": "312734ca4295f6fa95c70d190ef297f926657155",
     "author": "bors",
     "date": 1472415407,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1453416097,
     "message": "Auto merge of #30882 - petrochenkov:varnamesp, r=nrc\n\nTuple and unit variants from other crates weren't put into type namespace.\nNow variant namespacing is aligned with struct namespacing and is not affected by the variant's crate of origin (struct -> type, tuple/unit -> type/value).\nAdditionally, struct variants from other crates are put into value namespace (struct variants from local crate were already in it). This is not a necessity, but a future proofing measure.\n\nThis fix can result in some new shadowing errors in cross-crate scenarios, crater reports [three regressions](https://github.com/rust-lang/rust/pull/30882#issuecomment-172369883).\n[breaking-change]"
-  },
-  {
-    "hash": "06c66d6ca23c73c60aeb0ea2c12baaf0236afe40",
-    "author": "Peter Atashian",
-    "date": 1452965694,
-    "message": "Change name when outputting staticlibs on Windows\nlibfoo.a -> foo.lib\nIn order to not cause conflicts, changes the DLL import library name\nfoo.lib -> foo.dll.lib\n\nFixes https://github.com/rust-lang/rust/issues/29508\n\nBecause this changes output filenames this is a [breaking-change]\n\nSigned-off-by: Peter Atashian <retep998@gmail.com>"
   }
 ]
