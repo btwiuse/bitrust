@@ -1,5 +1,11 @@
 [
   {
+    "hash": "147371f58f1a99e32524d61af1d86b2e1e0a503b",
+    "author": "bors",
+    "date": 1472735104,
+    "message": "Auto merge of #34982 - arielb1:bad-tuples-and-objects, r=nikomatsakis\n\nTurn the RFC1592 warnings into hard errors\n\nThe warnings have already reached stable, and I want to improve the trait error reporting code.\n\nTurning warnings into errors, this is obviously a [breaking-change].\n\nr? @nikomatsakis\n\ncc @rust-lang/compiler"
+  },
+  {
     "hash": "71ee82a8aa0c02fc2c73e84f40bdb55512d10938",
     "author": "bors",
     "date": 1472542579,
@@ -592,11 +598,5 @@
     "author": "Jeffrey Seyfried",
     "date": 1453781818,
     "message": "Resolve: fix #23880, a scoping bug\n\nThis fixes a bug in which items in a block are shadowed by local variables and type parameters that are in scope.\nIt is a [breaking-change]. For example, the following code breaks:\n\n```rust\nfn foo() {\n    let mut f = 1;\n    {\n        fn f() {}\n        f += 1; // This will now resolve to the function instead of the local variable\n    }\n}\n```\n\nAny breakage can be fixed by renaming the item that is no longer shadowed."
-  },
-  {
-    "hash": "54475e950cf3db909c4dec4a30c72f7636ab4e07",
-    "author": "bors",
-    "date": 1453416097,
-    "message": "Auto merge of #30882 - petrochenkov:varnamesp, r=nrc\n\nTuple and unit variants from other crates weren't put into type namespace.\nNow variant namespacing is aligned with struct namespacing and is not affected by the variant's crate of origin (struct -> type, tuple/unit -> type/value).\nAdditionally, struct variants from other crates are put into value namespace (struct variants from local crate were already in it). This is not a necessity, but a future proofing measure.\n\nThis fix can result in some new shadowing errors in cross-crate scenarios, crater reports [three regressions](https://github.com/rust-lang/rust/pull/30882#issuecomment-172369883).\n[breaking-change]"
   }
 ]
