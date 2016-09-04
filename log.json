@@ -1,5 +1,11 @@
 [
   {
+    "hash": "ecc6c39e876b69496bc88ef47ff3a339662346b1",
+    "author": "Alex Crichton",
+    "date": 1472845976,
+    "message": "rustc: Implement custom derive (macros 1.1)\n\nThis commit is an implementation of [RFC 1681] which adds support to the\ncompiler for first-class user-define custom `#[derive]` modes with a far more\nstable API than plugins have today.\n\n[RFC 1681]: https://github.com/rust-lang/rfcs/blob/master/text/1681-macros-1.1.md\n\nThe main features added by this commit are:\n\n* A new `rustc-macro` crate-type. This crate type represents one which will\n  provide custom `derive` implementations and perhaps eventually flower into the\n  implementation of macros 2.0 as well.\n\n* A new `rustc_macro` crate in the standard distribution. This crate will\n  provide the runtime interface between macro crates and the compiler. The API\n  here is particularly conservative right now but has quite a bit of room to\n  expand into any manner of APIs required by macro authors.\n\n* The ability to load new derive modes through the `#[macro_use]` annotations on\n  other crates.\n\nAll support added here is gated behind the `rustc_macro` feature gate, both for\nthe library support (the `rustc_macro` crate) as well as the language features.\n\nThere are a few minor differences from the implementation outlined in the RFC,\nsuch as the `rustc_macro` crate being available as a dylib and all symbols are\n`dlsym`'d directly instead of having a shim compiled. These should only affect\nthe implementation, however, not the public interface.\n\nThis commit also ended up touching a lot of code related to `#[derive]`, making\na few notable changes:\n\n* Recognized derive attributes are no longer desugared to `derive_Foo`. Wasn't\n  sure how to keep this behavior and *not* expose it to custom derive.\n\n* Derive attributes no longer have access to unstable features by default, they\n  have to opt in on a granular level.\n\n* The `derive(Copy,Clone)` optimization is now done through another \"obscure\n  attribute\" which is just intended to ferry along in the compiler that such an\n  optimization is possible. The `derive(PartialEq,Eq)` optimization was also\n  updated to do something similar.\n\n---\n\nOne part of this PR which needs to be improved before stabilizing are the errors\nand exact interfaces here. The error messages are relatively poor quality and\nthere are surprising spects of this such as `#[derive(PartialEq, Eq, MyTrait)]`\nnot working by default. The custom attributes added by the compiler end up\nbecoming unstable again when going through a custom impl.\n\nHopefully though this is enough to start allowing experimentation on crates.io!\n\nsyntax-[breaking-change]"
+  },
+  {
     "hash": "147371f58f1a99e32524d61af1d86b2e1e0a503b",
     "author": "bors",
     "date": 1472735104,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1453807458,
     "message": "Auto merge of #31105 - jseyfried:fix_lexical_scoping, r=nrc\n\nThis fixes #23880, a scoping bug in which items in a block are shadowed by local variables and type parameters that are in scope.\n\nAfter this PR, an item in a block will shadow any local variables or type parameters above the item in the scope hierarchy. Items in a block will continue to be shadowed by local variables in the same block (even if the item is defined after the local variable).\n\nThis is a [breaking-change]. For example, the following code breaks:\n```rust\nfn foo() {\n    let mut f = 1;\n    {\n        fn f() {}\n        f += 1; // This will resolve to the function instead of the local variable\n    }\n}"
-  },
-  {
-    "hash": "faf0852fc1d01aef18fe8098a0f2f601dbfebd9b",
-    "author": "Jeffrey Seyfried",
-    "date": 1453781818,
-    "message": "Resolve: fix #23880, a scoping bug\n\nThis fixes a bug in which items in a block are shadowed by local variables and type parameters that are in scope.\nIt is a [breaking-change]. For example, the following code breaks:\n\n```rust\nfn foo() {\n    let mut f = 1;\n    {\n        fn f() {}\n        f += 1; // This will now resolve to the function instead of the local variable\n    }\n}\n```\n\nAny breakage can be fixed by renaming the item that is no longer shadowed."
   }
 ]
