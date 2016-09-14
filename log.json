@@ -1,5 +1,11 @@
 [
   {
+    "hash": "b1363a73ede57ae595f3a1be2bb75d308ba4f7f6",
+    "author": "bors",
+    "date": 1473804492,
+    "message": "Auto merge of #35021 - japaric:rustc-builtins, r=alexcrichton\n\ncrate-ify compiler-rt into compiler-builtins\n\nlibcompiler-rt.a is dead, long live libcompiler-builtins.rlib\n\nThis commit moves the logic that used to build libcompiler-rt.a into a\ncompiler-builtins crate on top of the core crate and below the std crate.\nThis new crate still compiles the compiler-rt instrinsics using gcc-rs\nbut produces an .rlib instead of a static library.\n\nAlso, with this commit rustc no longer passes -lcompiler-rt to the\nlinker. This effectively makes the \"no-compiler-rt\" field of target\nspecifications a no-op. Users of `no_std` will have to explicitly add\nthe compiler-builtins crate to their crate dependency graph *if* they\nneed the compiler-rt intrinsics - this is a [breaking-change]. Users\nof the `std` have to do nothing extra as the std crate depends\non compiler-builtins.\n\nFinally, this a step towards lazy compilation of std with Cargo as the\ncompiler-rt intrinsics can now be built by Cargo instead of having to\nbe supplied by the user by some other method.\n\ncloses #34400\n\n---\n\nr? @alexcrichton"
+  },
+  {
     "hash": "ecc6c39e876b69496bc88ef47ff3a339662346b1",
     "author": "Alex Crichton",
     "date": 1472845976,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1454302332,
     "message": "Auto merge of #30866 - jseyfried:fix_shadowed_use_visibility, r=nrc\n\nThis reverts PR #30324, fixing bug #30159 in which a public a glob import makes public any preceding imports that share a name with an item in the module being glob imported from.\n\nFor example,\n```rust\npub fn f() {}\npub mod foo {\n    fn f() {}\n}\n\nmod bar {\n    use f;\n    use f as g;\n    pub use foo::*; // This makes the first import public but does not affect the second import.\n}\n```\n\nThis is a [breaking-change]."
-  },
-  {
-    "hash": "43c1a173a874f5513db58b2f5321489a00087484",
-    "author": "bors",
-    "date": 1453807458,
-    "message": "Auto merge of #31105 - jseyfried:fix_lexical_scoping, r=nrc\n\nThis fixes #23880, a scoping bug in which items in a block are shadowed by local variables and type parameters that are in scope.\n\nAfter this PR, an item in a block will shadow any local variables or type parameters above the item in the scope hierarchy. Items in a block will continue to be shadowed by local variables in the same block (even if the item is defined after the local variable).\n\nThis is a [breaking-change]. For example, the following code breaks:\n```rust\nfn foo() {\n    let mut f = 1;\n    {\n        fn f() {}\n        f += 1; // This will resolve to the function instead of the local variable\n    }\n}"
   }
 ]
