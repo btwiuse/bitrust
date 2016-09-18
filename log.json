@@ -1,5 +1,11 @@
 [
   {
+    "hash": "7b25e886028195a4f90c0baa5cc9101ebeceb5a3",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1474027712,
+    "message": "forbid moves out of slices\n\nThe wording of RFC #495 enables moves out of slices. Unfortuantely, non-zeroing\nmoves out of slices introduce a very annoying complication: as slices can\nvary in their length, indexes from the start and end may or may not overlap\ndepending on the slice's exact length, which prevents assigning a particular\ndrop flag for each individual element.\n\nFor example, in the code\n\n```Rust\nfn foo<T>(a: Box<[Box<[T]>]>, c: bool) -> T {\n    match (a, c) {\n        (box [box [t, ..], ..], true) => t,\n        (box [.., box [.., t]], false) => t,\n        _ => panic!()\n    }\n}\n```\n\nIf the condition is false, we have to drop the first element\nof `a`, unless `a` has size 1 in which case we drop all the elements\nof it but the last.\n\nIf someone comes with a nice way of handling it, we can always re-allow\nmoves out of slices.\n\nThis is a [breaking-change], but it is behind the `slice_patterns` feature\ngate and was not allowed until recently."
+  },
+  {
     "hash": "b1363a73ede57ae595f3a1be2bb75d308ba4f7f6",
     "author": "bors",
     "date": 1473804492,
@@ -592,11 +598,5 @@
     "author": "Brian Campbell",
     "date": 1454722878,
     "message": "Abort on stack overflow instead of re-raising SIGSEGV\n\nWe use guard pages that cause the process to abort to protect against\nundefined behavior in the event of stack overflow.  We have a handler\nthat catches segfaults, prints out an error message if the segfault was\ndue to a stack overflow, then unregisters itself and returns to allow\nthe signal to be re-raised and kill the process.\n\nThis caused some confusion, as it was unexpected that safe code would be\nable to cause a segfault, while it's easy to overflow the stack in safe\ncode.  To avoid this confusion, when we detect a segfault in the guard\npage, abort instead of the previous behavior of re-raising the SIGSEGV.\n\nTo test this, we need to adapt the tests for segfault to actually check\nthe exit status.  Doing so revealed that the existing test for segfault\nbehavior was actually invalid; LLVM optimizes the explicit null pointer\nreference down to an illegal instruction, so the program aborts with\nSIGILL instead of SIGSEGV and the test didn't actually trigger the\nsignal handler at all.  Use a C helper function to get a null pointer\nthat LLVM can't optimize away, so we get our segfault instead.\n\nThis is a [breaking-change] if anyone is relying on the exact signal\nraised to kill a process on stack overflow.\n\nCloses #31273"
-  },
-  {
-    "hash": "654f68dd50b72d1d812b0760f1b71d7c366f6f55",
-    "author": "bors",
-    "date": 1454302332,
-    "message": "Auto merge of #30866 - jseyfried:fix_shadowed_use_visibility, r=nrc\n\nThis reverts PR #30324, fixing bug #30159 in which a public a glob import makes public any preceding imports that share a name with an item in the module being glob imported from.\n\nFor example,\n```rust\npub fn f() {}\npub mod foo {\n    fn f() {}\n}\n\nmod bar {\n    use f;\n    use f as g;\n    pub use foo::*; // This makes the first import public but does not affect the second import.\n}\n```\n\nThis is a [breaking-change]."
   }
 ]
