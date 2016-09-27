@@ -1,5 +1,11 @@
 [
   {
+    "hash": "b786976a158e79196254f489bb3a6f87e4d16a5a",
+    "author": "bors",
+    "date": 1474878060,
+    "message": "Auto merge of #36730 - jseyfried:make_macro_rules_invocations_magic, r=nrc\n\nForbid user-defined macros named \"macro_rules\"\n\nThis is a [breaking-change].\nr? @nrc"
+  },
+  {
     "hash": "a0843d7210f41974a0a2bc6876c538718404c268",
     "author": "bors",
     "date": 1474755427,
@@ -592,11 +598,5 @@
     "author": "Oliver Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't glob export ast::UnOp variants"
-  },
-  {
-    "hash": "1de70d33f7baf12978cfb3de861e61b2a5d6fca7",
-    "author": "bors",
-    "date": 1455164833,
-    "message": "Auto merge of #31461 - jseyfried:remove_import_resolutions, r=nrc\n\nThis PR adds to `NameBinding` so it can more fully represent bindings from imports as well from items, refactors away `Target`, generalizes `ImportResolution` to a simpler type `NameResolution`, and uses a single `NameResolution`-valued map in place the existing maps `children` and `import_resolutions` (of `NameBinding`s and `ImportResolution`s, respectively), simplifying duplicate checking and name resolution.\n\nIt also unifies the `resolve_name_in_module` in `lib.rs` with its namesake in `resolve_imports.rs`, clarifying and improving the core logic (fixes #31403 and fixes #31404) while maintaining clear future-comparability with shadowable globs (i.e., never reporting that a resolution is a `Success` or is `Failing` unless this would also be knowable with shadowable globs).\n\nSince it fixes #31403, this is technically a [breaking-change], but it is exceedingly unlikely to cause breakage in practice. The following is an example of code that would break:\n```rust\nmod foo {\n    pub mod bar {} // This defines bar in the type namespace\n    pub use alpha::bar; // This defines bar in the value namespace\n\n    // This should define baz in both namespaces, but it only defines baz in the type namespace.\n    pub use self::bar as baz;\n    pub fn baz() {} // This should collide with baz, but now it does not.\n}\n\npub fn f() {}\nmod alpha {\n    pub use self::f as bar; // Changing this to `pub fn bar() {}` causes the collision right now.\n    pub use super::*;\n}\n```\n\nr? @nrc"
   }
 ]
