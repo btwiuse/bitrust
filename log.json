@@ -1,5 +1,11 @@
 [
   {
+    "hash": "eee2d04d877fe909309c39b6bdf711dc586d0a1e",
+    "author": "bors",
+    "date": 1475112667,
+    "message": "Auto merge of #36395 - durka:rangeinclusive-no-esi, r=alexcrichton\n\nremove ExactSizeIterator from RangeInclusive<{u,i}{32,size}>\n\nFixes #36386.\n\nThis is a [breaking-change] for nightly users of `#![feature(inclusive_range_syntax)]` and/or `#![feature(inclusive_range)]`."
+  },
+  {
     "hash": "b786976a158e79196254f489bb3a6f87e4d16a5a",
     "author": "bors",
     "date": 1474878060,
@@ -592,11 +598,5 @@
     "author": "Oliver Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't glob export ast::BinOp_"
-  },
-  {
-    "hash": "f875f4c4c24e8a14c04bbe4eedd230c4aa3c1431",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::UnOp variants"
   }
 ]
