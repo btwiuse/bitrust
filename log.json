@@ -1,5 +1,11 @@
 [
   {
+    "hash": "13a2dd96fe824cc5d61e94ed380db0114efdd014",
+    "author": "tormol",
+    "date": 1475046210,
+    "message": "[breaking-change] std: change `encode_utf{8,16}()` to take a buffer and return a slice\n\nThey panic if the buffer is too small."
+  },
+  {
     "hash": "eee2d04d877fe909309c39b6bdf711dc586d0a1e",
     "author": "bors",
     "date": 1475112667,
@@ -592,11 +598,5 @@
     "author": "Oliver Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't glob import ast::FunctionRetTy variants"
-  },
-  {
-    "hash": "05e25de4f0add7ae3cd0e8f66cd4558c5bfa42aa",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::BinOp_"
   }
 ]
