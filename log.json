@@ -1,5 +1,17 @@
 [
   {
+    "hash": "259d1fcd478f868a9980cdce63f7556f30d55b90",
+    "author": "Manish Goregaokar",
+    "date": 1475329932,
+    "message": "Rollup merge of #36599 - jonas-schievink:whats-a-pirates-favorite-data-structure, r=pnkfelix\n\n Contains a syntax-[breaking-change] as a separate commit (cc #31645).nnAlso renames slice patterns from `PatKind::Vec` to `PatKind::Slice`."
+  },
+  {
+    "hash": "48e5199de366ed2945d1103f0b6c8aa542604ebb",
+    "author": "Jonas Schievink",
+    "date": 1475094678,
+    "message": "libsyntax: clearer names for some AST parts\n\nThis applies the HIR changes from the previous commits to the AST, and\nis thus a syntax-[breaking-change]\n\nRenames `PatKind::Vec` to `PatKind::Slice`, since these are called slice\npatterns, not vec patterns. Renames `TyKind::Vec`, which represents the\ntype `[T]`, to `TyKind::Slice`. Renames `TyKind::FixedLengthVec` to\n`TyKind::Array`."
+  },
+  {
     "hash": "13a2dd96fe824cc5d61e94ed380db0114efdd014",
     "author": "tormol",
     "date": 1475046210,
@@ -586,17 +598,5 @@
     "author": "Oliver Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't glob import/export syntax::abi enum variants"
-  },
-  {
-    "hash": "47b0784ba8e62a2e1b877750baeae10d16555fff",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::BlockCheckMode variants"
-  },
-  {
-    "hash": "3b57d40fe5a813ac957667ac04938753e3100f55",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob import ast::FunctionRetTy variants"
   }
 ]
