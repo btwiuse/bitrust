@@ -1,5 +1,11 @@
 [
   {
+    "hash": "f3745653e10e366e7e119a12c178a59ab6394007",
+    "author": "bors",
+    "date": 1475483432,
+    "message": "Auto merge of #36767 - jseyfried:enforce_rfc_1560_shadowing, r=nrc\n\nEnforce the shadowing restrictions from RFC 1560 for today's macros\n\nThis PR enforces a weakened version of the shadowing restrictions from RFC 1560. More specifically,\n - If a macro expansion contains a `macro_rules!` macro definition that is used outside of the expansion, the defined macro may not shadow an existing macro.\n - If a macro expansion contains a `#[macro_use] extern crate` macro import that is used outside of the expansion, the imported macro may not shadow an existing macro.\n\nThis is a [breaking-change]. For example,\n```rust\nmacro_rules! m { () => {} }\nmacro_rules! n { () => {\n    macro_rules! m { () => {} } //< This shadows an existing macro.\n    m!(); //< This is inside the expansion that generated `m`'s definition, so it is OK.\n} }\nn!();\nm!(); //< This use of `m` is outside the expansion, so it causes the shadowing to be an error.\n```\n\nr? @nrc"
+  },
+  {
     "hash": "259d1fcd478f868a9980cdce63f7556f30d55b90",
     "author": "Manish Goregaokar",
     "date": 1475329932,
@@ -592,11 +598,5 @@
     "author": "Oliver Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't glob export ast::CaptureClause variants"
-  },
-  {
-    "hash": "243a30c9319b56e1be2b9ff2f9ed9e0d7583e2d1",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob import/export syntax::abi enum variants"
   }
 ]
