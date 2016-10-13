@@ -1,5 +1,23 @@
 [
   {
+    "hash": "20991829e2639d1786acbd52621b220c89f0d9cb",
+    "author": "Alex Crichton",
+    "date": 1476306476,
+    "message": "Rollup merge of #37084 - jseyfried:cleanup_expanded_macro_use_scopes, r=nrc\n\nmacros: clean up scopes of expanded `#[macro_use]` imports\n\nThis PR changes the scope of macro-expanded `#[macro_use]` imports to match that of unexpanded `#[macro_use]` imports. For example, this would be allowed:\n```rust\nexample!();\nmacro_rules! m { () => { #[macro_use(example)] extern crate example_crate; } }\nm!();\n```\n\nThis PR also enforces the full shadowing restrictions from RFC 1560 on `#[macro_use]` imports (currently, we only enforce the weakened restrictions from #36767).\n\nThis is a [breaking-change], but I believe it is highly unlikely to cause breakage in practice.\nr? @nrc"
+  },
+  {
+    "hash": "f05bd1b41ddda779032f4c5c8e30bf640129832f",
+    "author": "Alex Crichton",
+    "date": 1476306476,
+    "message": "Rollup merge of #37064 - nnethercote:read_str, r=eddyb\n\nAvoid allocations in `Decoder::read_str`.\n\n`opaque::Decoder::read_str` is very hot within `rustc` due to its use in\nthe reading of crate metadata, and it currently returns a `String`. This\ncommit changes it to instead return a `Cow<str>`, which avoids a heap\nallocation.\n\nThis change reduces the number of calls to `malloc` by almost 10% in\nsome benchmarks.\n\nThis is a [breaking-change] to libserialize."
+  },
+  {
+    "hash": "b043e11de2eb2c60f7bfec5e15960f537b229e20",
+    "author": "Nicholas Nethercote",
+    "date": 1476056195,
+    "message": "Avoid allocations in `Decoder::read_str`.\n\n`opaque::Decoder::read_str` is very hot within `rustc` due to its use in\nthe reading of crate metadata, and it currently returns a `String`. This\ncommit changes it to instead return a `Cow<str>`, which avoids a heap\nallocation.\n\nThis change reduces the number of calls to `malloc` by almost 10% in\nsome benchmarks.\n\nThis is a [breaking-change] to libserialize."
+  },
+  {
     "hash": "f3745653e10e366e7e119a12c178a59ab6394007",
     "author": "bors",
     "date": 1475483432,
@@ -580,23 +598,5 @@
     "author": "Oliver Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't glob export ast::Expr_ variants"
-  },
-  {
-    "hash": "1c4d43715843a5ff5af4657c798b5d5cc85ca523",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::ExplicitSelf_ variants"
-  },
-  {
-    "hash": "79fa657abc6b8885ceb4023099b4e0026c5ef28f",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::Decl_ variants"
-  },
-  {
-    "hash": "8516ba367d1f51318ce373fe9b60650c82ded1e9",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::CaptureClause variants"
   }
 ]
