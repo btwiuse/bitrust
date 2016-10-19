@@ -1,5 +1,35 @@
 [
   {
+    "hash": "e2631208b1888d6a340938314457446a7f8ed2fc",
+    "author": "Nicholas Nethercote",
+    "date": 1475618255,
+    "message": "Rename StringReader::curr as ch.\n\nLikewise, rename StringReader::curr_is as ch_is.\n\nThis is a [breaking-change] for libsyntax."
+  },
+  {
+    "hash": "cb92f5c6d6e09a7c1575241a05df15c96ca3b531",
+    "author": "Nicholas Nethercote",
+    "date": 1475618217,
+    "message": "Rename StringReader::last_pos as pos.\n\nThis is a [breaking-change] for libsyntax."
+  },
+  {
+    "hash": "94565a4409f8b8a133db36d3a22221b5b38a1a13",
+    "author": "Nicholas Nethercote",
+    "date": 1475618125,
+    "message": "Rename StringReader::pos as next_pos.\n\nThis is a [breaking-change] for libsyntax."
+  },
+  {
+    "hash": "3c4c85947cddac2d36854e5bf8c7a8edb32e1245",
+    "author": "Nicholas Nethercote",
+    "date": 1475617998,
+    "message": "Rename Parser::last_token_kind as prev_token_kind.\n\nLikewise, rename LastTokenKind as PrevTokenKind.\n\nThis is a [breaking-change] for libsyntax."
+  },
+  {
+    "hash": "2747923c272a355dbb6265586a884652e26b0ec7",
+    "author": "Nicholas Nethercote",
+    "date": 1475617998,
+    "message": "Rename Parser::last_span as prev_span.\n\nThis is a [breaking-change] for libsyntax."
+  },
+  {
     "hash": "20991829e2639d1786acbd52621b220c89f0d9cb",
     "author": "Alex Crichton",
     "date": 1476306476,
@@ -568,35 +598,5 @@
     "author": "Oliver Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't pub export ast::Ty_ variants"
-  },
-  {
-    "hash": "ec61e632c0a00ccc2ca0494d5d3c8a0848c574f2",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] remove unused enum ast::PrimTy"
-  },
-  {
-    "hash": "bfa66bb389ce1c7ce4aff09d1842b3428015bd4d",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] remove the sign from integer literals in the ast"
-  },
-  {
-    "hash": "625e78b7001c6e20f29928a5da8c9d21e9aed6c5",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::{UintTy, IntTy} variants"
-  },
-  {
-    "hash": "ccf48bcd4054ecb4e205a18b1ac582ef3ac3a905",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::FloatTy variants"
-  },
-  {
-    "hash": "80bf9ae18a133571d694aa866b824dcaea875d32",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::Expr_ variants"
   }
 ]
