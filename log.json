@@ -1,5 +1,11 @@
 [
   {
+    "hash": "cfc9b5185bbf5ab04a2736347bfa7fd9ab70c1e7",
+    "author": "bors",
+    "date": 1476883990,
+    "message": "Auto merge of #37213 - jseyfried:refactor_crate_var, r=nrc\n\nmacros: improve `$crate`\n\nThis PR refactors the implementation of `$crate` so that\n - `$crate` is only allowed at the start of a path (like `super`),\n - we can make `$crate` work with inter-crate re-exports (groundwork for macro modularization), and\n - we can support importing macros from an extern crate that is not declared at the crate root (also groundwork for macro modularization).\n\nThis is a [breaking-change]. For example, the following would break:\n```rust\nfn foo() {}\nmacro_rules! m { () => {\n    $crate foo $crate () $crate $crate;\n    //^ Today, `$crate` is allowed just about anywhere in unexported macros.\n} }\nfn main() {\n    m!();\n}\n```\nr? @nrc"
+  },
+  {
     "hash": "e2631208b1888d6a340938314457446a7f8ed2fc",
     "author": "Nicholas Nethercote",
     "date": 1475618255,
@@ -592,11 +598,5 @@
     "author": "Oliver Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't pub export ast::Lit_ variants"
-  },
-  {
-    "hash": "05d4cefd630cd9ae104555e69ceb3b1566298a6a",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't pub export ast::Ty_ variants"
   }
 ]
