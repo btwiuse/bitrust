@@ -1,5 +1,11 @@
 [
   {
+    "hash": "da5b6467c33f7f86b4964b08b37726f7611a8f0c",
+    "author": "bors",
+    "date": 1477039711,
+    "message": "Auto merge of #37247 - jseyfried:future_proof_no_link, r=nrc\n\nmacros: Future proof `#[no_link]`\n\nThis PR future proofs `#[no_link]` for macro modularization (cc #35896).\n\nFirst, we resolve all `#[no_link] extern crate`s. `#[no_link]` crates without `#[macro_use]` or `#[macro_reexport]` are not resolved today, this is a [breaking-change]. For example,\n```rust\n```\nAny breakage can be fixed by simply removing the `#[no_link] extern crate`.\n\nSecond, `#[no_link] extern crate`s will define an empty module in type namespace to eventually allow importing the crate's macros with `use`. This is a [breaking-change], for example:\n```rust\nmod syntax {} //< This becomes a duplicate error.\n```\n\nr? @nrc"
+  },
+  {
     "hash": "cfc9b5185bbf5ab04a2736347bfa7fd9ab70c1e7",
     "author": "bors",
     "date": 1476883990,
@@ -592,11 +598,5 @@
     "author": "Oliver Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't pub export ast::IntLitType variants"
-  },
-  {
-    "hash": "69072c4f5d18d7a1762fbfb007b0ba3d6b59ad33",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't pub export ast::Lit_ variants"
   }
 ]
