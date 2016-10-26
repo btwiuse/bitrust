@@ -1,5 +1,11 @@
 [
   {
+    "hash": "aef18be1bc4e03617177c5e9df1164ce3df49ba2",
+    "author": "bors",
+    "date": 1477424263,
+    "message": "Auto merge of #37111 - TimNN:sized-enums, r=nikomatsakis\n\nDisallow Unsized Enums\n\nFixes #16812.\n\nThis PR is a potential fix for #16812, an issue which is reported [again](https://github.com/rust-lang/rust/issues/36801) and [again](https://github.com/rust-lang/rust/issues/36975), with over a dozen duplicates by now.\n\nThis PR is mainly meant to promoted discussion about the issue and the correct way to fix it.\n\nThis is a [breaking-change] since the error is now reported during wfchecking, so that even the definition of a (potentially) unsized enum will cause an error (whereas it would previously cause an ICE at trans time if the enum was used in an unsized manner)."
+  },
+  {
     "hash": "da5b6467c33f7f86b4964b08b37726f7611a8f0c",
     "author": "bors",
     "date": 1477039711,
@@ -592,11 +598,5 @@
     "author": "Oliver Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't pub export ast::Stmt_ variants"
-  },
-  {
-    "hash": "498a2e416e693fa22042d3ae81c5c969fc87fe5c",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't pub export ast::IntLitType variants"
   }
 ]
