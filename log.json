@@ -1,5 +1,11 @@
 [
   {
+    "hash": "6062e7ed3d81cb3bd535993e9b14269924b76c29",
+    "author": "bors",
+    "date": 1477835490,
+    "message": "Auto merge of #37431 - jseyfried:refactor_crate_config, r=eddyb\n\nMove `CrateConfig` from `Crate` to `ParseSess`\n\nThis is a syntax-[breaking-change]. Most breakage can be fixed by removing a `CrateConfig` argument.\nr? @eddyb"
+  },
+  {
     "hash": "aef18be1bc4e03617177c5e9df1164ce3df49ba2",
     "author": "bors",
     "date": 1477424263,
@@ -592,11 +598,5 @@
     "author": "Oliver 'ker' Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't glob export ast::ForeignItem_ variants"
-  },
-  {
-    "hash": "8290c950a8b4cdc70038736abcf29f41dede6e0c",
-    "author": "Oliver Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't pub export ast::Stmt_ variants"
   }
 ]
