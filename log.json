@@ -1,5 +1,11 @@
 [
   {
+    "hash": "d00e5e9343a11939c80c0ade5ca71c8dcbc31847",
+    "author": "Jonathan Turner",
+    "date": 1478113781,
+    "message": "Rollup merge of #37351 - Amanieu:consume, r=alexcrichton\n\nPrevent exhaustive matching of Ordering to allow for future extension\n\nThe C++11 atomic memory model defines a `memory_order_consume` ordering which is generally equivalent to `memory_order_acquire` but can allow better code generation by avoiding memory barrier instructions. Most compilers (including LLVM) currently do not implement this ordering directly and instead treat it identically to `memory_order_acquire`, including adding a memory barrier instruction.\n\nThere is currently [work](http://open-std.org/Jtc1/sc22/wg21/docs/papers/2016/p0098r1.pdf) to support consume ordering in compilers, and it would be a shame if Rust did not support this. This PR therefore reserves a `__Nonexhaustive` variant in `Ordering` so that adding a new ordering is not a breaking change in the future.\n\nThis is a [breaking-change] since it disallows exhaustive matching on `Ordering`, however a search of all Rust code on Github shows that there is no code that does this. This makes sense since `Ordering` is typically only used as a parameter to an atomic operation."
+  },
+  {
     "hash": "6062e7ed3d81cb3bd535993e9b14269924b76c29",
     "author": "bors",
     "date": 1477835490,
@@ -592,11 +598,5 @@
     "author": "Oliver 'ker' Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't glob export ast::Item_ variants"
-  },
-  {
-    "hash": "0d6ddd190355650a6d851c3aae12cf79339665af",
-    "author": "Oliver 'ker' Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::ForeignItem_ variants"
   }
 ]
