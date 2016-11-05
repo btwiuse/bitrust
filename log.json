@@ -1,5 +1,11 @@
 [
   {
+    "hash": "ccfc38f034e3f53cb460936bd9744085d4a63b40",
+    "author": "bors",
+    "date": 1478269244,
+    "message": "Auto merge of #37167 - nikomatsakis:jroesch-issue-18937, r=pnkfelix\n\ndetect extra region requirements in impls\n\nThe current \"compare method\" check fails to check for the \"region obligations\" that accrue in the fulfillment context. This branch switches that code to create a `FnCtxt` so that it can invoke the regionck code. Previous crater runs (I haven't done one with the latest tip) have found some small number of affected crates, so I went ahead and introduced a warning cycle. I will kick off a crater run with this branch shortly.\n\nThis is a [breaking-change] because previously unsound code was accepted. The crater runs also revealed some cases where legitimate code was no longer type-checking, so the branch contains one additional (but orthogonal) change. It improves the elaborator so that we elaborate region requirements more thoroughly. In particular, if we know that `&'a T: 'b`, we now deduce that `T: 'b` and `'a: 'b`.\n\nI invested a certain amount of effort in getting a good error message. The error message looks like this:\n\n```\nerror[E0276]: impl has stricter requirements than trait\n  --> traits-elaborate-projection-region.rs:33:5\n   |\n21 |     fn foo() where T: 'a;\n   |     --------------------- definition of `foo` from trait\n...\n33 |     fn foo() where U: 'a { }\n   |     ^^^^^^^^^^^^^^^^^^^^^^^^ impl has extra requirement `U: 'a`\n   |\n   = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!\n   = note: for more information, see issue #18937 <https://github.com/rust-lang/rust/issues/18937>\nnote: lint level defined here\n  --> traits-elaborate-projection-region.rs:12:9\n   |\n12 | #![deny(extra_requirement_in_impl)]\n   |         ^^^^^^^^^^^^^^^^^^^^^^^^^\n```\n\nObviously the warning only prints if this is a _new_ error (that resulted from the bugfix). But all existing errors that fit this description are updated to follow the general template. In order to get the lint to preserve the span-labels and the error code, I separate out the core `Diagnostic` type (which encapsulates the error code, message, span, and children) from the `DiagnosticBuilder` (which layers on a `Handler` that can be used to report errors). I also extended `add_lint` with an alternative `add_lint_diagnostic` that takes in a full diagnostic (cc @jonathandturner for those changes). This doesn't feel ideal but feels like it's moving in the right direction =).\n\nr? @pnkfelix\ncc @arielb1\n\nFixes #18937"
+  },
+  {
     "hash": "d00e5e9343a11939c80c0ade5ca71c8dcbc31847",
     "author": "Jonathan Turner",
     "date": 1478113781,
@@ -592,11 +598,5 @@
     "author": "Oliver 'ker' Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't glob export ast::KleeneOp variants"
-  },
-  {
-    "hash": "019614f03d106324ab50a37746b556c41e66c099",
-    "author": "Oliver 'ker' Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::Item_ variants"
   }
 ]
