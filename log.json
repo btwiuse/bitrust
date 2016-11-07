@@ -1,5 +1,11 @@
 [
   {
+    "hash": "09fc1af9d80ecb71c82367b6569461e645a3a946",
+    "author": "bors",
+    "date": 1478488348,
+    "message": "Auto merge of #37506 - jseyfried:improve_shadowing_checks, r=nrc\n\nmacros: improve shadowing checks\n\nThis PR improves macro-expanded shadowing checks to work with out-of-(pre)order expansion.\n\nOut-of-order expansion became possible in #37084, so this technically a [breaking-change] for nightly.\nThe regression test from this PR is an example of code that would break.\n\nr? @nrc"
+  },
+  {
     "hash": "ccfc38f034e3f53cb460936bd9744085d4a63b40",
     "author": "bors",
     "date": 1478269244,
@@ -592,11 +598,5 @@
     "author": "Oliver 'ker' Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't glob export ast::MacStmtStyle"
-  },
-  {
-    "hash": "798974cae58639c174010fd4a6411dcdc860e404",
-    "author": "Oliver 'ker' Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::KleeneOp variants"
   }
 ]
