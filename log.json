@@ -1,5 +1,11 @@
 [
   {
+    "hash": "ab03f855221d83ad13120b309506488f4a34cb0f",
+    "author": "bors",
+    "date": 1478772345,
+    "message": "Auto merge of #37463 - jseyfried:refactor_macro_reexports, r=nrc\n\nmacros: improve reexports\n\nThis PR\n- avoids building multiple module graphs for a crate that is referenced by multiple `extern crate` items,\n- registers `#[no_link] extern crate`s to avoid loading the same crate metadata twice,\n- stability checks `#[no_link] extern crate`s,\n  - [breaking-chage]: `#[no_link] #[macro_use] extern crate syntax;` is allowed on stable today\n- fixes `$crate` in `#[macro_reexport]`ed macros,\n  - [breaking-change] for `#[feature(macro_reexport)]` (technically)\n- allows selective macro importing (i.e. `#[macro_use(foo, bar)]`) from custom derive crates, and\n- refactors the crate metadata to support re-exported macros in arbitrary modules (not yet needed).\n\nr? @nrc"
+  },
+  {
     "hash": "09fc1af9d80ecb71c82367b6569461e645a3a946",
     "author": "bors",
     "date": 1478488348,
@@ -592,11 +598,5 @@
     "author": "Oliver 'ker' Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't glob export ast::MetaItem_"
-  },
-  {
-    "hash": "e797e1961df00ec7725c47225dcf9b5a0e9fce64",
-    "author": "Oliver 'ker' Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::MacStmtStyle"
   }
 ]
