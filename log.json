@@ -1,5 +1,11 @@
 [
   {
+    "hash": "323c20c8a4747aa96285c90005a00aa43228af8e",
+    "author": "Oliver 'ker' Schneider",
+    "date": 1478867770,
+    "message": "[breaking-change] change the `box_free` item to accept pointers to unsized types"
+  },
+  {
     "hash": "ab03f855221d83ad13120b309506488f4a34cb0f",
     "author": "bors",
     "date": 1478772345,
@@ -592,11 +598,5 @@
     "author": "Oliver 'ker' Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't glob export ast::Mutablity variants"
-  },
-  {
-    "hash": "14e09ad4686bb20a98acfd7d930386f6330d2b4d",
-    "author": "Oliver 'ker' Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::MetaItem_"
   }
 ]
