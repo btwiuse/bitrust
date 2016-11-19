@@ -1,5 +1,17 @@
 [
   {
+    "hash": "fb025b483a5ef96bba944055c47af620d2afb602",
+    "author": "bors",
+    "date": 1479560328,
+    "message": "Auto merge of #37814 - japaric:aapcs, r=alexcrichton\n\nfix `extern \"aapcs\" fn`\n\nto actually use the AAPCS calling convention\n\ncloses #37810\n\nThis is technically a [breaking-change] because it changes the ABI of\n`extern \"aapcs\"` functions that (a) involve `f32`/`f64` arguments/return\nvalues and (b) are compiled for arm-eabihf targets from\n\"aapcs-vfp\" (wrong) to \"aapcs\" (correct).\n\nAppendix:\n\nWhat these ABIs mean?\n\n- In the \"aapcs-vfp\" ABI or \"hard float\" calling convention: Floating\npoint values are passed/returned through FPU registers (s0, s1, d0, etc.)\n\n- Whereas, in the \"aapcs\" ABI or \"soft float\" calling convention:\nFloating point values are passed/returned through general purpose\nregisters (r0, r1, etc.)\n\nMixing these ABIs can cause problems if the caller assumes that the\nroutine is using one of these ABIs but it's actually using the other\none.\n\n---\n\nr? @alexcrichton We are going this `extern \"aapcs\" fn` thing to implement some intrinsics (floatundidf) for the eabihf targets in order to comply with LLVM's calling convention of intrinsics.\n\nOh, and the value of the enum came from [here](http://llvm.org/docs/doxygen/html/namespacellvm_1_1CallingConv.html).\n\ncc @TimNN @parched"
+  },
+  {
+    "hash": "456ceba13784f2f88f7f21239e308a0f195967a1",
+    "author": "Jorge Aparicio",
+    "date": 1479339512,
+    "message": "fix `extern \"aapcs\" fn`\n\nto actually use the AAPCS calling convention\n\ncloses #37810\n\nThis is technically a [breaking-change] because it changes the ABI of\n`extern \"aapcs\"` functions that (a) involve `f32`/`f64` arguments/return\nvalues and (b) are compiled for arm-eabihf targets from\n\"aapcs-vfp\" (wrong) to \"aapcs\" (correct).\n\nAppendix:\n\nWhat these ABIs mean?\n\n- In the \"aapcs-vfp\" ABI or \"hard float\" calling convention: Floating\npoint values are passed/returned through FPU registers (s0, s1, d0, etc.)\n\n- Whereas, in the \"aapcs\" ABI or \"soft float\" calling convention:\nFloating point values are passed/returned through general purpose\nregisters (r0, r1, etc.)\n\nMixing these ABIs can cause problems if the caller assumes that the\nroutine is using one of these ABIs but it's actually using the other\none."
+  },
+  {
     "hash": "323c20c8a4747aa96285c90005a00aa43228af8e",
     "author": "Oliver 'ker' Schneider",
     "date": 1478867770,
@@ -586,17 +598,5 @@
     "author": "Oliver 'ker' Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't glob export ast::Visibility variants"
-  },
-  {
-    "hash": "dfe35da6b83f64bb7553b19649839512a3c301ce",
-    "author": "Oliver 'ker' Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::TraitItemKind variants"
-  },
-  {
-    "hash": "73fa9b2da2ee82c91a5c8d605b91f22f19e4d74b",
-    "author": "Oliver 'ker' Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::Mutablity variants"
   }
 ]
