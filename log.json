@@ -1,5 +1,11 @@
 [
   {
+    "hash": "1c11ea3aedebac562f5125e1cf22ac56a3a8993c",
+    "author": "bors",
+    "date": 1479784548,
+    "message": "Auto merge of #37602 - jseyfried:directory_ownership, r=nikomatsakis\n\nparser: simplify directory ownership semantics\n\nThis PR simplifies the semantics of \"directory ownership\". After this PR,\n - a non-inline module without a `#[path]` attribute (e.g. `mod foo;`) is allowed iff its parent module/block (whichever is nearer) is a directory owner,\n - an non-inline module is a directory owner iff its corresponding file is named `mod.rs` (c.f. [comment](https://github.com/rust-lang/rust/issues/32401#issuecomment-201021902)),\n - a block is never a directory owner (c.f. #31534), and\n - an inline module is a directory owner iff either\n   - its parent module/block is a directory owner (again, c.f. #31534), or\n   - it has a `#[path]` attribute (c.f. #36789).\n\nThese semantics differ from today's in three orthogonal ways:\n - `#[path = \"foo.rs\"] mod foo;` is no longer a directory owner. This is a [breaking-change].\n - #36789 is generalized to apply to modules that are not directory owners in addition to blocks.\n - A macro-expanded non-inline module is only allowed where an ordinary non-inline module would be allowed. Today, we incorrectly allow macro-expanded non-inline modules in modules that are not directory owners (but not in blocks). This is a [breaking-change].\n\nFixes #32401.\nr? @nikomatsakis"
+  },
+  {
     "hash": "fb025b483a5ef96bba944055c47af620d2afb602",
     "author": "bors",
     "date": 1479560328,
@@ -592,11 +598,5 @@
     "author": "Oliver 'ker' Schneider",
     "date": 1455190488,
     "message": "[breaking-change] don't glob export ast::StrStyle variants"
-  },
-  {
-    "hash": "d844bfb1967b780ff6cc6e81644bf4b529dc0738",
-    "author": "Oliver 'ker' Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::Visibility variants"
   }
 ]
