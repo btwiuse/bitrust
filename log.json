@@ -1,5 +1,17 @@
 [
   {
+    "hash": "10771498273764e25d197209f80830a45b7cfdcd",
+    "author": "bors",
+    "date": 1480638011,
+    "message": "Auto merge of #37789 - arielb1:length-limit, r=nikomatsakis\n\nlimit the length of types in monomorphization\n\nThis adds the new insta-stable `#![type_size_limit]` crate attribute to control\nthe limit, and is obviously a [breaking-change] fixable by that.\n\nFixes #37311.\n\nr? @nikomatsakis"
+  },
+  {
+    "hash": "242cd7ebe295d44c7b612e2e1da8b83412d31f49",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1480632862,
+    "message": "limit the length of types in monomorphization\n\nThis adds the new insta-stable `#![type_size_limit]` crate attribute to control\nthe limit, and is obviously a [breaking-change] fixable by that."
+  },
+  {
     "hash": "1c11ea3aedebac562f5125e1cf22ac56a3a8993c",
     "author": "bors",
     "date": 1479784548,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1455288980,
     "message": "Auto merge of #31583 - petrochenkov:indi_ast, r=Manishearth\n\ncc #31487\nplugin-[breaking-change]\n\nThe AST part of https://github.com/rust-lang/rust/pull/30087\n\nr? @Manishearth"
-  },
-  {
-    "hash": "2b816b0d6a9bc8210ca314a020a247f8632b4f38",
-    "author": "Oliver 'ker' Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::PathListItem_ variants"
-  },
-  {
-    "hash": "8b3856b1bc1c23969e5d8983f25cf85698a5c2b1",
-    "author": "Oliver 'ker' Schneider",
-    "date": 1455190488,
-    "message": "[breaking-change] don't glob export ast::StrStyle variants"
   }
 ]
