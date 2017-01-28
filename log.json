@@ -90,6 +90,24 @@
     "message": "Auto merge of #37213 - jseyfried:refactor_crate_var, r=nrc\n\nmacros: improve `$crate`\n\nThis PR refactors the implementation of `$crate` so that\n - `$crate` is only allowed at the start of a path (like `super`),\n - we can make `$crate` work with inter-crate re-exports (groundwork for macro modularization), and\n - we can support importing macros from an extern crate that is not declared at the crate root (also groundwork for macro modularization).\n\nThis is a [breaking-change]. For example, the following would break:\n```rust\nfn foo() {}\nmacro_rules! m { () => {\n    $crate foo $crate () $crate $crate;\n    //^ Today, `$crate` is allowed just about anywhere in unexported macros.\n} }\nfn main() {\n    m!();\n}\n```\nr? @nrc"
   },
   {
+    "hash": "20991829e2639d1786acbd52621b220c89f0d9cb",
+    "author": "Alex Crichton",
+    "date": 1476306476,
+    "message": "Rollup merge of #37084 - jseyfried:cleanup_expanded_macro_use_scopes, r=nrc\n\nmacros: clean up scopes of expanded `#[macro_use]` imports\n\nThis PR changes the scope of macro-expanded `#[macro_use]` imports to match that of unexpanded `#[macro_use]` imports. For example, this would be allowed:\n```rust\nexample!();\nmacro_rules! m { () => { #[macro_use(example)] extern crate example_crate; } }\nm!();\n```\n\nThis PR also enforces the full shadowing restrictions from RFC 1560 on `#[macro_use]` imports (currently, we only enforce the weakened restrictions from #36767).\n\nThis is a [breaking-change], but I believe it is highly unlikely to cause breakage in practice.\nr? @nrc"
+  },
+  {
+    "hash": "f05bd1b41ddda779032f4c5c8e30bf640129832f",
+    "author": "Alex Crichton",
+    "date": 1476306476,
+    "message": "Rollup merge of #37064 - nnethercote:read_str, r=eddyb\n\nAvoid allocations in `Decoder::read_str`.\n\n`opaque::Decoder::read_str` is very hot within `rustc` due to its use in\nthe reading of crate metadata, and it currently returns a `String`. This\ncommit changes it to instead return a `Cow<str>`, which avoids a heap\nallocation.\n\nThis change reduces the number of calls to `malloc` by almost 10% in\nsome benchmarks.\n\nThis is a [breaking-change] to libserialize."
+  },
+  {
+    "hash": "b043e11de2eb2c60f7bfec5e15960f537b229e20",
+    "author": "Nicholas Nethercote",
+    "date": 1476056195,
+    "message": "Avoid allocations in `Decoder::read_str`.\n\n`opaque::Decoder::read_str` is very hot within `rustc` due to its use in\nthe reading of crate metadata, and it currently returns a `String`. This\ncommit changes it to instead return a `Cow<str>`, which avoids a heap\nallocation.\n\nThis change reduces the number of calls to `malloc` by almost 10% in\nsome benchmarks.\n\nThis is a [breaking-change] to libserialize."
+  },
+  {
     "hash": "e2631208b1888d6a340938314457446a7f8ed2fc",
     "author": "Nicholas Nethercote",
     "date": 1475618255,
@@ -120,24 +138,6 @@
     "message": "Rename Parser::last_span as prev_span.\n\nThis is a [breaking-change] for libsyntax."
   },
   {
-    "hash": "20991829e2639d1786acbd52621b220c89f0d9cb",
-    "author": "Alex Crichton",
-    "date": 1476306476,
-    "message": "Rollup merge of #37084 - jseyfried:cleanup_expanded_macro_use_scopes, r=nrc\n\nmacros: clean up scopes of expanded `#[macro_use]` imports\n\nThis PR changes the scope of macro-expanded `#[macro_use]` imports to match that of unexpanded `#[macro_use]` imports. For example, this would be allowed:\n```rust\nexample!();\nmacro_rules! m { () => { #[macro_use(example)] extern crate example_crate; } }\nm!();\n```\n\nThis PR also enforces the full shadowing restrictions from RFC 1560 on `#[macro_use]` imports (currently, we only enforce the weakened restrictions from #36767).\n\nThis is a [breaking-change], but I believe it is highly unlikely to cause breakage in practice.\nr? @nrc"
-  },
-  {
-    "hash": "f05bd1b41ddda779032f4c5c8e30bf640129832f",
-    "author": "Alex Crichton",
-    "date": 1476306476,
-    "message": "Rollup merge of #37064 - nnethercote:read_str, r=eddyb\n\nAvoid allocations in `Decoder::read_str`.\n\n`opaque::Decoder::read_str` is very hot within `rustc` due to its use in\nthe reading of crate metadata, and it currently returns a `String`. This\ncommit changes it to instead return a `Cow<str>`, which avoids a heap\nallocation.\n\nThis change reduces the number of calls to `malloc` by almost 10% in\nsome benchmarks.\n\nThis is a [breaking-change] to libserialize."
-  },
-  {
-    "hash": "b043e11de2eb2c60f7bfec5e15960f537b229e20",
-    "author": "Nicholas Nethercote",
-    "date": 1476056195,
-    "message": "Avoid allocations in `Decoder::read_str`.\n\n`opaque::Decoder::read_str` is very hot within `rustc` due to its use in\nthe reading of crate metadata, and it currently returns a `String`. This\ncommit changes it to instead return a `Cow<str>`, which avoids a heap\nallocation.\n\nThis change reduces the number of calls to `malloc` by almost 10% in\nsome benchmarks.\n\nThis is a [breaking-change] to libserialize."
-  },
-  {
     "hash": "f3745653e10e366e7e119a12c178a59ab6394007",
     "author": "bors",
     "date": 1475483432,
@@ -156,16 +156,16 @@
     "message": "libsyntax: clearer names for some AST parts\n\nThis applies the HIR changes from the previous commits to the AST, and\nis thus a syntax-[breaking-change]\n\nRenames `PatKind::Vec` to `PatKind::Slice`, since these are called slice\npatterns, not vec patterns. Renames `TyKind::Vec`, which represents the\ntype `[T]`, to `TyKind::Slice`. Renames `TyKind::FixedLengthVec` to\n`TyKind::Array`."
   },
   {
-    "hash": "13a2dd96fe824cc5d61e94ed380db0114efdd014",
-    "author": "tormol",
-    "date": 1475046210,
-    "message": "[breaking-change] std: change `encode_utf{8,16}()` to take a buffer and return a slice\n\nThey panic if the buffer is too small."
-  },
-  {
     "hash": "eee2d04d877fe909309c39b6bdf711dc586d0a1e",
     "author": "bors",
     "date": 1475112667,
     "message": "Auto merge of #36395 - durka:rangeinclusive-no-esi, r=alexcrichton\n\nremove ExactSizeIterator from RangeInclusive<{u,i}{32,size}>\n\nFixes #36386.\n\nThis is a [breaking-change] for nightly users of `#![feature(inclusive_range_syntax)]` and/or `#![feature(inclusive_range)]`."
+  },
+  {
+    "hash": "13a2dd96fe824cc5d61e94ed380db0114efdd014",
+    "author": "tormol",
+    "date": 1475046210,
+    "message": "[breaking-change] std: change `encode_utf{8,16}()` to take a buffer and return a slice\n\nThey panic if the buffer is too small."
   },
   {
     "hash": "b786976a158e79196254f489bb3a6f87e4d16a5a",
@@ -300,6 +300,12 @@
     "message": "Auto merge of #34424 - jseyfried:breaking_batch, r=Manishearth\n\nBatch up libsyntax breaking changes\n\nBatch of the following syntax-[breaking-change] changes:\n - #34213: Add a variant `Macro` to `TraitItemKind`\n - #34368: Merge the variant `QPath` of `PatKind` into the variant `PatKind::Path`\n - #34385: Move `syntax::ast::TokenTree` into a new module `syntax::tokenstream`\n - #33943:\n  - Remove the type parameter from `visit::Visitor`\n  - Remove `attr::WithAttrs` -- use `attr::HasAttrs` instead.\n  - Change `fold_tt`/`fold_tts` to take token trees by value and avoid wrapping token trees in `Rc`.\n  - Remove the field `ctxt` of `ast::Mac_`\n  - Remove inherent method `attrs()` of types -- use the method `attrs` of `HasAttrs` instead.\n - #34316:\n  - Remove `ast::Decl`/`ast::DeclKind` and add variants `Local` and `Item` to `StmtKind`.\n  - Move the node id for statements from the `StmtKind` variants to a field of `Stmt` (making `Stmt` a struct instead of an alias for `Spanned<StmtKind>`)\n  - Rename `ast::ExprKind::Again` to `Continue`.\n - #34339: Generalize and abstract `ThinAttributes` to `ThinVec<Attribute>`\n  - Use `.into()` in convert between `Vec<Attribute>` and `ThinVec<Attribute>`\n  - Use autoderef instead of `.as_attr_slice()`\n - #34436: Remove the optional expression from `ast::Block` and instead use a `StmtKind::Expr` at the end of the statement list.\n - #34403: Move errors into a separate crate (unlikely to cause breakage)"
   },
   {
+    "hash": "af2fe634bfa770e7da675210aa661a96cde51275",
+    "author": "bors",
+    "date": 1466992932,
+    "message": "Auto merge of #34491 - eddyb:return-in-peace, r=nagisa\n\nRemove the return_address intrinsic.\n\nThis intrinsic to get the return pointer was introduced in #16248 / #16081 by @pcwalton for Servo.\nHowever, as explained in #34227, it's impossible to ensure it's used correctly, and it broke with `-Zorbit`.\n\nServo's usage is being replaced in servo/servo#11872, and I expect nobody else to have abused it.\nBut I've also started a crater run, just in case this is a `[breaking-change]` for anyone else."
+  },
+  {
     "hash": "82a15a6a0af724e71004c735f8a99ec5f2a03920",
     "author": "Jeffrey Seyfried",
     "date": 1466907119,
@@ -318,12 +324,6 @@
     "message": "Rollup merge of #34213 - josephDunne:trait_item_macros, r=jseyfried\n\n**syntax-[breaking-change]** cc #31645\nNew `TraitItemKind::Macro` variant\n\nThis change adds support for macro expansion inside trait items by adding the new `TraitItemKind::Macro` and associated parsing code."
   },
   {
-    "hash": "af2fe634bfa770e7da675210aa661a96cde51275",
-    "author": "bors",
-    "date": 1466992932,
-    "message": "Auto merge of #34491 - eddyb:return-in-peace, r=nagisa\n\nRemove the return_address intrinsic.\n\nThis intrinsic to get the return pointer was introduced in #16248 / #16081 by @pcwalton for Servo.\nHowever, as explained in #34227, it's impossible to ensure it's used correctly, and it broke with `-Zorbit`.\n\nServo's usage is being replaced in servo/servo#11872, and I expect nobody else to have abused it.\nBut I've also started a crater run, just in case this is a `[breaking-change]` for anyone else."
-  },
-  {
     "hash": "6edea2cfda2818f0a76f4bac2d18a30feb54c137",
     "author": "bors",
     "date": 1466074195,
@@ -336,16 +336,16 @@
     "message": "Auto merge of #34180 - durka:patch-24, r=brson\n\nderive Hash (and not Copy) for ranges\n\nFixes #34170.\n\nAlso, `RangeInclusive` was `Copy` by mistake -- fix that, which is a [breaking-change] to that unstable type."
   },
   {
-    "hash": "9e78cd73b5c4254efda9fe57be56b8b374383812",
-    "author": "Alex Burka",
-    "date": 1465493162,
-    "message": "make RangeInclusive Hash and !Copy\n\n[breaking-change] due to the removal of Copy which shouldn't have been there in the first place, as per policy set forth in #27186."
-  },
-  {
     "hash": "7d2f75a953b5645d3a336b2978b48b60d310bf54",
     "author": "bors",
     "date": 1465512517,
     "message": "Auto merge of #34095 - petrochenkov:pathir2, r=jseyfried\n\nImprovements to pattern resolution + some refactoring\n\nContinuation of https://github.com/rust-lang/rust/pull/33929\nFirst commit is a careful rewrite of `resolve_pattern`, pattern path resolution and new binding creation logic is factored out in separate functions, some minor bugs are fixed. Also, `resolve_possibly_assoc_item` doesn't swallow modules now.\nLater commits are refactorings, see the comment descriptions.\n\nI intend to continue this work later with better support for `Def::Err` in patterns in post-resolve stages and cleanup of pattern resolution code in type checker.\n\nFixes https://github.com/rust-lang/rust/issues/32086\nFixes https://github.com/rust-lang/rust/issues/34047 ([breaking-change])\nFixes https://github.com/rust-lang/rust/issues/34074\n\ncc @jseyfried\nr? @eddyb"
+  },
+  {
+    "hash": "9e78cd73b5c4254efda9fe57be56b8b374383812",
+    "author": "Alex Burka",
+    "date": 1465493162,
+    "message": "make RangeInclusive Hash and !Copy\n\n[breaking-change] due to the removal of Copy which shouldn't have been there in the first place, as per policy set forth in #27186."
   },
   {
     "hash": "dc77c5ebe80d8e8fe08b9ba05859c04f4dbb99cf",
@@ -384,12 +384,6 @@
     "message": "Auto merge of #33814 - lambda:rtabort-use-platform-abort, r=alexcrichton\n\nOpen code the __fastfail intrinsic for rtabort! on windows\n\nAs described https://msdn.microsoft.com/en-us/library/dn774154.aspx\n\nThis is a Windows 8+ mechanism for terminating the process quickly,\nwhich degrades to either an access violation or bugcheck in older versions.\n\nI'm not sure this is better the the current mechanism of terminating\nwith an illegal instruction, but we recently converted unix to\nterminate more correctly with SIGABORT, and this *seems* more correct\nfor windows.\n\n[breaking-change]"
   },
   {
-    "hash": "696a570a00db2528b7934be32da7d8334738a997",
-    "author": "Brian Anderson",
-    "date": 1464094563,
-    "message": "Open code the __fastfail intrinsic for rtabort! on windows\n\nAs described https://msdn.microsoft.com/en-us/library/dn774154.aspx\n\nThis is a Windows 8+ mechanism for terminating the process quickly,\nwhich degrades to either an access violation or bugcheck in older versions.\n\nI'm not sure this is better the the current mechanism of terminating\nwith an illegal instruction, but we recently converted unix to\nterminate more correctly with SIGABORT, and this *seems* more correct\nfor windows.\n\n[breaking-change]"
-  },
-  {
     "hash": "c2cab1fd58d6373582da189bd2c20ed3f6a7042a",
     "author": "bors",
     "date": 1464787313,
@@ -412,6 +406,12 @@
     "author": "Manish Goregaokar",
     "date": 1464323220,
     "message": "Rollup merge of #33639 - petrochenkov:dotdot, r=nmatsakis\n\n cc https://github.com/rust-lang/rust/issues/33627\nr? @nikomatsakis\n\nplugin-[breaking-change] cc https://github.com/rust-lang/rust/issues/31645 @Manishearth"
+  },
+  {
+    "hash": "696a570a00db2528b7934be32da7d8334738a997",
+    "author": "Brian Anderson",
+    "date": 1464094563,
+    "message": "Open code the __fastfail intrinsic for rtabort! on windows\n\nAs described https://msdn.microsoft.com/en-us/library/dn774154.aspx\n\nThis is a Windows 8+ mechanism for terminating the process quickly,\nwhich degrades to either an access violation or bugcheck in older versions.\n\nI'm not sure this is better the the current mechanism of terminating\nwith an illegal instruction, but we recently converted unix to\nterminate more correctly with SIGABORT, and this *seems* more correct\nfor windows.\n\n[breaking-change]"
   },
   {
     "hash": "6e455640950c4e8cb8bff919edb4854fcf7773ca",
@@ -516,16 +516,16 @@
     "message": "Rollup merge of #32199 - nikomatsakis:limiting-constants-in-patterns-2, r=pnkfelix\n\nRestrict constants in patterns\n\nThis implements [RFC 1445](https://github.com/rust-lang/rfcs/blob/master/text/1445-restrict-constants-in-patterns.md). The primary change is to limit the types of constants used in patterns to those that *derive* `Eq` (note that implementing `Eq` is not sufficient). This has two main effects:\n\n1. Floating point constants are linted, and will eventually be disallowed. This is because floating point constants do not implement `Eq` but only `PartialEq`. This check replaces the existing special case code that aimed to detect the use of `NaN`.\n2. Structs and enums must derive `Eq` to be usable within a match.\n\nThis is a [breaking-change]: if you encounter a problem, you are most likely using a constant in an expression where the type of the constant is some struct that does not currently implement\n`Eq`. Something like the following:\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nThe easiest and most future compatible fix is to annotate the type in question with `#[derive(Eq)]` (note that merely *implementing* `Eq` is not enough, it must be *derived*):\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nAnother good option is to rewrite the match arm to use an `if` condition (this is also particularly good for floating point types, which implement `PartialEq` but not `Eq`):\n\n```rust\nmatch foo {\n    c if c == SOME_CONST => ...\n}\n```\n\nFinally, a third alternative is to tag the type with `#[structural_match]`; but this is not recommended, as the attribute is never expected to be stabilized. Please see RFC #1445 for more details.\n\ncc https://github.com/rust-lang/rust/issues/31434\n\nr? @pnkfelix"
   },
   {
-    "hash": "f69eb8efbe5dbc373426bf0ff021b49f37db41cb",
-    "author": "Niko Matsakis",
-    "date": 1458902742,
-    "message": "issue a future-compat lint for constants of invalid type\n\nThis is a [breaking-change]: according to RFC #1445, constants used as\npatterns must be of a type that *derives* `Eq`. If you encounter a\nproblem, you are most likely using a constant in an expression where the\ntype of the constant is some struct that does not currently implement\n`Eq`. Something like the following:\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nThe easiest and most future compatible fix is to annotate the type in\nquestion with `#[derive(Eq)]` (note that merely *implementing* `Eq` is\nnot enough, it must be *derived*):\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nAnother good option is to rewrite the match arm to use an `if`\ncondition (this is also particularly good for floating point types,\nwhich implement `PartialEq` but not `Eq`):\n\n```rust\nmatch foo {\n    c if c == SOME_CONST => ...\n}\n```\n\nFinally, a third alternative is to tag the type with\n`#[structural_match]`; but this is not recommended, as the attribute is\nnever expected to be stabilized. Please see RFC #1445 for more details."
-  },
-  {
     "hash": "64a13a46601bb47a470264936b623b4adf706128",
     "author": "bors",
     "date": 1458907393,
     "message": "Auto merge of #31908 - jseyfried:disallow_shadowed_traits, r=nikomatsakis\n\nDisallow methods from traits that are not in scope\n\nThis PR only allows a trait method to be used if the trait is in scope (fixes #31379).\nThis is a [breaking-change]. For example, the following would break:\n```rust\nmod foo {\n    pub trait T { fn f(&self) {} }\n    impl T for () {}\n}\n\nmod bar { pub use foo::T; }\n\nfn main() {\n    pub use bar::*;\n    struct T; // This shadows the trait `T`,\n    ().f() // making this an error.\n}\n```\nr? @nikomatsakis"
+  },
+  {
+    "hash": "f69eb8efbe5dbc373426bf0ff021b49f37db41cb",
+    "author": "Niko Matsakis",
+    "date": 1458902742,
+    "message": "issue a future-compat lint for constants of invalid type\n\nThis is a [breaking-change]: according to RFC #1445, constants used as\npatterns must be of a type that *derives* `Eq`. If you encounter a\nproblem, you are most likely using a constant in an expression where the\ntype of the constant is some struct that does not currently implement\n`Eq`. Something like the following:\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nThe easiest and most future compatible fix is to annotate the type in\nquestion with `#[derive(Eq)]` (note that merely *implementing* `Eq` is\nnot enough, it must be *derived*):\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nAnother good option is to rewrite the match arm to use an `if`\ncondition (this is also particularly good for floating point types,\nwhich implement `PartialEq` but not `Eq`):\n\n```rust\nmatch foo {\n    c if c == SOME_CONST => ...\n}\n```\n\nFinally, a third alternative is to tag the type with\n`#[structural_match]`; but this is not recommended, as the attribute is\nnever expected to be stabilized. Please see RFC #1445 for more details."
   },
   {
     "hash": "06074ac004701bff42c625247c4764b2ae6fca6c",
@@ -546,18 +546,6 @@
     "message": "Auto merge of #31710 - eddyb:reify, r=nikomatsakis\n\nDistinguish fn item types to allow reification from nothing to fn pointers.\n\nThe first commit is a rebase of #26284, except for files that have moved since.\n\nThis is a [breaking-change], due to:\n* each FFI function has a distinct type, like all other functions currently do\n* all generic parameters on functions are recorded in their item types, e.g.:\n`size_of::<u8>` & `size_of::<i8>`'s types differ despite their identical signature.\n* function items are zero-sized, which will stop transmutes from working on them\n\nThe first two cases are handled in most cases with the new coerce-unify logic,\nwhich will combine incompatible function item types into function pointers,\nat the outer-most level of if-else chains, match arms and array literals.\n\nThe last case is specially handled during type-checking such that transmutes\nfrom a function item type to a pointer or integer type will continue to work for\nanother release cycle, but are being linted against. To get rid of warnings and\nensure your code will continue to compile, cast to a pointer before transmuting."
   },
   {
-    "hash": "3a872782d396e9ed3827a515a54d1f0a634c0b77",
-    "author": "Jonas Schievink",
-    "date": 1455625960,
-    "message": "Move more uses of `panictry!` out of libsyntax\n\n[breaking-change] for syntax extensions"
-  },
-  {
-    "hash": "c5d58de665819f7330b3d64bdd084d25a412830a",
-    "author": "Alex Burka",
-    "date": 1456556501,
-    "message": "core: add inclusive ranges to core::ops\n\nSince it removes the old iter::{range_inclusive, RangeInclusive} which\nwere unstable and deprecated, this is a [breaking-change] on nightly."
-  },
-  {
     "hash": "5b5e52186917502258a9feadc8bf77a89183386b",
     "author": "bors",
     "date": 1457074511,
@@ -570,16 +558,16 @@
     "message": "Auto merge of #31824 - jseyfried:privacy_in_resolve, r=nikomatsakis\n\nThis PR privacy checks paths as they are resolved instead of in `librustc_privacy` (fixes #12334 and fixes #31779). This removes the need for the `LastPrivate` system introduced in PR #9735, the limitations of which cause #31779.\n\nThis PR also reports privacy violations in paths to intra- and inter-crate items the same way -- it always reports the first inaccessible segment of the path.\n\nSince it fixes #31779, this is a [breaking-change]. For example, the following code would break:\n```rust\nmod foo {\n    pub use foo::bar::S;\n    mod bar { // `bar` should be private to `foo`\n        pub struct S;\n    }\n}\n\nimpl foo::S {\n    fn f() {}\n}\n\nfn main() {\n    foo::bar::S::f(); // This is now a privacy error\n}\n```\n\nr? @alexcrichton"
   },
   {
+    "hash": "c5d58de665819f7330b3d64bdd084d25a412830a",
+    "author": "Alex Burka",
+    "date": 1456556501,
+    "message": "core: add inclusive ranges to core::ops\n\nSince it removes the old iter::{range_inclusive, RangeInclusive} which\nwere unstable and deprecated, this is a [breaking-change] on nightly."
+  },
+  {
     "hash": "acea6fc1cb5edf5211ade6ad4a79b119879eab82",
     "author": "Manish Goregaokar",
     "date": 1456486422,
     "message": "Rollup merge of #31904 - bluss:writer-formatter-error, r=alexcrichton\n\nMake sure formatter errors are emitted by the default Write::write_fmt\n\nPreviously, if an error was returned from the formatter that did not\noriginate in an underlying writer error, Write::write_fmt would return\nsuccessfully even if the formatting did not complete (was interrupted by\nan `fmt::Error` return).\n\nNow we choose to emit an io::Error with kind Other for formatter errors.\n\nSince this may reveal error returns from `write!()` and similar that\npreviously passed silently, it's a kind of a [breaking-change].\n\nFixes #31879"
-  },
-  {
-    "hash": "6cfafad3c56736a62e1043a8d01f7f2c74384008",
-    "author": "Ulrik Sverdrup",
-    "date": 1456451965,
-    "message": "Make sure formatter errors are emitted by the default Write::write_fmt\n\nPreviously, if an error was returned from the formatter that did not\noriginate in an underlying writer error, Write::write_fmt would return\nsuccessfully even if the formatting did not complete (was interrupted by\nan `fmt::Error` return).\n\nNow we choose to emit an io::Error with kind Other for formatter errors.\n\nSince this may reveal error returns from `write!()` and similar that\npreviously passed silently, it's a kind of a [breaking-change]."
   },
   {
     "hash": "9c6a0088fbdae5a6554c39f8db9207c1b878eb05",
@@ -588,10 +576,22 @@
     "message": "Auto merge of #31857 - jseyfried:fix_scoping, r=nikomatsakis\n\nThis fixes a bug (#31845) introduced in #31105 in which lexical scopes contain items from all anonymous module ancestors, even if the path to the anonymous module includes a normal module:\n```rust\nfn f() {\n    fn g() {}\n    mod foo {\n        fn h() {\n           g(); // This erroneously resolves on nightly\n        }\n    }\n}\n```\n\nThis is a [breaking-change] on nightly but not on stable or beta.\nr? @nikomatsakis"
   },
   {
+    "hash": "6cfafad3c56736a62e1043a8d01f7f2c74384008",
+    "author": "Ulrik Sverdrup",
+    "date": 1456451965,
+    "message": "Make sure formatter errors are emitted by the default Write::write_fmt\n\nPreviously, if an error was returned from the formatter that did not\noriginate in an underlying writer error, Write::write_fmt would return\nsuccessfully even if the formatting did not complete (was interrupted by\nan `fmt::Error` return).\n\nNow we choose to emit an io::Error with kind Other for formatter errors.\n\nSince this may reveal error returns from `write!()` and similar that\npreviously passed silently, it's a kind of a [breaking-change]."
+  },
+  {
     "hash": "9658645407c784105bb361297d5316cadc9ff2bd",
     "author": "bors",
     "date": 1455651297,
     "message": "Auto merge of #31534 - jseyfried:restrict_noninline_mod, r=nikomatsakis\n\nThis PR disallows non-inline modules without path annotations that are either in a block or in an inline module whose containing file is not a directory owner (fixes #29765).\nThis is a [breaking-change].\nr? @nikomatsakis"
+  },
+  {
+    "hash": "3a872782d396e9ed3827a515a54d1f0a634c0b77",
+    "author": "Jonas Schievink",
+    "date": 1455625960,
+    "message": "Move more uses of `panictry!` out of libsyntax\n\n[breaking-change] for syntax extensions"
   },
   {
     "hash": "9d98390765bbe61ce2a39b40c99ae1a68bb6d1cc",
