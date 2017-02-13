@@ -1,5 +1,11 @@
 [
   {
+    "hash": "956e2bcbaa00c05e051718b1375375915064f1c3",
+    "author": "bors",
+    "date": 1486941675,
+    "message": "Auto merge of #39572 - jseyfried:fix_inert_attributes, r=nrc\n\nmacros: fix inert attributes from `proc_macro_derives` with `#![feature(proc_macro)]`\n\nThis PR refactors collection of `proc_macro_derive` invocations to fix #39347.\n\nAfter this PR, the input to a `#[proc_macro_derive]` function no longer sees `#[derive]`s on the underlying item. For example, consider:\n```rust\nextern crate my_derives;\nuse my_derives::{Trait, Trait2};\n\n#[derive(Copy, Clone)]\n#[derive(Trait)]\n#[derive(Trait2)]\nstruct S;\n```\n\nToday, the input to the `Trait` derive is `#[derive(Copy, Clone, Trait2)] struct S;`, and the input to the `Trait2` derive is `#[derive(Copy, Clone)] struct S;`. More generally, a `proc_macro_derive` sees all builtin derives, as well as all `proc_macro_derive`s listed *after* the one being invoked.\n\nAfter this PR, both `Trait` and `Trait2` will see `struct S;`.\nThis is a [breaking-change], but I believe it is highly unlikely to cause breakage in practice.\n\nr? @nrc"
+  },
+  {
     "hash": "b27c7095606ad9386a7038d7af03abd7f948f02f",
     "author": "bors",
     "date": 1484165546,
@@ -592,11 +598,5 @@
     "author": "Jonas Schievink",
     "date": 1455625960,
     "message": "Move more uses of `panictry!` out of libsyntax\n\n[breaking-change] for syntax extensions"
-  },
-  {
-    "hash": "9d98390765bbe61ce2a39b40c99ae1a68bb6d1cc",
-    "author": "bors",
-    "date": 1455430690,
-    "message": "Auto merge of #31581 - petrochenkov:patrefact, r=Manishearth\n\ncc https://github.com/rust-lang/rust/pull/31487#issuecomment-182945101\nplugin-[breaking-change]\n\nThe first commit renames `ast::Pat_` to `ast::PatKind` and uses its variants in enum qualified form. I've also taken the opportunity and renamed `PatKind::Region` into `PatKind::Ref`.\n\nThe second commit splits `PatKind::Enum` into `PatKind::TupleStruct` and `PatKind::UnitStruct`.\nSo, pattern kinds now correspond to their struct/variant kinds - `Struct`, `TupleStruct` and `UnitStruct`.\n@nikomatsakis @nrc @arielb1 Are you okay with this naming scheme?\nAn alternative possible naming scheme is `PatKind::StructVariant`, `PatKind::TupleVariant`, `PatKind::UnitVariant` (it's probably closer to the common use, but I like it less).\n\nI intend to apply these changes to HIR later, they should not necessarily go in the same nightly with https://github.com/rust-lang/rust/pull/31487\nr? @Manishearth"
   }
 ]
