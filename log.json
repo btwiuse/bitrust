@@ -1,5 +1,11 @@
 [
   {
+    "hash": "87e544bca5ae1bd187f11239abcab1f73c836049",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1487882782,
+    "message": "use a more conservative inhabitableness rule\n\nThis is a [breaking-change] from 1.15, because this used to compile:\n\n```Rust\nenum Void {}\nfn foo(x: &Void) {\n    match x {}\n}\n```"
+  },
+  {
     "hash": "956e2bcbaa00c05e051718b1375375915064f1c3",
     "author": "bors",
     "date": 1486941675,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1455651297,
     "message": "Auto merge of #31534 - jseyfried:restrict_noninline_mod, r=nikomatsakis\n\nThis PR disallows non-inline modules without path annotations that are either in a block or in an inline module whose containing file is not a directory owner (fixes #29765).\nThis is a [breaking-change].\nr? @nikomatsakis"
-  },
-  {
-    "hash": "3a872782d396e9ed3827a515a54d1f0a634c0b77",
-    "author": "Jonas Schievink",
-    "date": 1455625960,
-    "message": "Move more uses of `panictry!` out of libsyntax\n\n[breaking-change] for syntax extensions"
   }
 ]
