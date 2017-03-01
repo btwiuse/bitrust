@@ -1,5 +1,17 @@
 [
   {
+    "hash": "7ce1fbe1f7fe5cdbec57377d76306e2bc7811bce",
+    "author": "bors",
+    "date": 1488347889,
+    "message": "Auto merge of #39419 - jseyfried:simplify_tokentree, r=nrc\n\nSimplify `TokenTree` and fix `macro_rules!` bugs\n\nThis PR\n - fixes #39390, fixes #39403, and fixes #39404 (each is a [breaking-change], see issues for examples),\n - fixes #39889,\n - simplifies and optimizes macro invocation parsing,\n - cleans up `ext::tt::transcribe`,\n - removes `tokenstream::TokenTree::Sequence` and `Token::MatchNt`,\n   - instead, adds a new type `ext::tt::quoted::TokenTree` for use by `macro_rules!` (`ext::tt`)\n - removes `parser.quote_depth` and `parser.parsing_token_tree`, and\n - removes `quote_matcher!`.\n   - Instead, use `quote_tokens!` and `ext::tt::quoted::parse` the result with `expect_matchers=true`.\n   - I found no outside uses of `quote_matcher!` when searching Rust code on Github.\n\nr? @nrc"
+  },
+  {
+    "hash": "4ba49ab39f942af3846cf0d8599674b0adde94b5",
+    "author": "Corey Farwell",
+    "date": 1488340526,
+    "message": "Rollup merge of #39419 - jseyfried:simplify_tokentree, r=nrc\n\nSimplify `TokenTree` and fix `macro_rules!` bugs\n\nThis PR\n - fixes #39390, fixes #39403, and fixes #39404 (each is a [breaking-change], see issues for examples),\n - fixes #39889,\n - simplifies and optimizes macro invocation parsing,\n - cleans up `ext::tt::transcribe`,\n - removes `tokenstream::TokenTree::Sequence` and `Token::MatchNt`,\n   - instead, adds a new type `ext::tt::quoted::TokenTree` for use by `macro_rules!` (`ext::tt`)\n - removes `parser.quote_depth` and `parser.parsing_token_tree`, and\n - removes `quote_matcher!`.\n   - Instead, use `quote_tokens!` and `ext::tt::quoted::parse` the result with `expect_matchers=true`.\n   - I found no outside uses of `quote_matcher!` when searching Rust code on Github.\n\nr? @nrc"
+  },
+  {
     "hash": "87e544bca5ae1bd187f11239abcab1f73c836049",
     "author": "Ariel Ben-Yehuda",
     "date": 1487882782,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1456461508,
     "message": "Auto merge of #31857 - jseyfried:fix_scoping, r=nikomatsakis\n\nThis fixes a bug (#31845) introduced in #31105 in which lexical scopes contain items from all anonymous module ancestors, even if the path to the anonymous module includes a normal module:\n```rust\nfn f() {\n    fn g() {}\n    mod foo {\n        fn h() {\n           g(); // This erroneously resolves on nightly\n        }\n    }\n}\n```\n\nThis is a [breaking-change] on nightly but not on stable or beta.\nr? @nikomatsakis"
-  },
-  {
-    "hash": "6cfafad3c56736a62e1043a8d01f7f2c74384008",
-    "author": "Ulrik Sverdrup",
-    "date": 1456451965,
-    "message": "Make sure formatter errors are emitted by the default Write::write_fmt\n\nPreviously, if an error was returned from the formatter that did not\noriginate in an underlying writer error, Write::write_fmt would return\nsuccessfully even if the formatting did not complete (was interrupted by\nan `fmt::Error` return).\n\nNow we choose to emit an io::Error with kind Other for formatter errors.\n\nSince this may reveal error returns from `write!()` and similar that\npreviously passed silently, it's a kind of a [breaking-change]."
-  },
-  {
-    "hash": "9658645407c784105bb361297d5316cadc9ff2bd",
-    "author": "bors",
-    "date": 1455651297,
-    "message": "Auto merge of #31534 - jseyfried:restrict_noninline_mod, r=nikomatsakis\n\nThis PR disallows non-inline modules without path annotations that are either in a block or in an inline module whose containing file is not a directory owner (fixes #29765).\nThis is a [breaking-change].\nr? @nikomatsakis"
   }
 ]
