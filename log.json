@@ -1,5 +1,11 @@
 [
   {
+    "hash": "691eba1358fc3c9c7a8033314a4112d43680c128",
+    "author": "bors",
+    "date": 1488362624,
+    "message": "Auto merge of #34198 - eddyb:you're-a-bad-transmute-and-you-should-feel-bad, r=nikomatsakis\n\nMake transmuting from fn item types to pointer-sized types a hard error.\n\nCloses #19925 by removing the future compatibility lint and the associated workarounds.\nThis is a `[breaking-change]` if you `transmute` from a function item without casting first.\nFor more information on how to fix your code, see https://github.com/rust-lang/rust/issues/19925."
+  },
+  {
     "hash": "7ce1fbe1f7fe5cdbec57377d76306e2bc7811bce",
     "author": "bors",
     "date": 1488347889,
@@ -592,11 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1456486422,
     "message": "Rollup merge of #31904 - bluss:writer-formatter-error, r=alexcrichton\n\nMake sure formatter errors are emitted by the default Write::write_fmt\n\nPreviously, if an error was returned from the formatter that did not\noriginate in an underlying writer error, Write::write_fmt would return\nsuccessfully even if the formatting did not complete (was interrupted by\nan `fmt::Error` return).\n\nNow we choose to emit an io::Error with kind Other for formatter errors.\n\nSince this may reveal error returns from `write!()` and similar that\npreviously passed silently, it's a kind of a [breaking-change].\n\nFixes #31879"
-  },
-  {
-    "hash": "9c6a0088fbdae5a6554c39f8db9207c1b878eb05",
-    "author": "bors",
-    "date": 1456461508,
-    "message": "Auto merge of #31857 - jseyfried:fix_scoping, r=nikomatsakis\n\nThis fixes a bug (#31845) introduced in #31105 in which lexical scopes contain items from all anonymous module ancestors, even if the path to the anonymous module includes a normal module:\n```rust\nfn f() {\n    fn g() {}\n    mod foo {\n        fn h() {\n           g(); // This erroneously resolves on nightly\n        }\n    }\n}\n```\n\nThis is a [breaking-change] on nightly but not on stable or beta.\nr? @nikomatsakis"
   }
 ]
