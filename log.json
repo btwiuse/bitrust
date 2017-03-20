@@ -1,5 +1,17 @@
 [
   {
+    "hash": "e5221f93977922090b0370aff1efdbf5c2d12f6d",
+    "author": "Corey Farwell",
+    "date": 1489971066,
+    "message": "Rollup merge of #40241 - Sawyer47:fix-39997, r=alexcrichton\n\nChange how the `0` flag works in format!\n\nNow it always implies right-alignment, so that padding zeroes are placed after the sign (if any) and before the digits. In other words, it always takes precedence over explicitly specified `[[fill]align]`. This also affects the '#' flag: zeroes are placed after the prefix (0b, 0o, 0x) and before the digits.\n\nHere's a short summary of how similar format strings work in Python and Rust:\n\n```\n              :05     :<05    :>05    :^05\nPython 3.6  |-0001| |-1000| |000-1| |0-100|\nRust before |-0001| |-1000| |-0001| |-0100|\nRust after  |-0001| |-0001| |-0001| |-0001|\n\n             :#05x   :<#05x  :>#05x  :^#05x\nPython 3.6  |0x001| |0x100| |000x1| |00x10|\nRust before |0x001| |0x100| |000x1| |0x010|\nRust after  |0x001| |0x001| |0x001| |0x001|\n```\n\nFixes #39997 [breaking-change]"
+  },
+  {
+    "hash": "ff63866edb511a73eed657a8a4f5c81f1ee5a9bb",
+    "author": "Piotr Jawniak",
+    "date": 1489589444,
+    "message": "Change how the `0` flag works in format!\n\nNow it always implies right-alignment, so that padding zeroes are placed after the sign (if any) and before the digits. In other words, it always takes precedence over explicitly specified `[[fill]align]`. This also affects the '#' flag: zeroes are placed after the prefix (0b, 0o, 0x) and before the digits.\n\n           :05     :<05    :>05    :^05\nbefore   |-0001| |-1000| |-0001| |-0100|\nafter    |-0001| |-0001| |-0001| |-0001|\n          :#05x   :<#05x  :>#05x  :^#05x\nbefore   |0x001| |0x100| |000x1| |0x010|\nafter    |0x001| |0x001| |0x001| |0x001|\n\nFixes #39997 [breaking-change]"
+  },
+  {
     "hash": "1b19284ad9d85f2848650be6dd466ad0e1e2d82c",
     "author": "bors",
     "date": 1489272494,
@@ -586,17 +598,5 @@
     "author": "bors",
     "date": 1457074511,
     "message": "Auto merge of #32006 - jseyfried:fix_expanded_mod_path, r=nikomatsakis\n\nThis PR changes the search paths for macro-expanded non-inline modules so that they match ordinary non-inline modules (fixes #31624). This is a [breaking-change].\n\nRight now, the search paths for a macro-expanded non-inline module are computed as if the module were declared in the top level of the file in which the macro was defined.\nFor example, consider `./foo/mod.rs`:\n```rust\nmod inconsequential { // moving the macro outside this module wouldn't change anything\n    macro_rules! mod_decl {\n        ($i:ident) => { mod $i; }\n    }\n}\n```\nand `./lib.rs`:\n```rust\nmod foo;\n\nmod bar {\n    mod_decl!(baz);\n    //^ Now, rustc expects `./foo/baz.rs` (or `./foo/baz/mod.rs`)\n    //| After this PR, rustc will expect `./bar/baz.rs` (or `./bar/baz/mod.rs`)\n}\n```\nr? @alexcrichton"
-  },
-  {
-    "hash": "7cee8b9ffb6a2dac7e2f729988c2324e2f8ac10f",
-    "author": "bors",
-    "date": 1456971688,
-    "message": "Auto merge of #31824 - jseyfried:privacy_in_resolve, r=nikomatsakis\n\nThis PR privacy checks paths as they are resolved instead of in `librustc_privacy` (fixes #12334 and fixes #31779). This removes the need for the `LastPrivate` system introduced in PR #9735, the limitations of which cause #31779.\n\nThis PR also reports privacy violations in paths to intra- and inter-crate items the same way -- it always reports the first inaccessible segment of the path.\n\nSince it fixes #31779, this is a [breaking-change]. For example, the following code would break:\n```rust\nmod foo {\n    pub use foo::bar::S;\n    mod bar { // `bar` should be private to `foo`\n        pub struct S;\n    }\n}\n\nimpl foo::S {\n    fn f() {}\n}\n\nfn main() {\n    foo::bar::S::f(); // This is now a privacy error\n}\n```\n\nr? @alexcrichton"
-  },
-  {
-    "hash": "c5d58de665819f7330b3d64bdd084d25a412830a",
-    "author": "Alex Burka",
-    "date": 1456556501,
-    "message": "core: add inclusive ranges to core::ops\n\nSince it removes the old iter::{range_inclusive, RangeInclusive} which\nwere unstable and deprecated, this is a [breaking-change] on nightly."
   }
 ]
