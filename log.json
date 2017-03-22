@@ -1,5 +1,11 @@
 [
   {
+    "hash": "8c4f2c64c6759a82f143e23964a46a65c67509c9",
+    "author": "bors",
+    "date": 1490148016,
+    "message": "Auto merge of #40043 - petrochenkov:objpars, r=nikomatsakis\n\nRefactor parsing of trait object types\n\nBugs are fixed and code is cleaned up.\n\nUser visible changes:\n- `ty` matcher in macros accepts trait object types like `Write + Send` (https://github.com/rust-lang/rust/issues/39080)\n- Buggy priority of `+` in trait object types starting with `for` is fixed (https://github.com/rust-lang/rust/issues/39317). `&for<'a> Trait<'a> + Send` is now parsed as `(&for<'a> Trait<'a>) + Send` and requires parens `&(for<'a> Trait<'a> + Send)`. For comparison, `&Send + for<'a> Trait<'a>` was parsed like this since [Nov 27, 2014](https://github.com/rust-lang/rust/pull/19298).\n- Trailing `+`s are supported in trait objects, like in other bounds.\n- Better error reporting for trait objects starting with `?Sized`.\n\nFixes https://github.com/rust-lang/rust/issues/39080\nFixes https://github.com/rust-lang/rust/issues/39317 [breaking-change]\nCloses https://github.com/rust-lang/rust/issues/39298\ncc https://github.com/rust-lang/rust/issues/39085 (fixed, then reverted https://github.com/rust-lang/rust/pull/40043#issuecomment-286570653)\ncc https://github.com/rust-lang/rust/issues/39318 (fixed, then reverted https://github.com/rust-lang/rust/pull/40043#issuecomment-284493890)\n\nr? @nikomatsakis"
+  },
+  {
     "hash": "e5221f93977922090b0370aff1efdbf5c2d12f6d",
     "author": "Corey Farwell",
     "date": 1489971066,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1457583380,
     "message": "Auto merge of #31710 - eddyb:reify, r=nikomatsakis\n\nDistinguish fn item types to allow reification from nothing to fn pointers.\n\nThe first commit is a rebase of #26284, except for files that have moved since.\n\nThis is a [breaking-change], due to:\n* each FFI function has a distinct type, like all other functions currently do\n* all generic parameters on functions are recorded in their item types, e.g.:\n`size_of::<u8>` & `size_of::<i8>`'s types differ despite their identical signature.\n* function items are zero-sized, which will stop transmutes from working on them\n\nThe first two cases are handled in most cases with the new coerce-unify logic,\nwhich will combine incompatible function item types into function pointers,\nat the outer-most level of if-else chains, match arms and array literals.\n\nThe last case is specially handled during type-checking such that transmutes\nfrom a function item type to a pointer or integer type will continue to work for\nanother release cycle, but are being linted against. To get rid of warnings and\nensure your code will continue to compile, cast to a pointer before transmuting."
-  },
-  {
-    "hash": "5b5e52186917502258a9feadc8bf77a89183386b",
-    "author": "bors",
-    "date": 1457074511,
-    "message": "Auto merge of #32006 - jseyfried:fix_expanded_mod_path, r=nikomatsakis\n\nThis PR changes the search paths for macro-expanded non-inline modules so that they match ordinary non-inline modules (fixes #31624). This is a [breaking-change].\n\nRight now, the search paths for a macro-expanded non-inline module are computed as if the module were declared in the top level of the file in which the macro was defined.\nFor example, consider `./foo/mod.rs`:\n```rust\nmod inconsequential { // moving the macro outside this module wouldn't change anything\n    macro_rules! mod_decl {\n        ($i:ident) => { mod $i; }\n    }\n}\n```\nand `./lib.rs`:\n```rust\nmod foo;\n\nmod bar {\n    mod_decl!(baz);\n    //^ Now, rustc expects `./foo/baz.rs` (or `./foo/baz/mod.rs`)\n    //| After this PR, rustc will expect `./bar/baz.rs` (or `./bar/baz/mod.rs`)\n}\n```\nr? @alexcrichton"
   }
 ]
