@@ -1,5 +1,11 @@
 [
   {
+    "hash": "7e7114fe2e26c5ccd6ebbd5686410b61a47820dc",
+    "author": "bors",
+    "date": 1493163997,
+    "message": "Auto merge of #41332 - petrochenkov:privti, r=eddyb\n\nCheck privacy of trait items in all contexts\n\nFixes https://github.com/rust-lang/rust/issues/28514\n\nThis is a sufficiently rare scenario and it's currently guarded by `private_in_public` lint, so it shouldn't be a [breaking-change] in practice."
+  },
+  {
     "hash": "3b5754e5ce73d24c6684b3ed0c68a557dfdd2f52",
     "author": "bors",
     "date": 1491847223,
@@ -592,11 +598,5 @@
     "author": "Niko Matsakis",
     "date": 1458902742,
     "message": "issue a future-compat lint for constants of invalid type\n\nThis is a [breaking-change]: according to RFC #1445, constants used as\npatterns must be of a type that *derives* `Eq`. If you encounter a\nproblem, you are most likely using a constant in an expression where the\ntype of the constant is some struct that does not currently implement\n`Eq`. Something like the following:\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nThe easiest and most future compatible fix is to annotate the type in\nquestion with `#[derive(Eq)]` (note that merely *implementing* `Eq` is\nnot enough, it must be *derived*):\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nAnother good option is to rewrite the match arm to use an `if`\ncondition (this is also particularly good for floating point types,\nwhich implement `PartialEq` but not `Eq`):\n\n```rust\nmatch foo {\n    c if c == SOME_CONST => ...\n}\n```\n\nFinally, a third alternative is to tag the type with\n`#[structural_match]`; but this is not recommended, as the attribute is\nnever expected to be stabilized. Please see RFC #1445 for more details."
-  },
-  {
-    "hash": "06074ac004701bff42c625247c4764b2ae6fca6c",
-    "author": "bors",
-    "date": 1457848514,
-    "message": "Auto merge of #32141 - jseyfried:fix_resolution_in_lexical_scopes, r=nikomatsakis\n\nFix name resolution in lexical scopes\n\nCurrently, `resolve_item_in_lexical_scope` does not check the \"ribs\" (type parameters and local variables). This can allow items that should be shadowed by type parameters to be named.\n\nFor example,\n```rust\nstruct T { i: i32 }\nfn f<T>() {\n    let t = T { i: 0 }; // This use of `T` resolves to the struct, not the type parameter\n}\n\nmod Foo {\n    pub fn f() {}\n}\nfn g<Foo>() {\n    Foo::f(); // This use of `Foo` resolves to the module, not the type parameter\n}\n```\n\nThis PR changes `resolve_item_in_lexical_scope` so that it fails when the item is shadowed by a rib (fixes #32120).\nThis is a [breaking-change], but it looks unlikely to cause breakage in practice.\n\nr? @nikomatsakis"
   }
 ]
