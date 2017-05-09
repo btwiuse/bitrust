@@ -1,5 +1,11 @@
 [
   {
+    "hash": "c104db48018ad01588153a59de6bdf9f177bf8f9",
+    "author": "Corey Farwell",
+    "date": 1494297286,
+    "message": "Rollup merge of #41293 - est31:floating_literal_match, r=nikomatsakis\n\nImplement the illegal_floating_point_literal_pattern compat lint\n\nAdds a future-compatibility lint for the [breaking-change] introduced by issue #41620 . cc issue #41255 ."
+  },
+  {
     "hash": "7e7114fe2e26c5ccd6ebbd5686410b61a47820dc",
     "author": "bors",
     "date": 1493163997,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1458907393,
     "message": "Auto merge of #31908 - jseyfried:disallow_shadowed_traits, r=nikomatsakis\n\nDisallow methods from traits that are not in scope\n\nThis PR only allows a trait method to be used if the trait is in scope (fixes #31379).\nThis is a [breaking-change]. For example, the following would break:\n```rust\nmod foo {\n    pub trait T { fn f(&self) {} }\n    impl T for () {}\n}\n\nmod bar { pub use foo::T; }\n\nfn main() {\n    pub use bar::*;\n    struct T; // This shadows the trait `T`,\n    ().f() // making this an error.\n}\n```\nr? @nikomatsakis"
-  },
-  {
-    "hash": "f69eb8efbe5dbc373426bf0ff021b49f37db41cb",
-    "author": "Niko Matsakis",
-    "date": 1458902742,
-    "message": "issue a future-compat lint for constants of invalid type\n\nThis is a [breaking-change]: according to RFC #1445, constants used as\npatterns must be of a type that *derives* `Eq`. If you encounter a\nproblem, you are most likely using a constant in an expression where the\ntype of the constant is some struct that does not currently implement\n`Eq`. Something like the following:\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nThe easiest and most future compatible fix is to annotate the type in\nquestion with `#[derive(Eq)]` (note that merely *implementing* `Eq` is\nnot enough, it must be *derived*):\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nAnother good option is to rewrite the match arm to use an `if`\ncondition (this is also particularly good for floating point types,\nwhich implement `PartialEq` but not `Eq`):\n\n```rust\nmatch foo {\n    c if c == SOME_CONST => ...\n}\n```\n\nFinally, a third alternative is to tag the type with\n`#[structural_match]`; but this is not recommended, as the attribute is\nnever expected to be stabilized. Please see RFC #1445 for more details."
   }
 ]
