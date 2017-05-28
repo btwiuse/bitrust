@@ -1,5 +1,11 @@
 [
   {
+    "hash": "493cd6b6e2dfc400c4026f1f2c9b89e97055107e",
+    "author": "Robin Kruppe",
+    "date": 1495912093,
+    "message": "Reduce API surface of rustc_trans\n\nMark various items and fields as private or pub(crate), and remove a function that turns out to be unused.\nThese are not used anywhere in-tree, but I guess it's a [breaking-change] for plugins."
+  },
+  {
     "hash": "c104db48018ad01588153a59de6bdf9f177bf8f9",
     "author": "Corey Farwell",
     "date": 1494297286,
@@ -592,11 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1458963441,
     "message": "Rollup merge of #32199 - nikomatsakis:limiting-constants-in-patterns-2, r=pnkfelix\n\nRestrict constants in patterns\n\nThis implements [RFC 1445](https://github.com/rust-lang/rfcs/blob/master/text/1445-restrict-constants-in-patterns.md). The primary change is to limit the types of constants used in patterns to those that *derive* `Eq` (note that implementing `Eq` is not sufficient). This has two main effects:\n\n1. Floating point constants are linted, and will eventually be disallowed. This is because floating point constants do not implement `Eq` but only `PartialEq`. This check replaces the existing special case code that aimed to detect the use of `NaN`.\n2. Structs and enums must derive `Eq` to be usable within a match.\n\nThis is a [breaking-change]: if you encounter a problem, you are most likely using a constant in an expression where the type of the constant is some struct that does not currently implement\n`Eq`. Something like the following:\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nThe easiest and most future compatible fix is to annotate the type in question with `#[derive(Eq)]` (note that merely *implementing* `Eq` is not enough, it must be *derived*):\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nAnother good option is to rewrite the match arm to use an `if` condition (this is also particularly good for floating point types, which implement `PartialEq` but not `Eq`):\n\n```rust\nmatch foo {\n    c if c == SOME_CONST => ...\n}\n```\n\nFinally, a third alternative is to tag the type with `#[structural_match]`; but this is not recommended, as the attribute is never expected to be stabilized. Please see RFC #1445 for more details.\n\ncc https://github.com/rust-lang/rust/issues/31434\n\nr? @pnkfelix"
-  },
-  {
-    "hash": "64a13a46601bb47a470264936b623b4adf706128",
-    "author": "bors",
-    "date": 1458907393,
-    "message": "Auto merge of #31908 - jseyfried:disallow_shadowed_traits, r=nikomatsakis\n\nDisallow methods from traits that are not in scope\n\nThis PR only allows a trait method to be used if the trait is in scope (fixes #31379).\nThis is a [breaking-change]. For example, the following would break:\n```rust\nmod foo {\n    pub trait T { fn f(&self) {} }\n    impl T for () {}\n}\n\nmod bar { pub use foo::T; }\n\nfn main() {\n    pub use bar::*;\n    struct T; // This shadows the trait `T`,\n    ().f() // making this an error.\n}\n```\nr? @nikomatsakis"
   }
 ]
