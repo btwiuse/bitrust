@@ -1,5 +1,11 @@
 [
   {
+    "hash": "422faf7a6fbedd75653f1568e69858f62b5c0fe7",
+    "author": "Corey Farwell",
+    "date": 1496290159,
+    "message": "Rollup merge of #42136 - petrochenkov:oldhard, r=nikomatsakis\n\nTurn sufficiently old compatibility lints into hard errors\n\nIt's been almost 7 months since https://github.com/rust-lang/rust/pull/36894 was merged, so it's time to take the next step.\n\n[breaking-change], needs crater run.\n\nPRs/issues submitted to affected crates:\nhttps://github.com/alexcrichton/ctest/pull/17\nhttps://github.com/Sean1708/rusty-cheddar/pull/55\nhttps://github.com/m-r-r/helianto/pull/3\nhttps://github.com/azdle/virgil/pull/1\nhttps://github.com/rust-locale/rust-locale/issues/24\nhttps://github.com/mneumann/acyclic-network-rs/pull/1\nhttps://github.com/reem/rust-typemap/pull/38\n\ncc https://internals.rust-lang.org/t/moving-forward-on-forward-compatibility-lints/4204\ncc https://github.com/rust-lang/rust/issues/34537 https://github.com/rust-lang/rust/issues/36887\nCloses https://github.com/rust-lang/rust/issues/36886\nCloses https://github.com/rust-lang/rust/issues/36888\nCloses https://github.com/rust-lang/rust/issues/36890\nCloses https://github.com/rust-lang/rust/issues/36891\nCloses https://github.com/rust-lang/rust/issues/36892\nr? @nikomatsakis"
+  },
+  {
     "hash": "493cd6b6e2dfc400c4026f1f2c9b89e97055107e",
     "author": "Robin Kruppe",
     "date": 1495912093,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1459223442,
     "message": "Auto merge of #32479 - eddyb:eof-not-even-twice, r=nikomatsakis\n\nPrevent bumping the parser past the EOF.\n\nMakes `Parser::bump` after EOF into an ICE, forcing callers to avoid repeated EOF bumps.\nThis ICE is intended to break infinite loops where EOF wasn't stopping the loop.\n\nFor example, the handling of EOF in `parse_trait_items`' recovery loop fixes #32446.\nBut even without this specific fix, the ICE is triggered, which helps diagnosis and UX.\n\nThis is a `[breaking-change]` for plugins authors who eagerly eat multiple EOFs.\nSee https://github.com/docopt/docopt.rs/pull/171 for such an example and the necessary fix."
-  },
-  {
-    "hash": "128b2ad8298f33984c64b98cfb354bb932b740ef",
-    "author": "Manish Goregaokar",
-    "date": 1458963441,
-    "message": "Rollup merge of #32199 - nikomatsakis:limiting-constants-in-patterns-2, r=pnkfelix\n\nRestrict constants in patterns\n\nThis implements [RFC 1445](https://github.com/rust-lang/rfcs/blob/master/text/1445-restrict-constants-in-patterns.md). The primary change is to limit the types of constants used in patterns to those that *derive* `Eq` (note that implementing `Eq` is not sufficient). This has two main effects:\n\n1. Floating point constants are linted, and will eventually be disallowed. This is because floating point constants do not implement `Eq` but only `PartialEq`. This check replaces the existing special case code that aimed to detect the use of `NaN`.\n2. Structs and enums must derive `Eq` to be usable within a match.\n\nThis is a [breaking-change]: if you encounter a problem, you are most likely using a constant in an expression where the type of the constant is some struct that does not currently implement\n`Eq`. Something like the following:\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nThe easiest and most future compatible fix is to annotate the type in question with `#[derive(Eq)]` (note that merely *implementing* `Eq` is not enough, it must be *derived*):\n\n```rust\nstruct SomeType { ... }\nconst SOME_CONST: SomeType = ...;\n\nmatch foo {\n    SOME_CONST => ...\n}\n```\n\nAnother good option is to rewrite the match arm to use an `if` condition (this is also particularly good for floating point types, which implement `PartialEq` but not `Eq`):\n\n```rust\nmatch foo {\n    c if c == SOME_CONST => ...\n}\n```\n\nFinally, a third alternative is to tag the type with `#[structural_match]`; but this is not recommended, as the attribute is never expected to be stabilized. Please see RFC #1445 for more details.\n\ncc https://github.com/rust-lang/rust/issues/31434\n\nr? @pnkfelix"
   }
 ]
