@@ -1,5 +1,11 @@
 [
   {
+    "hash": "4079e6128f6cff3270ed2b0ebdc62fb6b1f4b5d7",
+    "author": "bors",
+    "date": 1498612332,
+    "message": "Auto merge of #42417 - eddyb:separate-fn-sig, r=nikomatsakis\n\nDon't drag function signatures along function item types.\n\nThis PR separates the signature of a function from the \"function item type\" (`TyFnDef`), leaving only the `DefId` and parameter `Substs`, making them even more like (captureless) closure types.\n\nThe motivation for this change is reducing typesystem complexity, and its consequences:\n* operating on the signature instead of just the parameters was less efficient\n  * specifically, signatures can easily add several levels of depth on top of the parameter types\n  * and the signatured were always substituted and normalized, so typically even more complex\n* it was *the only* type that was *both* nominal (identity) and structural (signature)\n  * harder to model in Chalk than either a purely nominal or structural type\n  * subtyping worked on the signature but parameters were always invariant\n  * call type-checking was transforming signatures but keeping the nominal half intact\n  * the signature could therefore get out of sync during type inference in several ways\n\nThat last point comes with a `[breaking-change]`, because functions with `'static` in their return types will now *not* be as usable as if they were using lifetime parameters instead:\n```rust\n// Will cause lifetime mismatch in main after this PR.\nfn bar() -> &'static str { \"bar\" }\n// Will continue to work fine, as every use can choose its own lifetime.\nfn bar<'a>() -> &'a str { \"bar\" }\n\nfn main() {\n    let s = String::from(\"foo\");\n    Some(&s[..]).unwrap_or_else(bar);\n}\n```\n\nr? @nikomatsakis"
+  },
+  {
     "hash": "422faf7a6fbedd75653f1568e69858f62b5c0fe7",
     "author": "Corey Farwell",
     "date": 1496290159,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1459907904,
     "message": "Auto merge of #32688 - jseyfried:ast_groundwork_for_1422, r=pnkfelix\n\n[breaking-batch] Add support for `pub(restricted)` syntax in the AST\n\nThis PR allows the AST to represent the `pub(restricted)` syntax from RFC 1422 (cc #32409).\n\nMore specifically, it makes `ast::Visibility` non-`Copy` and adds two new variants, `Visibility::Crate` for `pub(crate)` and `Visitibility::Restricted { path: P<Path>, id: NodeId }` for `pub(path)`.\n\nplugin-[breaking-change] cc #31645\nr? @pnkfelix"
-  },
-  {
-    "hash": "a11129701c873d96fe0816e4c8b55510efebe96e",
-    "author": "bors",
-    "date": 1459223442,
-    "message": "Auto merge of #32479 - eddyb:eof-not-even-twice, r=nikomatsakis\n\nPrevent bumping the parser past the EOF.\n\nMakes `Parser::bump` after EOF into an ICE, forcing callers to avoid repeated EOF bumps.\nThis ICE is intended to break infinite loops where EOF wasn't stopping the loop.\n\nFor example, the handling of EOF in `parse_trait_items`' recovery loop fixes #32446.\nBut even without this specific fix, the ICE is triggered, which helps diagnosis and UX.\n\nThis is a `[breaking-change]` for plugins authors who eagerly eat multiple EOFs.\nSee https://github.com/docopt/docopt.rs/pull/171 for such an example and the necessary fix."
   }
 ]
