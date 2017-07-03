@@ -1,5 +1,17 @@
 [
   {
+    "hash": "2a992167c51d30a2b21da7a20d8c3077a2ec0093",
+    "author": "bors",
+    "date": 1499001743,
+    "message": "Auto merge of #43015 - arielb1:every-error-counts, r=eddyb\n\nreport the total number of errors on compilation failure\n\nPrior to this PR, when we aborted because a \"critical pass\" failed, we displayed the number of errors from that critical pass. While that's the number of errors that caused compilation to abort in *that place*, that's not what people really want to know. Instead, always report the total number of errors, and don't bother to track the number of errors from the last pass that failed.\n\nThis changes the compiler driver API to handle errors more smoothly, therefore is a compiler-api-[breaking-change].\n\nFixes #42793.\n\nr? @eddyb"
+  },
+  {
+    "hash": "fb7ab9e43da3727e1c58faf9451857968270dc77",
+    "author": "Ariel Ben-Yehuda",
+    "date": 1499001404,
+    "message": "report the total number of errors on compilation failure\n\nPrior to this PR, when we aborted because a \"critical pass\" failed, we\ndisplayed the number of errors from that critical pass. While that's the\nnumber of errors that caused compilation to abort in *that place*,\nthat's not what people really want to know. Instead, always report the\ntotal number of errors, and don't bother to track the number of errors\nfrom the last pass that failed.\n\nThis changes the compiler driver API to handle errors more smoothly,\nand therefore is a compiler-api-[breaking-change].\n\nFixes #42793."
+  },
+  {
     "hash": "4079e6128f6cff3270ed2b0ebdc62fb6b1f4b5d7",
     "author": "bors",
     "date": 1498612332,
@@ -586,17 +598,5 @@
     "author": "Manish Goregaokar",
     "date": 1460749603,
     "message": "Rollup merge of #32923 - jseyfried:fix_hygiene, r=nrc\n\nFix macro hygiene bug\n\nThis fixes #32922 (EDIT: and fixes #31856), macro hygiene bugs.\nIt is a [breaking-change]. For example, the following would break:\n```rust\nfn main() {\n    let x = true;\n    macro_rules! foo { () => {\n        let x = 0;\n        macro_rules! bar { () => {x} }\n        let _: bool = bar!();\n        //^ `bar!()` used to resolve the first `x` (a bool),\n        //| but will now resolve to the second x (an i32).\n    }}\n    foo! {};\n}\n```\n\nr? @nrc"
-  },
-  {
-    "hash": "af7b00b68fc7960e98fb914be52d9a6a16fe2224",
-    "author": "Manish Goregaokar",
-    "date": 1459943131,
-    "message": "Rollup merge of #32682 - petrochenkov:field3, r=Manishearth\n\n The AST part of https://github.com/rust-lang/rust/pull/31937\n\nUnlike HIR, AST still uses `Option` for field names because parser can't know field indexes reliably due to constructions like\n```\nstruct S(#[cfg(false)] u8, u8); // The index of the second field changes from 1 during parsing to 0 after expansion.\n```\nand I wouldn't like to put the burden of renaming fields on expansion passes and syntax extensions.\n\nplugin-[breaking-change] cc https://github.com/rust-lang/rust/issues/31645\nr? @Manishearth"
-  },
-  {
-    "hash": "772c600d4d6f39daa6d07d1a60ee0df3d3426978",
-    "author": "bors",
-    "date": 1459907904,
-    "message": "Auto merge of #32688 - jseyfried:ast_groundwork_for_1422, r=pnkfelix\n\n[breaking-batch] Add support for `pub(restricted)` syntax in the AST\n\nThis PR allows the AST to represent the `pub(restricted)` syntax from RFC 1422 (cc #32409).\n\nMore specifically, it makes `ast::Visibility` non-`Copy` and adds two new variants, `Visibility::Crate` for `pub(crate)` and `Visitibility::Restricted { path: P<Path>, id: NodeId }` for `pub(path)`.\n\nplugin-[breaking-change] cc #31645\nr? @pnkfelix"
   }
 ]
