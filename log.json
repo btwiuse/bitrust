@@ -1,5 +1,11 @@
 [
   {
+    "hash": "b80b659d674fa19b2b48142e4f7974544bc8d5f6",
+    "author": "bors",
+    "date": 1499391133,
+    "message": "Auto merge of #42125 - petrochenkov:privty, r=nikomatsakis\n\nCheck types for privacy\n\nThis PR implements late post factum checking of type privacy, as opposed to early preventive \"private-in-public\" checking.\nThis will allow to turn private-in-public checks into a lint and make them more heuristic-based, and more aligned with what people may expect (e.g. reachability-based behavior).\n\nTypes are privacy-checked if they are written explicitly, and also if they are inferred as expression or pattern types.\nThis PR checks \"semantic\" types and does it unhygienically, this significantly restricts what macros 2.0 (as implemented in https://github.com/rust-lang/rust/pull/40847) can do (sorry @jseyfried) - they still can use private *names*, but can't use private *types*.\nThis is the most conservative solution, but hopefully it's temporary and can be relaxed in the future, probably using macro contexts of expression/pattern spans.\n\nTraits are also checked in preparation for [trait aliases](https://github.com/rust-lang/rust/issues/41517), which will be able to leak private traits, and macros 2.0 which will be able to leak pretty much anything.\n\nThis is a [breaking-change], but the code that is not contrived and can be broken by this patch should be guarded by `private_in_public` lint. [Previous crater run](https://github.com/rust-lang/rust/issues/34537#issuecomment-262865768) discovered a few abandoned crates that weren't updated since `private_in_public` has been introduced in 2015.\n\ncc https://github.com/rust-lang/rust/issues/34537 https://internals.rust-lang.org/t/lang-team-minutes-private-in-public-rules/4504\nFixes https://github.com/rust-lang/rust/issues/30476\nFixes https://github.com/rust-lang/rust/issues/33479\n\ncc @nikomatsakis\nr? @eddyb"
+  },
+  {
     "hash": "2a992167c51d30a2b21da7a20d8c3077a2ec0093",
     "author": "bors",
     "date": 1499001743,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1461162479,
     "message": "Auto merge of #32939 - eddyb:layout, r=nikomatsakis\n\nCompute LLVM-agnostic type layouts in rustc.\n\nLayout for monomorphic types, and some polymorphic ones (e.g. `&T` where `T: Sized`),\ncan now be computed by rustc without involving LLVM in the actual process.\n\nThis gives rustc the ability to evaluate `size_of` or `align_of`, as well as obtain field offsets.\nMIR-based CTFE will eventually make use of these layouts, as will MIR trans, shortly.\n\nLayout computation also comes with a `[breaking-change]`, or two:\n* `\"data-layout\"` is now mandatory in custom target specifications, reverting the decision from #27076.\nThis string is needed because it describes endianness, pointer size and alignments for various types.\nWe have the first two and we could allow tweaking alignments in target specifications.\nOr we could also extract the data layout from LLVM and feed it back into rustc.\nHowever, that can vary with the LLVM version, which is fragile and undermines stability.\nFor built-in targets, I've added a check that the hardcoded data-layout matches LLVM defaults.\n* `transmute` calls are checked in a stricter fashion, which fixes #32377\n\nTo expand on `transmute`, there are only 2 allowed patterns: between types with statically known sizes and between pointers with the same potentially-unsized \"tail\" (which determines the type of unsized metadata they use, if any).\nIf you're affected, my suggestions are:\n* try to use casts (and raw pointer deref) instead of transmutes\n* *really* try to avoid `transmute` where possible\n* if you have a structure, try working on individual fields and unpack/repack the structure instead of transmuting it whole, e.g. `transmute::<RefCell<Box<T>>, RefCell<*mut T>>(x)` doesn't work, but `RefCell::new(Box::into_raw(x.into_inner()))` does (and `Box::into_raw` is just a `transmute`)"
-  },
-  {
-    "hash": "6a0cfbcac294faab2b8bcd95a04cda042101a2d8",
-    "author": "Manish Goregaokar",
-    "date": 1460749603,
-    "message": "Rollup merge of #32923 - jseyfried:fix_hygiene, r=nrc\n\nFix macro hygiene bug\n\nThis fixes #32922 (EDIT: and fixes #31856), macro hygiene bugs.\nIt is a [breaking-change]. For example, the following would break:\n```rust\nfn main() {\n    let x = true;\n    macro_rules! foo { () => {\n        let x = 0;\n        macro_rules! bar { () => {x} }\n        let _: bool = bar!();\n        //^ `bar!()` used to resolve the first `x` (a bool),\n        //| but will now resolve to the second x (an i32).\n    }}\n    foo! {};\n}\n```\n\nr? @nrc"
   }
 ]
