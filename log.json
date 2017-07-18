@@ -1,5 +1,11 @@
 [
   {
+    "hash": "83c659ef655b1f740777f83eb415fd7ebe5a3fe5",
+    "author": "bors",
+    "date": 1500373213,
+    "message": "Auto merge of #42492 - petrochenkov:methlife, r=nikomatsakis\n\nSupport generic lifetime arguments in method calls\n\nFixes https://github.com/rust-lang/rust/issues/42403\nFixes https://github.com/rust-lang/rust/issues/42115\nLifetimes in a method call `x.f::<'a, 'b, T, U>()` are treated exactly like lifetimes in the equivalent UFCS call `X::f::<'a, 'b, T, U>`.\nIn addition, if the method has late bound lifetime parameters (explicit or implicit), then explicitly specifying lifetime arguments is not permitted (guarded by a compatibility lint).\n[breaking-change] because previously lifetimes in method calls were accepted unconditionally.\n\nr? @eddyb"
+  },
+  {
     "hash": "b80b659d674fa19b2b48142e4f7974544bc8d5f6",
     "author": "bors",
     "date": 1499391133,
@@ -592,11 +598,5 @@
     "author": "Steven Fackler",
     "date": 1461213739,
     "message": "Remove IPV6_V6ONLY functionality\n\nThese settings can only be adjusted before bind time, which doesn't make\nsense in the current set of functionality. These methods are stable, but\nhaven't hit a stable release yet.\n\nCloses #33052\n\n[breaking-change]"
-  },
-  {
-    "hash": "6ece1447f02b2310e5f4c7ef1efd1312476cae80",
-    "author": "bors",
-    "date": 1461162479,
-    "message": "Auto merge of #32939 - eddyb:layout, r=nikomatsakis\n\nCompute LLVM-agnostic type layouts in rustc.\n\nLayout for monomorphic types, and some polymorphic ones (e.g. `&T` where `T: Sized`),\ncan now be computed by rustc without involving LLVM in the actual process.\n\nThis gives rustc the ability to evaluate `size_of` or `align_of`, as well as obtain field offsets.\nMIR-based CTFE will eventually make use of these layouts, as will MIR trans, shortly.\n\nLayout computation also comes with a `[breaking-change]`, or two:\n* `\"data-layout\"` is now mandatory in custom target specifications, reverting the decision from #27076.\nThis string is needed because it describes endianness, pointer size and alignments for various types.\nWe have the first two and we could allow tweaking alignments in target specifications.\nOr we could also extract the data layout from LLVM and feed it back into rustc.\nHowever, that can vary with the LLVM version, which is fragile and undermines stability.\nFor built-in targets, I've added a check that the hardcoded data-layout matches LLVM defaults.\n* `transmute` calls are checked in a stricter fashion, which fixes #32377\n\nTo expand on `transmute`, there are only 2 allowed patterns: between types with statically known sizes and between pointers with the same potentially-unsized \"tail\" (which determines the type of unsized metadata they use, if any).\nIf you're affected, my suggestions are:\n* try to use casts (and raw pointer deref) instead of transmutes\n* *really* try to avoid `transmute` where possible\n* if you have a structure, try working on individual fields and unpack/repack the structure instead of transmuting it whole, e.g. `transmute::<RefCell<Box<T>>, RefCell<*mut T>>(x)` doesn't work, but `RefCell::new(Box::into_raw(x.into_inner()))` does (and `Box::into_raw` is just a `transmute`)"
   }
 ]
