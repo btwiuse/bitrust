@@ -1,5 +1,11 @@
 [
   {
+    "hash": "7ebd81377db0e24f57be9c4f7aa84d2556931f1a",
+    "author": "Guillaume Gomez",
+    "date": 1502614989,
+    "message": "Rollup merge of #43782 - nrc:include, r=GuillaumeGomez\n\nFix include! in doc tests\n\nBy making the path relative to the current file.\n\nFixes #43153\n\n[breaking-change] - if you use `include!` inside a doc test, you'll need to change the path to be relative to the current file rather than relative to the working directory."
+  },
+  {
     "hash": "83c659ef655b1f740777f83eb415fd7ebe5a3fe5",
     "author": "bors",
     "date": 1500373213,
@@ -592,11 +598,5 @@
     "author": "bors",
     "date": 1461447606,
     "message": "Auto merge of #33124 - sfackler:kill-ipv6-only, r=alexcrichton\n\nRemove IPV6_V6ONLY functionality\n\nThese settings can only be adjusted before bind time, which doesn't make\nsense in the current set of functionality. These methods are stable, but\nhaven't hit a stable release yet.\n\nCloses #33052\n\n[breaking-change]\n\nr? @alexcrichton\n\nWill also need a backport to the beta."
-  },
-  {
-    "hash": "c6480e8b6b13401030c52f3c2b4fcc4e80c14481",
-    "author": "Steven Fackler",
-    "date": 1461213739,
-    "message": "Remove IPV6_V6ONLY functionality\n\nThese settings can only be adjusted before bind time, which doesn't make\nsense in the current set of functionality. These methods are stable, but\nhaven't hit a stable release yet.\n\nCloses #33052\n\n[breaking-change]"
   }
 ]
