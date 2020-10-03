@@ -4,8 +4,8 @@ import "fmt"
 import "strings"
 import "log"
 import "io/ioutil"
-import "github.com/navigaid/pretty"
-import git "gopkg.in/libgit2/git2go.v27"
+import "github.com/btwiuse/pretty"
+import git "github.com/libgit2/git2go/v30"
 
 type commit struct {
 	/// SHA1 hash
