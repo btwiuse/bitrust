@@ -15,4 +15,4 @@ lto = true
 
 [dependencies]
 rustc-serialize = "0.3.12"
-git2 = "0.2.8"
+git2 = "0.13.11"

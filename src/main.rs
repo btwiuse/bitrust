@@ -24,16 +24,16 @@ struct Commit {
 fn fetch_commits(repo: &Repository, start: &Option<Oid>, query: &str, amount: usize)
     -> Result<Vec<Commit>, GitError> {
 
-    let mut revs = try!(repo.revwalk());
+    let mut revs = repo.revwalk()?;
     match *start {
-        Some(commit_id) => try!(revs.push(commit_id)),
-        _ => try!(revs.push_head()),
+        Some(commit_id) => revs.push(commit_id)?,
+        _ => revs.push_head()?,
     }
 
-    revs.set_sorting(git2::SORT_TOPOLOGICAL | git2::SORT_TIME);
+    revs.set_sorting(git2::Sort::TOPOLOGICAL | git2::Sort::TIME)?;
 
     let commits = revs
-    .filter_map(|commit_id| { repo.find_commit(commit_id).ok() })
+    .filter_map(|commit_id| { repo.find_commit(commit_id.unwrap()).ok() })
     .filter(|commit| { commit.message().map(|m| m.contains(query)).unwrap_or(false) })
     .map(|commit| {
         let c = Commit {
