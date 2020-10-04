@@ -1,14 +1,14 @@
 extern crate git2;
-extern crate rustc_serialize;
+extern crate serde;
+extern crate serde_json;
 
-use std::io::{stdout, Write};
-use std::env;
+use std::env::args;
 use git2::{Repository, Oid};
 use git2::Error as GitError;
-use rustc_serialize::json;
+use serde::{Serialize, Deserialize};
 
 /// Simple commit, struct determines JSON output
-#[derive(Clone, RustcDecodable, RustcEncodable)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 struct Commit {
     /// SHA1 hash
     hash: String,
@@ -21,11 +21,11 @@ struct Commit {
 }
 
 /// Retrieve commits matching query from repsitory.
-fn fetch_commits(repo: &Repository, start: &Option<Oid>, query: &str, amount: usize)
-    -> Result<Vec<Commit>, GitError> {
-
+fn fetch_commits(repo: &str, rev: &str, query: &str) -> Result<Vec<Commit>, GitError> {
+    let repo: Repository = Repository::open(repo)?;
+    let rev: Option<Oid> = Oid::from_str(&rev).ok();
     let mut revs = repo.revwalk()?;
-    match *start {
+    match rev {
         Some(commit_id) => revs.push(commit_id)?,
         _ => revs.push_head()?,
     }
@@ -46,20 +46,13 @@ fn fetch_commits(repo: &Repository, start: &Option<Oid>, query: &str, amount: us
         };
         c
     })
-    .take(amount)
     .collect();
 
     Ok(commits)
 }
 
-fn main() {
-    let args = env::args().collect::<Vec<_>>();
-    let start = if args.len() >= 2 { Some(Oid::from_str(&args[1][..]).unwrap()) } else { None };
-
-    let cwd = env::current_dir().unwrap();
-    let repo = Repository::open(&cwd.join("rust")).unwrap();
-
-    let commits = fetch_commits(&repo, &start, "[breaking-change]", 100).unwrap();
-
-    write!(&mut stdout(), "{}\n", json::as_pretty_json(&commits)).unwrap();
+fn main(){
+    let revision: String = args().nth(1).unwrap_or(String::new());
+    let commits = fetch_commits("rust", &revision, "[breaking-change]").unwrap();
+    println!("{}", serde_json::to_string_pretty(&commits).unwrap());
 }
